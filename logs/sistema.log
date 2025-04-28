@@ -70,3 +70,280 @@
 2025-04-28 14:32:55,497 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
 2025-04-28 14:35:02,936 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
 2025-04-28 14:35:03,060 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 16:21:05,792 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 16:21:05,978 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 16:26:37,192 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 16:26:37,323 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 16:27:55,938 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 16:27:56,069 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 16:29:17,025 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 16:29:17,150 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 16:29:17,151 - __main__ - INFO - Sistema inicializado
+2025-04-28 16:29:17,151 - __main__ - INFO - Iniciando aplicação
+2025-04-28 16:29:18,005 - __main__ - INFO - Janela de login exibida
+2025-04-28 16:30:27,043 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 16:30:27,183 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 16:30:27,183 - __main__ - INFO - Sistema inicializado
+2025-04-28 16:30:27,183 - __main__ - INFO - Iniciando aplicação
+2025-04-28 16:30:28,038 - __main__ - INFO - Janela de login exibida
+2025-04-28 16:30:33,082 - __main__ - INFO - Login bem sucedido para usuário ID: 2
+2025-04-28 16:30:33,216 - __main__ - INFO - Janela principal exibida para usuário: admin
+2025-04-28 16:33:49,894 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 16:33:50,019 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 16:33:50,019 - __main__ - INFO - Sistema inicializado
+2025-04-28 16:33:50,019 - __main__ - INFO - Iniciando aplicação
+2025-04-28 16:33:50,876 - __main__ - INFO - Janela de login exibida
+2025-04-28 16:33:54,584 - __main__ - INFO - Login bem sucedido para usuário ID: 2
+2025-04-28 16:33:54,721 - __main__ - INFO - Janela principal exibida para usuário: admin
+2025-04-28 16:36:32,165 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 16:36:32,302 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 16:36:32,302 - __main__ - INFO - Sistema inicializado
+2025-04-28 16:36:32,302 - __main__ - INFO - Iniciando aplicação
+2025-04-28 16:36:33,314 - __main__ - INFO - Janela de login exibida
+2025-04-28 16:36:47,054 - __main__ - INFO - Login bem sucedido para usuário ID: 2
+2025-04-28 16:36:47,163 - __main__ - INFO - Janela principal exibida para usuário: admin
+2025-04-28 16:37:28,913 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 16:37:29,041 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 16:37:29,041 - __main__ - INFO - Sistema inicializado
+2025-04-28 16:37:29,041 - __main__ - INFO - Iniciando aplicação
+2025-04-28 16:37:29,976 - __main__ - INFO - Janela de login exibida
+2025-04-28 16:39:02,642 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 16:39:02,783 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 16:39:02,783 - __main__ - INFO - Sistema inicializado
+2025-04-28 16:39:02,783 - __main__ - INFO - Iniciando aplicação
+2025-04-28 16:39:03,746 - __main__ - INFO - Janela de login exibida
+2025-04-28 16:39:07,973 - __main__ - INFO - Login bem sucedido para usuário ID: 2
+2025-04-28 16:39:08,113 - __main__ - INFO - Janela principal exibida para usuário: admin
+2025-04-28 16:56:34,363 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 16:56:34,497 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 16:56:34,497 - __main__ - INFO - Sistema inicializado
+2025-04-28 16:56:34,497 - __main__ - INFO - Iniciando aplicação
+2025-04-28 16:56:35,441 - __main__ - INFO - Janela de login exibida
+2025-04-28 16:56:42,612 - __main__ - INFO - Login bem sucedido para usuário ID: 2
+2025-04-28 16:56:42,711 - __main__ - INFO - Janela principal exibida para usuário: admin
+2025-04-28 16:57:53,996 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 16:57:54,139 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 16:57:54,139 - __main__ - INFO - Sistema inicializado
+2025-04-28 16:57:54,139 - __main__ - INFO - Iniciando aplicação
+2025-04-28 16:57:55,101 - __main__ - INFO - Janela de login exibida
+2025-04-28 16:57:58,496 - __main__ - INFO - Login bem sucedido para usuário ID: 2
+2025-04-28 16:57:58,597 - __main__ - INFO - Janela principal exibida para usuário: admin
+2025-04-28 16:58:21,317 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 16:58:21,430 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 16:58:21,430 - __main__ - INFO - Sistema inicializado
+2025-04-28 16:58:21,430 - __main__ - INFO - Iniciando aplicação
+2025-04-28 16:58:22,460 - __main__ - INFO - Janela de login exibida
+2025-04-28 16:58:26,873 - __main__ - INFO - Login bem sucedido para usuário ID: 4
+2025-04-28 16:58:26,884 - __main__ - ERROR - Erro ao processar login: ClientWindow.__init__() missing 1 required positional argument: 'company'
+2025-04-28 16:59:03,044 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 16:59:03,168 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 16:59:03,168 - __main__ - INFO - Sistema inicializado
+2025-04-28 16:59:03,169 - __main__ - INFO - Iniciando aplicação
+2025-04-28 16:59:04,122 - __main__ - INFO - Janela de login exibida
+2025-04-28 16:59:08,523 - __main__ - INFO - Login bem sucedido para usuário ID: 4
+2025-04-28 16:59:08,535 - __main__ - ERROR - Erro ao processar login: 'AuthController' object has no attribute 'db_models'
+2025-04-28 17:00:03,981 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 17:00:04,113 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 17:00:04,113 - __main__ - INFO - Sistema inicializado
+2025-04-28 17:00:04,113 - __main__ - INFO - Iniciando aplicação
+2025-04-28 17:00:05,069 - __main__ - INFO - Janela de login exibida
+2025-04-28 17:00:11,548 - __main__ - INFO - Login bem sucedido para usuário ID: 4
+2025-04-28 17:00:11,558 - __main__ - ERROR - Erro ao processar login: 'AuthController' object has no attribute 'db_models'
+2025-04-28 17:01:05,935 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 17:01:06,079 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 17:01:06,079 - __main__ - INFO - Sistema inicializado
+2025-04-28 17:01:06,079 - __main__ - INFO - Iniciando aplicação
+2025-04-28 17:01:07,019 - __main__ - INFO - Janela de login exibida
+2025-04-28 17:01:11,698 - __main__ - INFO - Login bem sucedido para usuário ID: 4
+2025-04-28 17:01:11,753 - controllers.inspection_controller - ERROR - Erro ao buscar inspeções da empresa test: ('42S22', "[42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'engenheiro_id' inválido. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'data' inválido. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'tipo' inválido. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'data' inválido. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Não foi possível preparar uma ou mais instruções. (8180)")
+2025-04-28 17:01:11,756 - controllers.report_controller - ERROR - Erro ao buscar relatórios da empresa test: ('42S22', "[42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'data' inválido. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'arquivo' inválido. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'data' inválido. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Não foi possível preparar uma ou mais instruções. (8180)")
+2025-04-28 17:01:11,809 - __main__ - INFO - Janela principal exibida para usuário: cliente
+2025-04-28 17:02:37,856 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 17:02:37,980 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 17:02:37,980 - __main__ - INFO - Sistema inicializado
+2025-04-28 17:02:37,980 - __main__ - INFO - Iniciando aplicação
+2025-04-28 17:02:38,908 - __main__ - INFO - Janela de login exibida
+2025-04-28 17:02:43,416 - __main__ - INFO - Login bem sucedido para usuário ID: 4
+2025-04-28 17:02:43,464 - controllers.inspection_controller - ERROR - Erro ao buscar inspeções da empresa test: ('42S22', "[42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'engenheiro_id' inválido. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'data' inválido. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'tipo' inválido. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'data' inválido. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Não foi possível preparar uma ou mais instruções. (8180)")
+2025-04-28 17:02:43,471 - controllers.report_controller - ERROR - Erro ao buscar relatórios da empresa test: ('42S22', "[42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'data' inválido. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'arquivo' inválido. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'data' inválido. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Não foi possível preparar uma ou mais instruções. (8180)")
+2025-04-28 17:02:43,529 - __main__ - INFO - Janela principal exibida para usuário: cliente
+2025-04-28 17:04:09,550 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 17:04:09,677 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 17:04:09,677 - __main__ - INFO - Sistema inicializado
+2025-04-28 17:04:09,677 - __main__ - INFO - Iniciando aplicação
+2025-04-28 17:04:10,694 - __main__ - INFO - Janela de login exibida
+2025-04-28 17:04:18,192 - __main__ - INFO - Login bem sucedido para usuário ID: 4
+2025-04-28 17:04:18,226 - controllers.inspection_controller - ERROR - Erro ao buscar inspeções da empresa test: ('42S22', "[42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'engenheiro_id' inválido. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'data' inválido. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'tipo' inválido. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'data' inválido. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Não foi possível preparar uma ou mais instruções. (8180)")
+2025-04-28 17:04:18,233 - controllers.report_controller - ERROR - Erro ao buscar relatórios da empresa test: ('42S22', "[42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'data' inválido. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'arquivo' inválido. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'data' inválido. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Não foi possível preparar uma ou mais instruções. (8180)")
+2025-04-28 17:04:18,311 - __main__ - INFO - Janela principal exibida para usuário: cliente
+2025-04-28 17:05:58,399 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 17:05:58,527 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 17:05:58,527 - __main__ - INFO - Sistema inicializado
+2025-04-28 17:05:58,527 - __main__ - INFO - Iniciando aplicação
+2025-04-28 17:05:59,529 - __main__ - INFO - Janela de login exibida
+2025-04-28 17:06:03,714 - __main__ - INFO - Login bem sucedido para usuário ID: 2
+2025-04-28 17:06:03,757 - __main__ - ERROR - Erro ao processar login: 'AdminWindow' object has no attribute 'load_inspections'
+2025-04-28 17:06:49,576 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 17:06:49,734 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 17:06:49,735 - __main__ - INFO - Sistema inicializado
+2025-04-28 17:06:49,735 - __main__ - INFO - Iniciando aplicação
+2025-04-28 17:06:50,685 - __main__ - INFO - Janela de login exibida
+2025-04-28 17:06:55,924 - __main__ - INFO - Login bem sucedido para usuário ID: 2
+2025-04-28 17:06:55,969 - ui.admin_ui - ERROR - Erro ao carregar inspeções: ('42S22', "[42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'engenheiro_id' inválido. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'data' inválido. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'tipo' inválido. (207)")
+2025-04-28 17:07:05,042 - ui.admin_ui - ERROR - Erro ao carregar relatórios: ('42S22', "[42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'data' inválido. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'arquivo' inválido. (207)")
+2025-04-28 17:07:53,558 - __main__ - INFO - Janela principal exibida para usuário: admin
+2025-04-28 17:18:17,598 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 17:18:17,729 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 17:18:17,730 - __main__ - INFO - Sistema inicializado
+2025-04-28 17:18:17,730 - __main__ - INFO - Iniciando aplicação
+2025-04-28 17:18:18,667 - __main__ - INFO - Janela de login exibida
+2025-04-28 17:18:22,157 - __main__ - INFO - Login bem sucedido para usuário ID: 2
+2025-04-28 17:18:22,193 - ui.admin_ui - ERROR - Erro ao carregar inspeções: ('42S22', "[42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'engenheiro_id' inválido. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'tipo' inválido. (207)")
+2025-04-28 17:18:23,619 - ui.admin_ui - ERROR - Erro ao carregar relatórios: ('42S22', "[42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'data' inválido. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'arquivo' inválido. (207)")
+2025-04-28 17:18:24,235 - __main__ - INFO - Janela principal exibida para usuário: admin
+2025-04-28 17:19:05,153 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 17:19:05,284 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 17:19:05,284 - __main__ - INFO - Sistema inicializado
+2025-04-28 17:19:05,284 - __main__ - INFO - Iniciando aplicação
+2025-04-28 17:19:06,215 - __main__ - INFO - Janela de login exibida
+2025-04-28 17:19:10,473 - __main__ - INFO - Login bem sucedido para usuário ID: 2
+2025-04-28 17:19:10,528 - ui.admin_ui - ERROR - Erro ao carregar inspeções: ('42S22', "[42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'tipo' inválido. (207) (SQLExecDirectW)")
+2025-04-28 17:19:27,950 - ui.admin_ui - ERROR - Erro ao carregar relatórios: ('42S22', "[42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'data' inválido. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'arquivo' inválido. (207)")
+2025-04-28 17:20:46,528 - __main__ - INFO - Janela principal exibida para usuário: admin
+2025-04-28 17:20:55,968 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 17:20:56,093 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 17:20:56,093 - __main__ - INFO - Sistema inicializado
+2025-04-28 17:20:56,093 - __main__ - INFO - Iniciando aplicação
+2025-04-28 17:20:57,002 - __main__ - INFO - Janela de login exibida
+2025-04-28 17:20:59,984 - __main__ - INFO - Login bem sucedido para usuário ID: 2
+2025-04-28 17:21:00,039 - ui.admin_ui - ERROR - Erro ao carregar inspeções: ('42S22', "[42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'tipo' inválido. (207) (SQLExecDirectW)")
+2025-04-28 17:21:04,871 - ui.admin_ui - ERROR - Erro ao carregar relatórios: ('42S22', "[42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'data' inválido. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'arquivo' inválido. (207)")
+2025-04-28 17:21:06,180 - __main__ - INFO - Janela principal exibida para usuário: admin
+2025-04-28 17:22:24,416 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 17:22:24,554 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 17:22:24,554 - __main__ - INFO - Sistema inicializado
+2025-04-28 17:22:24,554 - __main__ - INFO - Iniciando aplicação
+2025-04-28 17:22:25,546 - __main__ - INFO - Janela de login exibida
+2025-04-28 17:22:31,565 - __main__ - INFO - Login bem sucedido para usuário ID: 4
+2025-04-28 17:22:31,601 - controllers.inspection_controller - ERROR - Erro ao buscar inspeções da empresa test: ('42S22', "[42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'data' inválido. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'tipo' inválido. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'data' inválido. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Não foi possível preparar uma ou mais instruções. (8180)")
+2025-04-28 17:22:31,610 - controllers.report_controller - ERROR - Erro ao buscar relatórios da empresa test: ('42S22', "[42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'data' inválido. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'arquivo' inválido. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'data' inválido. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Não foi possível preparar uma ou mais instruções. (8180)")
+2025-04-28 17:22:31,679 - __main__ - INFO - Janela principal exibida para usuário: cliente
+2025-04-28 17:22:35,771 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 17:22:35,883 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 17:22:35,883 - __main__ - INFO - Sistema inicializado
+2025-04-28 17:22:35,883 - __main__ - INFO - Iniciando aplicação
+2025-04-28 17:22:36,851 - __main__ - INFO - Janela de login exibida
+2025-04-28 17:22:44,867 - __main__ - INFO - Login bem sucedido para usuário ID: 2
+2025-04-28 17:22:44,914 - ui.admin_ui - ERROR - Erro ao carregar inspeções: ('42S22', "[42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'tipo' inválido. (207) (SQLExecDirectW)")
+2025-04-28 17:23:09,469 - ui.admin_ui - ERROR - Erro ao carregar relatórios: ('42S22', "[42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'data' inválido. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'arquivo' inválido. (207)")
+2025-04-28 17:27:06,149 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 17:27:06,266 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 17:27:06,266 - __main__ - INFO - Sistema inicializado
+2025-04-28 17:27:06,267 - __main__ - INFO - Iniciando aplicação
+2025-04-28 17:27:07,226 - __main__ - INFO - Janela de login exibida
+2025-04-28 17:27:11,828 - __main__ - INFO - Login bem sucedido para usuário ID: 2
+2025-04-28 17:27:11,881 - ui.admin_ui - ERROR - Erro ao carregar relatórios: ('42S22', "[42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'data' inválido. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'arquivo' inválido. (207)")
+2025-04-28 17:27:29,307 - __main__ - INFO - Janela principal exibida para usuário: admin
+2025-04-28 17:29:04,690 - controllers.inspection_controller - ERROR - Erro ao buscar inspeções: ('42S22', "[42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'data' inválido. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'tipo' inválido. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'data' inválido. (207)")
+2025-04-28 17:29:30,768 - controllers.inspection_controller - ERROR - Erro ao buscar inspeções: ('42S22', "[42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'data' inválido. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'tipo' inválido. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'data' inválido. (207)")
+2025-04-28 17:33:42,750 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 17:33:42,877 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 17:33:42,877 - __main__ - INFO - Sistema inicializado
+2025-04-28 17:33:42,877 - __main__ - INFO - Iniciando aplicação
+2025-04-28 17:33:43,817 - __main__ - INFO - Janela de login exibida
+2025-04-28 17:33:46,918 - __main__ - INFO - Login bem sucedido para usuário ID: 2
+2025-04-28 17:33:46,968 - ui.admin_ui - ERROR - Erro ao carregar relatórios: ('42S22', "[42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'data' inválido. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'arquivo' inválido. (207)")
+2025-04-28 17:33:53,289 - __main__ - INFO - Janela principal exibida para usuário: admin
+2025-04-28 17:35:22,057 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 17:35:22,176 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 17:35:22,176 - __main__ - INFO - Sistema inicializado
+2025-04-28 17:35:22,176 - __main__ - INFO - Iniciando aplicação
+2025-04-28 17:35:23,125 - __main__ - INFO - Janela de login exibida
+2025-04-28 17:35:25,880 - __main__ - INFO - Login bem sucedido para usuário ID: 2
+2025-04-28 17:35:25,930 - ui.admin_ui - ERROR - Erro ao carregar relatórios: ('42S22', "[42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'data' inválido. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'arquivo' inválido. (207)")
+2025-04-28 17:37:41,540 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 17:37:41,671 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 17:37:41,671 - __main__ - INFO - Sistema inicializado
+2025-04-28 17:37:41,671 - __main__ - INFO - Iniciando aplicação
+2025-04-28 17:37:42,688 - __main__ - INFO - Janela de login exibida
+2025-04-28 17:37:46,125 - __main__ - INFO - Login bem sucedido para usuário ID: 2
+2025-04-28 17:37:46,183 - ui.admin_ui - ERROR - Erro ao carregar relatórios: ('42S22', "[42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'data' inválido. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'arquivo' inválido. (207)")
+2025-04-28 17:37:53,029 - __main__ - INFO - Janela principal exibida para usuário: admin
+2025-04-28 17:38:43,122 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 17:38:43,262 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 17:38:43,262 - __main__ - INFO - Sistema inicializado
+2025-04-28 17:38:43,262 - __main__ - INFO - Iniciando aplicação
+2025-04-28 17:38:44,188 - __main__ - INFO - Janela de login exibida
+2025-04-28 17:38:47,244 - __main__ - INFO - Login bem sucedido para usuário ID: 2
+2025-04-28 17:38:47,302 - ui.admin_ui - ERROR - Erro ao carregar relatórios: ('42S22', "[42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'data' inválido. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'arquivo' inválido. (207)")
+2025-04-28 17:38:59,142 - __main__ - INFO - Janela principal exibida para usuário: admin
+2025-04-28 17:39:55,598 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 17:39:55,727 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 17:39:55,727 - __main__ - INFO - Sistema inicializado
+2025-04-28 17:39:55,727 - __main__ - INFO - Iniciando aplicação
+2025-04-28 17:39:56,661 - __main__ - INFO - Janela de login exibida
+2025-04-28 17:40:04,879 - __main__ - INFO - Login bem sucedido para usuário ID: 2
+2025-04-28 17:40:04,932 - ui.admin_ui - ERROR - Erro ao carregar relatórios: ('42S22', "[42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'data' inválido. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'arquivo' inválido. (207)")
+2025-04-28 17:40:11,153 - __main__ - INFO - Janela principal exibida para usuário: admin
+2025-04-28 17:41:01,855 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 17:41:01,984 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 17:41:01,984 - __main__ - INFO - Sistema inicializado
+2025-04-28 17:41:01,985 - __main__ - INFO - Iniciando aplicação
+2025-04-28 17:41:02,956 - __main__ - INFO - Janela de login exibida
+2025-04-28 17:41:06,047 - __main__ - INFO - Login bem sucedido para usuário ID: 2
+2025-04-28 17:41:06,105 - ui.admin_ui - ERROR - Erro ao carregar relatórios: ('42S22', "[42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'data_relatorio' inválido. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'nome_arquivo' inválido. (207)")
+2025-04-28 17:41:08,089 - __main__ - INFO - Janela principal exibida para usuário: admin
+2025-04-28 17:41:14,326 - controllers.inspection_controller - ERROR - Erro ao buscar inspeções: ('42S22', "[42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'data' inválido. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'tipo' inválido. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'data' inválido. (207)")
+2025-04-28 17:42:09,922 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 17:42:10,052 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 17:42:10,052 - __main__ - INFO - Sistema inicializado
+2025-04-28 17:42:10,053 - __main__ - INFO - Iniciando aplicação
+2025-04-28 17:42:10,972 - __main__ - INFO - Janela de login exibida
+2025-04-28 17:45:06,316 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 17:45:06,440 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 17:45:06,440 - __main__ - INFO - Sistema inicializado
+2025-04-28 17:45:06,440 - __main__ - INFO - Iniciando aplicação
+2025-04-28 17:45:07,408 - __main__ - INFO - Janela de login exibida
+2025-04-28 17:45:14,471 - __main__ - INFO - Login bem sucedido para usuário ID: 2
+2025-04-28 17:45:14,614 - __main__ - INFO - Janela principal exibida para usuário: admin
+2025-04-28 17:45:24,821 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 17:45:24,939 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 17:45:24,940 - __main__ - INFO - Sistema inicializado
+2025-04-28 17:45:24,940 - __main__ - INFO - Iniciando aplicação
+2025-04-28 17:45:25,896 - __main__ - INFO - Janela de login exibida
+2025-04-28 17:47:13,963 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 17:47:14,095 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 17:47:14,095 - __main__ - INFO - Sistema inicializado
+2025-04-28 17:47:14,095 - __main__ - INFO - Iniciando aplicação
+2025-04-28 17:47:15,048 - __main__ - INFO - Janela de login exibida
+2025-04-28 17:47:19,639 - __main__ - INFO - Login bem sucedido para usuário ID: 2
+2025-04-28 17:47:19,847 - __main__ - INFO - Janela principal exibida para usuário: admin
+2025-04-28 17:47:46,553 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 17:47:46,671 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 17:47:46,671 - __main__ - INFO - Sistema inicializado
+2025-04-28 17:47:46,671 - __main__ - INFO - Iniciando aplicação
+2025-04-28 17:47:47,694 - __main__ - INFO - Janela de login exibida
+2025-04-28 17:48:23,190 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 17:48:23,316 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 17:48:23,316 - __main__ - INFO - Sistema inicializado
+2025-04-28 17:48:23,316 - __main__ - INFO - Iniciando aplicação
+2025-04-28 17:48:24,268 - __main__ - INFO - Janela de login exibida
+2025-04-28 17:48:30,494 - __main__ - INFO - Login bem sucedido para usuário ID: 2
+2025-04-28 17:48:30,671 - __main__ - INFO - Janela principal exibida para usuário: admin
+2025-04-28 17:49:15,494 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 17:49:15,618 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 17:49:15,618 - __main__ - INFO - Sistema inicializado
+2025-04-28 17:49:15,618 - __main__ - INFO - Iniciando aplicação
+2025-04-28 17:49:16,591 - __main__ - INFO - Janela de login exibida
+2025-04-28 17:49:21,189 - __main__ - INFO - Login bem sucedido para usuário ID: 2
+2025-04-28 17:49:21,359 - __main__ - INFO - Janela principal exibida para usuário: admin
+2025-04-28 17:50:14,772 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 17:50:14,895 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 17:50:14,895 - __main__ - INFO - Sistema inicializado
+2025-04-28 17:50:14,895 - __main__ - INFO - Iniciando aplicação
+2025-04-28 17:50:15,866 - __main__ - INFO - Janela de login exibida
+2025-04-28 17:50:19,676 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 17:50:19,802 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 17:50:19,802 - __main__ - INFO - Sistema inicializado
+2025-04-28 17:50:19,802 - __main__ - INFO - Iniciando aplicação
+2025-04-28 17:50:20,802 - __main__ - INFO - Janela de login exibida

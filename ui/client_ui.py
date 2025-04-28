@@ -5,13 +5,19 @@ from PyQt5.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QPushButton, QLabel, QTableWidget, QTableWidgetItem,
     QMessageBox, QTabWidget, QLineEdit, QComboBox,
-    QDateEdit, QTextEdit
+    QDateEdit, QTextEdit, QToolButton, QMenu, QHeaderView,
+    QDialog
 )
-from PyQt5.QtCore import Qt, QDate
+from PyQt5.QtCore import Qt, QDate, QSize
 from datetime import datetime, timedelta
 import logging
 from controllers.auth_controller import AuthController
 from database.models import DatabaseModels
+from ui.styles import Styles
+from PyQt5.QtGui import QIcon
+from ui.modals import InspectionModal, ReportModal
+from controllers.inspection_controller import InspectionController
+from controllers.report_controller import ReportController
 
 logger = logging.getLogger(__name__)
 
@@ -20,17 +26,22 @@ class ClientWindow(QMainWindow):
     Janela principal do cliente.
     """
     
-    def __init__(self, auth_controller: AuthController, user_email: str):
+    def __init__(self, auth_controller: AuthController, user_id: int, company: str):
         super().__init__()
         self.auth_controller = auth_controller
         self.db_models = DatabaseModels()
-        self.user_email = user_email
+        self.user_id = user_id
+        self.company = company
+        self.inspection_controller = InspectionController()
+        self.report_controller = ReportController()
+        self.is_dark = True
         self.initUI()
+        self.apply_theme()
         
     def initUI(self):
         """Inicializa a interface do usuário."""
         self.setWindowTitle('Sistema de Inspeções NR-13 - Cliente')
-        self.setGeometry(100, 100, 1200, 800)
+        self.setMinimumSize(800, 600)
         
         # Widget central
         central_widget = QWidget()
@@ -38,92 +49,50 @@ class ClientWindow(QMainWindow):
         
         # Layout principal
         layout = QVBoxLayout(central_widget)
+        layout.setSpacing(16)
+        layout.setContentsMargins(24, 24, 24, 24)
+        
+        # Título
+        title = QLabel(f"Painel do Cliente - {self.company}")
+        title.setStyleSheet("font-size: 24px; font-weight: bold;")
+        layout.addWidget(title)
         
         # Abas
-        tabs = QTabWidget()
-        layout.addWidget(tabs)
-        
-        # Aba de Equipamentos
-        equipment_tab = QWidget()
-        tabs.addTab(equipment_tab, "Meus Equipamentos")
-        self._setup_equipment_tab(equipment_tab)
+        self.tabs = QTabWidget()
         
         # Aba de Inspeções
         inspection_tab = QWidget()
-        tabs.addTab(inspection_tab, "Minhas Inspeções")
-        self._setup_inspection_tab(inspection_tab)
+        inspection_layout = QVBoxLayout(inspection_tab)
         
-        # Aba de Relatórios
-        reports_tab = QWidget()
-        tabs.addTab(reports_tab, "Meus Relatórios")
-        self._setup_reports_tab(reports_tab)
-        
-    def _setup_equipment_tab(self, tab):
-        """Configura a aba de equipamentos."""
-        layout = QVBoxLayout(tab)
-        
-        # Filtros
-        filter_layout = QHBoxLayout()
-        
-        self.equipment_filter = QComboBox()
-        self.equipment_filter.addItems(["Todos", "Caldeiras", "Vasos de Pressão", "Tubulações"])
-        filter_layout.addWidget(self.equipment_filter)
-        
-        self.equipment_status = QComboBox()
-        self.equipment_status.addItems(["Todos", "Ativos", "Inativos", "Em Manutenção"])
-        filter_layout.addWidget(self.equipment_status)
-        
-        filter_button = QPushButton("Filtrar")
-        filter_button.clicked.connect(self._filter_equipment)
-        filter_layout.addWidget(filter_button)
-        
-        layout.addLayout(filter_layout)
-        
-        # Tabela de equipamentos
-        self.equipment_table = QTableWidget()
-        self.equipment_table.setColumnCount(8)
-        self.equipment_table.setHorizontalHeaderLabels([
-            "ID", "Tipo", "Localização", "Código", "Pressão",
-            "Temperatura", "Última Inspeção", "Próxima Inspeção"
-        ])
-        layout.addWidget(self.equipment_table)
-        
-        self._load_equipment()
-        
-    def _setup_inspection_tab(self, tab):
-        """Configura a aba de inspeções."""
-        layout = QVBoxLayout(tab)
-        
-        # Filtros
-        filter_layout = QHBoxLayout()
-        
-        self.inspection_filter = QComboBox()
-        self.inspection_filter.addItems([
-            "Todas", "Próximas 30 dias", "Vencidas",
-            "Periódicas", "Extraordinárias"
-        ])
-        filter_layout.addWidget(self.inspection_filter)
-        
-        filter_button = QPushButton("Filtrar")
-        filter_button.clicked.connect(self._filter_inspections)
-        filter_layout.addWidget(filter_button)
-        
-        layout.addLayout(filter_layout)
+        # Botões de ação para inspeções
+        inspection_buttons = QHBoxLayout()
+        self.add_inspection_button = QPushButton("Adicionar Inspeção")
+        self.add_inspection_button.setMinimumHeight(36)
+        self.add_inspection_button.clicked.connect(self.add_inspection)
+        inspection_buttons.addWidget(self.add_inspection_button)
+        inspection_layout.addLayout(inspection_buttons)
         
         # Tabela de inspeções
         self.inspection_table = QTableWidget()
-        self.inspection_table.setColumnCount(7)
+        self.inspection_table.setColumnCount(6)
         self.inspection_table.setHorizontalHeaderLabels([
-            "ID", "Equipamento", "Data", "Tipo", "Engenheiro",
-            "Resultado", "Status"
+            "ID", "Equipamento", "Data", "Tipo", "Engenheiro", "Resultado"
         ])
-        layout.addWidget(self.inspection_table)
+        self.inspection_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.load_inspections()
+        inspection_layout.addWidget(self.inspection_table)
         
-        self._load_inspections()
+        # Aba de Relatórios
+        report_tab = QWidget()
+        report_layout = QVBoxLayout(report_tab)
         
-    def _setup_reports_tab(self, tab):
-        """Configura a aba de relatórios."""
-        layout = QVBoxLayout(tab)
+        # Botões de ação para relatórios
+        report_buttons = QHBoxLayout()
+        self.add_report_button = QPushButton("Adicionar Relatório")
+        self.add_report_button.setMinimumHeight(36)
+        self.add_report_button.clicked.connect(self.add_report)
+        report_buttons.addWidget(self.add_report_button)
+        report_layout.addLayout(report_buttons)
         
         # Tabela de relatórios
         self.report_table = QTableWidget()
@@ -131,261 +100,122 @@ class ClientWindow(QMainWindow):
         self.report_table.setHorizontalHeaderLabels([
             "ID", "Inspeção", "Data", "Arquivo"
         ])
-        layout.addWidget(self.report_table)
+        self.report_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.load_reports()
+        report_layout.addWidget(self.report_table)
         
-        self._load_reports()
+        # Adiciona as abas
+        self.tabs.addTab(inspection_tab, "Inspeções")
+        self.tabs.addTab(report_tab, "Relatórios")
         
-    def _load_equipment(self):
-        """Carrega os equipamentos na tabela."""
-        try:
-            conn = self.db_models.db.get_connection()
-            cursor = conn.cursor()
+        layout.addWidget(self.tabs)
+        
+        # Barra inferior com botão de configurações
+        bottom_bar = QHBoxLayout()
+        bottom_bar.setAlignment(Qt.AlignRight)
+        
+        # Botão de configurações
+        self.settings_button = QToolButton()
+        self.settings_button.setIcon(QIcon("icons/settings.png"))
+        self.settings_button.setIconSize(QSize(24, 24))
+        self.settings_button.setToolTip("Configurações")
+        self.settings_button.setPopupMode(QToolButton.InstantPopup)
+        
+        # Menu de configurações
+        settings_menu = QMenu()
+        self.theme_action = settings_menu.addAction("Tema Claro")
+        self.theme_action.setCheckable(True)
+        self.theme_action.setChecked(self.is_dark)
+        self.theme_action.triggered.connect(self.toggle_theme)
+        
+        self.settings_button.setMenu(settings_menu)
+        bottom_bar.addWidget(self.settings_button)
+        
+        layout.addLayout(bottom_bar)
+        
+    def apply_theme(self):
+        """Aplica o tema atual"""
+        if self.is_dark:
+            self.setStyleSheet(Styles.get_dark_theme())
+            self.theme_action.setText("Tema Claro")
+        else:
+            self.setStyleSheet(Styles.get_light_theme())
+            self.theme_action.setText("Tema Escuro")
             
-            cursor.execute("""
-                SELECT e.*, i.data_inspecao, i.proxima_inspecao
-                FROM equipamentos e
-                LEFT JOIN inspecoes i ON e.id = i.equipamento_id
-                WHERE e.empresa = (
-                    SELECT empresa FROM usuarios WHERE email = ?
-                )
-                ORDER BY i.proxima_inspecao ASC
-            """, (self.user_email,))
+    def toggle_theme(self):
+        """Alterna entre tema escuro e claro"""
+        self.is_dark = not self.is_dark
+        self.theme_action.setChecked(self.is_dark)
+        self.apply_theme()
+        
+    def load_inspections(self):
+        """Carrega as inspeções na tabela"""
+        inspections = self.inspection_controller.get_inspections_by_company(self.company)
+        self.inspection_table.setRowCount(len(inspections))
+        
+        for i, insp in enumerate(inspections):
+            self.inspection_table.setItem(i, 0, QTableWidgetItem(str(insp['id'])))
+            self.inspection_table.setItem(i, 1, QTableWidgetItem(insp['equipamento']))
+            self.inspection_table.setItem(i, 2, QTableWidgetItem(str(insp['data'])))
+            self.inspection_table.setItem(i, 3, QTableWidgetItem(insp['tipo']))
+            self.inspection_table.setItem(i, 4, QTableWidgetItem(insp['engenheiro']))
+            self.inspection_table.setItem(i, 5, QTableWidgetItem(insp['resultado']))
             
-            equipment = cursor.fetchall()
+    def load_reports(self):
+        """Carrega os relatórios na tabela"""
+        reports = self.report_controller.get_reports_by_company(self.company)
+        self.report_table.setRowCount(len(reports))
+        
+        for i, rep in enumerate(reports):
+            self.report_table.setItem(i, 0, QTableWidgetItem(str(rep['id'])))
+            self.report_table.setItem(i, 1, QTableWidgetItem(str(rep['inspecao_id'])))
+            self.report_table.setItem(i, 2, QTableWidgetItem(str(rep['data_emissao'])))
+            self.report_table.setItem(i, 3, QTableWidgetItem(rep['link_arquivo']))
             
-            self.equipment_table.setRowCount(len(equipment))
-            for i, item in enumerate(equipment):
-                self.equipment_table.setItem(i, 0, QTableWidgetItem(str(item.id)))
-                self.equipment_table.setItem(i, 1, QTableWidgetItem(item.tipo))
-                self.equipment_table.setItem(i, 2, QTableWidgetItem(item.localizacao))
-                self.equipment_table.setItem(i, 3, QTableWidgetItem(item.codigo_projeto))
-                self.equipment_table.setItem(i, 4, QTableWidgetItem(str(item.pressao_maxima)))
-                self.equipment_table.setItem(i, 5, QTableWidgetItem(str(item.temperatura_maxima)))
-                self.equipment_table.setItem(i, 6, QTableWidgetItem(str(item.data_inspecao or "")))
-                self.equipment_table.setItem(i, 7, QTableWidgetItem(str(item.proxima_inspecao or "")))
+    def add_inspection(self):
+        """Abre a janela modal para adicionar inspeção"""
+        modal = InspectionModal(self, self.is_dark)
+        
+        # Carrega os equipamentos da empresa no combobox
+        equipment = self.inspection_controller.get_equipment_by_company(self.company)
+        for equip in equipment:
+            modal.equipamento_input.addItem(f"{equip['id']} - {equip['tipo']}")
+            
+        if modal.exec_() == QDialog.Accepted:
+            data = modal.get_data()
+            success, message = self.inspection_controller.criar_inspecao(
+                equipamento_id=data['equipamento_id'],
+                data=data['data'],
+                tipo=data['tipo'],
+                engenheiro=data['engenheiro'],
+                resultado=data['resultado'],
+                recomendacoes=data['recomendacoes']
+            )
+            if success:
+                QMessageBox.information(self, "Sucesso", message)
+                self.load_inspections()
+            else:
+                QMessageBox.warning(self, "Erro", message)
                 
-                # Destaca equipamentos com inspeção próxima ou vencida
-                if item.proxima_inspecao:
-                    if item.proxima_inspecao < datetime.now():
-                        for j in range(8):
-                            self.equipment_table.item(i, j).setBackground(Qt.red)
-                    elif (item.proxima_inspecao - datetime.now()).days <= 30:
-                        for j in range(8):
-                            self.equipment_table.item(i, j).setBackground(Qt.yellow)
-                            
-        except Exception as e:
-            logger.error(f"Erro ao carregar equipamentos: {str(e)}")
-            QMessageBox.critical(self, "Erro", f"Erro ao carregar equipamentos: {str(e)}")
+    def add_report(self):
+        """Abre a janela modal para adicionar relatório"""
+        modal = ReportModal(self, self.is_dark)
+        
+        # Carrega as inspeções da empresa no combobox
+        inspections = self.inspection_controller.get_inspections_by_company(self.company)
+        for insp in inspections:
+            modal.inspecao_input.addItem(f"{insp['id']} - {insp['tipo']} ({insp['data']})")
             
-        finally:
-            cursor.close()
-            
-    def _filter_equipment(self):
-        """Filtra os equipamentos na tabela."""
-        try:
-            tipo = self.equipment_filter.currentText()
-            status = self.equipment_status.currentText()
-            
-            conn = self.db_models.db.get_connection()
-            cursor = conn.cursor()
-            
-            query = """
-                SELECT e.*, i.data_inspecao, i.proxima_inspecao
-                FROM equipamentos e
-                LEFT JOIN inspecoes i ON e.id = i.equipamento_id
-                WHERE e.empresa = (
-                    SELECT empresa FROM usuarios WHERE email = ?
-                )
-            """
-            params = [self.user_email]
-            
-            if tipo != "Todos":
-                query += " AND e.tipo = ?"
-                params.append(tipo.lower().replace(" ", "_"))
-                
-            if status != "Todos":
-                query += " AND e.status = ?"
-                params.append(status.lower().replace(" ", "_"))
-                
-            query += " ORDER BY i.proxima_inspecao ASC"
-            
-            cursor.execute(query, params)
-            equipment = cursor.fetchall()
-            
-            self.equipment_table.setRowCount(len(equipment))
-            for i, item in enumerate(equipment):
-                self.equipment_table.setItem(i, 0, QTableWidgetItem(str(item.id)))
-                self.equipment_table.setItem(i, 1, QTableWidgetItem(item.tipo))
-                self.equipment_table.setItem(i, 2, QTableWidgetItem(item.localizacao))
-                self.equipment_table.setItem(i, 3, QTableWidgetItem(item.codigo_projeto))
-                self.equipment_table.setItem(i, 4, QTableWidgetItem(str(item.pressao_maxima)))
-                self.equipment_table.setItem(i, 5, QTableWidgetItem(str(item.temperatura_maxima)))
-                self.equipment_table.setItem(i, 6, QTableWidgetItem(str(item.data_inspecao or "")))
-                self.equipment_table.setItem(i, 7, QTableWidgetItem(str(item.proxima_inspecao or "")))
-                
-                # Destaca equipamentos com inspeção próxima ou vencida
-                if item.proxima_inspecao:
-                    if item.proxima_inspecao < datetime.now():
-                        for j in range(8):
-                            self.equipment_table.item(i, j).setBackground(Qt.red)
-                    elif (item.proxima_inspecao - datetime.now()).days <= 30:
-                        for j in range(8):
-                            self.equipment_table.item(i, j).setBackground(Qt.yellow)
-                            
-        except Exception as e:
-            logger.error(f"Erro ao filtrar equipamentos: {str(e)}")
-            QMessageBox.critical(self, "Erro", f"Erro ao filtrar equipamentos: {str(e)}")
-            
-        finally:
-            cursor.close()
-            
-    def _load_inspections(self):
-        """Carrega as inspeções na tabela."""
-        try:
-            conn = self.db_models.db.get_connection()
-            cursor = conn.cursor()
-            
-            cursor.execute("""
-                SELECT i.*, e.codigo_projeto
-                FROM inspecoes i
-                JOIN equipamentos e ON i.equipamento_id = e.id
-                WHERE e.empresa = (
-                    SELECT empresa FROM usuarios WHERE email = ?
-                )
-                ORDER BY i.data_inspecao DESC
-            """, (self.user_email,))
-            
-            inspections = cursor.fetchall()
-            
-            self.inspection_table.setRowCount(len(inspections))
-            for i, insp in enumerate(inspections):
-                self.inspection_table.setItem(i, 0, QTableWidgetItem(str(insp.id)))
-                self.inspection_table.setItem(i, 1, QTableWidgetItem(insp.codigo_projeto))
-                self.inspection_table.setItem(i, 2, QTableWidgetItem(str(insp.data_inspecao)))
-                self.inspection_table.setItem(i, 3, QTableWidgetItem(insp.tipo_inspecao))
-                self.inspection_table.setItem(i, 4, QTableWidgetItem(insp.engenheiro_responsavel))
-                self.inspection_table.setItem(i, 5, QTableWidgetItem(insp.resultado))
-                
-                # Define o status da inspeção
-                if insp.proxima_inspecao:
-                    if insp.proxima_inspecao < datetime.now():
-                        status = "Vencida"
-                        for j in range(7):
-                            self.inspection_table.item(i, j).setBackground(Qt.red)
-                    elif (insp.proxima_inspecao - datetime.now()).days <= 30:
-                        status = "Próxima"
-                        for j in range(7):
-                            self.inspection_table.item(i, j).setBackground(Qt.yellow)
-                    else:
-                        status = "Em dia"
-                else:
-                    status = "Sem data definida"
-                    
-                self.inspection_table.setItem(i, 6, QTableWidgetItem(status))
-                
-        except Exception as e:
-            logger.error(f"Erro ao carregar inspeções: {str(e)}")
-            QMessageBox.critical(self, "Erro", f"Erro ao carregar inspeções: {str(e)}")
-            
-        finally:
-            cursor.close()
-            
-    def _filter_inspections(self):
-        """Filtra as inspeções na tabela."""
-        try:
-            filtro = self.inspection_filter.currentText()
-            
-            conn = self.db_models.db.get_connection()
-            cursor = conn.cursor()
-            
-            query = """
-                SELECT i.*, e.codigo_projeto
-                FROM inspecoes i
-                JOIN equipamentos e ON i.equipamento_id = e.id
-                WHERE e.empresa = (
-                    SELECT empresa FROM usuarios WHERE email = ?
-                )
-            """
-            params = [self.user_email]
-            
-            if filtro == "Próximas 30 dias":
-                query += " AND i.proxima_inspecao BETWEEN ? AND ?"
-                params.extend([datetime.now(), datetime.now() + timedelta(days=30)])
-            elif filtro == "Vencidas":
-                query += " AND i.proxima_inspecao < ?"
-                params.append(datetime.now())
-            elif filtro == "Periódicas":
-                query += " AND i.tipo_inspecao = 'periodica'"
-            elif filtro == "Extraordinárias":
-                query += " AND i.tipo_inspecao = 'extraordinaria'"
-                
-            query += " ORDER BY i.data_inspecao DESC"
-            
-            cursor.execute(query, params)
-            inspections = cursor.fetchall()
-            
-            self.inspection_table.setRowCount(len(inspections))
-            for i, insp in enumerate(inspections):
-                self.inspection_table.setItem(i, 0, QTableWidgetItem(str(insp.id)))
-                self.inspection_table.setItem(i, 1, QTableWidgetItem(insp.codigo_projeto))
-                self.inspection_table.setItem(i, 2, QTableWidgetItem(str(insp.data_inspecao)))
-                self.inspection_table.setItem(i, 3, QTableWidgetItem(insp.tipo_inspecao))
-                self.inspection_table.setItem(i, 4, QTableWidgetItem(insp.engenheiro_responsavel))
-                self.inspection_table.setItem(i, 5, QTableWidgetItem(insp.resultado))
-                
-                # Define o status da inspeção
-                if insp.proxima_inspecao:
-                    if insp.proxima_inspecao < datetime.now():
-                        status = "Vencida"
-                        for j in range(7):
-                            self.inspection_table.item(i, j).setBackground(Qt.red)
-                    elif (insp.proxima_inspecao - datetime.now()).days <= 30:
-                        status = "Próxima"
-                        for j in range(7):
-                            self.inspection_table.item(i, j).setBackground(Qt.yellow)
-                    else:
-                        status = "Em dia"
-                else:
-                    status = "Sem data definida"
-                    
-                self.inspection_table.setItem(i, 6, QTableWidgetItem(status))
-                
-        except Exception as e:
-            logger.error(f"Erro ao filtrar inspeções: {str(e)}")
-            QMessageBox.critical(self, "Erro", f"Erro ao filtrar inspeções: {str(e)}")
-            
-        finally:
-            cursor.close()
-            
-    def _load_reports(self):
-        """Carrega os relatórios na tabela."""
-        try:
-            conn = self.db_models.db.get_connection()
-            cursor = conn.cursor()
-            
-            cursor.execute("""
-                SELECT r.*, i.data_inspecao
-                FROM relatorios r
-                JOIN inspecoes i ON r.inspecao_id = i.id
-                JOIN equipamentos e ON i.equipamento_id = e.id
-                WHERE e.empresa = (
-                    SELECT empresa FROM usuarios WHERE email = ?
-                )
-                ORDER BY r.data_emissao DESC
-            """, (self.user_email,))
-            
-            reports = cursor.fetchall()
-            
-            self.report_table.setRowCount(len(reports))
-            for i, rep in enumerate(reports):
-                self.report_table.setItem(i, 0, QTableWidgetItem(str(rep.id)))
-                self.report_table.setItem(i, 1, QTableWidgetItem(str(rep.inspecao_id)))
-                self.report_table.setItem(i, 2, QTableWidgetItem(str(rep.data_emissao)))
-                self.report_table.setItem(i, 3, QTableWidgetItem(rep.link_arquivo))
-                
-        except Exception as e:
-            logger.error(f"Erro ao carregar relatórios: {str(e)}")
-            QMessageBox.critical(self, "Erro", f"Erro ao carregar relatórios: {str(e)}")
-            
-        finally:
-            cursor.close() 
+        if modal.exec_() == QDialog.Accepted:
+            data = modal.get_data()
+            success, message = self.report_controller.criar_relatorio(
+                inspecao_id=data['inspecao_id'],
+                data_emissao=data['data'],
+                link_arquivo=data['link_arquivo'],
+                observacoes=data['observacoes']
+            )
+            if success:
+                QMessageBox.information(self, "Sucesso", message)
+                self.load_reports()
+            else:
+                QMessageBox.warning(self, "Erro", message) 

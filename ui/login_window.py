@@ -5,9 +5,10 @@
 Tela de Login do Sistema de Gerenciamento de Inspeções Técnicas
 """
 from ui.debug_window import DebugWindow
+from ui.styles import Styles
 from PyQt5.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
                             QLabel, QLineEdit, QPushButton, QMessageBox, QComboBox,
-                            QCheckBox)
+                            QCheckBox, QToolButton, QMenu)
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QFont, QIcon
 
@@ -34,6 +35,28 @@ class LoginWindow(QMainWindow):
         layout = QVBoxLayout(central_widget)
         layout.setSpacing(24)
         layout.setContentsMargins(32, 32, 32, 32)
+        
+        # Barra superior
+        top_bar = QHBoxLayout()
+        top_bar.setContentsMargins(0, 0, 0, 0)
+        
+        # Botão de configurações
+        self.settings_btn = QToolButton()
+        self.settings_btn.setIcon(QIcon("icons/settings.png"))
+        self.settings_btn.setToolTip("Configurações")
+        self.settings_btn.setPopupMode(QToolButton.InstantPopup)
+        
+        # Menu de configurações
+        settings_menu = QMenu()
+        theme_action = settings_menu.addAction("🌙 Tema escuro")
+        theme_action.setCheckable(True)
+        theme_action.setChecked(True)
+        theme_action.triggered.connect(self.toggle_theme)
+        self.settings_btn.setMenu(settings_menu)
+        
+        top_bar.addStretch()
+        top_bar.addWidget(self.settings_btn)
+        layout.addLayout(top_bar)
         
         # Título
         title_label = QLabel("Sistema de Inspeções NR-13")
@@ -71,13 +94,6 @@ class LoginWindow(QMainWindow):
         layout.addWidget(senha_label)
         layout.addWidget(self.senha_input)
         
-        # Switch de tema
-        self.theme_switch = QPushButton("🌙 Tema escuro")
-        self.theme_switch.setCheckable(True)
-        self.theme_switch.setChecked(True)
-        self.theme_switch.clicked.connect(self.toggle_theme)
-        layout.addWidget(self.theme_switch)
-        
         # Botões
         buttons_layout = QHBoxLayout()
         
@@ -101,26 +117,6 @@ class LoginWindow(QMainWindow):
         buttons_layout.addWidget(self.cancel_button)
         buttons_layout.addWidget(self.debug_btn)
         layout.addLayout(buttons_layout)
-        
-        # Configurações adicionais
-        self.setStyleSheet("""
-            QMainWindow {
-                background-color: #f8f9fa;
-            }
-            QLabel {
-                color: #212529;
-            }
-            QLineEdit {
-                padding: 8px;
-                border: 1px solid #ced4da;
-                border-radius: 4px;
-                background-color: white;
-            }
-            QLineEdit:focus {
-                border: 1px solid #80bdff;
-                outline: none;
-            }
-        """)
         
         # Centraliza a janela
         self.center_window()
@@ -162,49 +158,11 @@ class LoginWindow(QMainWindow):
 
     def apply_theme(self):
         if self.is_dark:
-            self.setStyleSheet("""
-                QMainWindow { background-color: #181a1b; }
-                QLabel { color: #f1f1f1; }
-                QLineEdit {
-                    background-color: #232629;
-                    color: #f1f1f1;
-                    border: 1px solid #444;
-                    border-radius: 6px;
-                    padding: 8px;
-                }
-                QLineEdit:focus { border: 1.5px solid #007bff; }
-                QPushButton {
-                    background-color: #232629;
-                    color: #f1f1f1;
-                    border: 1px solid #444;
-                    border-radius: 6px;
-                    font-weight: bold;
-                }
-                QPushButton:hover { background-color: #33373a; }
-            """)
-            self.theme_switch.setText("🌙 Tema escuro")
+            self.setStyleSheet(Styles.get_dark_theme())
+            self.settings_btn.menu().actions()[0].setText("🌙 Tema escuro")
         else:
-            self.setStyleSheet("""
-                QMainWindow { background-color: #f8f9fa; }
-                QLabel { color: #212529; }
-                QLineEdit {
-                    background-color: #fff;
-                    color: #212529;
-                    border: 1px solid #ced4da;
-                    border-radius: 6px;
-                    padding: 8px;
-                }
-                QLineEdit:focus { border: 1.5px solid #007bff; }
-                QPushButton {
-                    background-color: #e9ecef;
-                    color: #212529;
-                    border: 1px solid #ced4da;
-                    border-radius: 6px;
-                    font-weight: bold;
-                }
-                QPushButton:hover { background-color: #dee2e6; }
-            """)
-            self.theme_switch.setText("☀️ Tema claro")
+            self.setStyleSheet(Styles.get_light_theme())
+            self.settings_btn.menu().actions()[0].setText("☀️ Tema claro")
 
     def toggle_theme(self):
         self.is_dark = not self.is_dark

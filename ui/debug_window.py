@@ -1,9 +1,12 @@
 from PyQt5.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QTableWidget,
-    QTableWidgetItem, QMessageBox, QLineEdit, QLabel, QFormLayout, QComboBox
+    QTableWidgetItem, QMessageBox, QLineEdit, QLabel, QFormLayout, QComboBox,
+    QToolButton, QMenu
 )
+from PyQt5.QtGui import QIcon
 from database.connection import DatabaseConnection
 from controllers.auth_controller import AuthController
+from ui.styles import Styles
 
 class DebugWindow(QMainWindow):
     def __init__(self):
@@ -12,13 +15,37 @@ class DebugWindow(QMainWindow):
         self.setMinimumSize(800, 500)
         self.db = DatabaseConnection()
         self.auth_controller = AuthController()
+        self.is_dark = True
         self.setup_ui()
+        self.apply_theme()
         self.load_users()
 
     def setup_ui(self):
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
         layout = QVBoxLayout(central_widget)
+
+        # Barra superior
+        top_bar = QHBoxLayout()
+        top_bar.setContentsMargins(0, 0, 0, 0)
+        
+        # Botão de configurações
+        self.settings_btn = QToolButton()
+        self.settings_btn.setIcon(QIcon("icons/settings.png"))
+        self.settings_btn.setToolTip("Configurações")
+        self.settings_btn.setPopupMode(QToolButton.InstantPopup)
+        
+        # Menu de configurações
+        settings_menu = QMenu()
+        theme_action = settings_menu.addAction("🌙 Tema escuro")
+        theme_action.setCheckable(True)
+        theme_action.setChecked(True)
+        theme_action.triggered.connect(self.toggle_theme)
+        self.settings_btn.setMenu(settings_menu)
+        
+        top_bar.addStretch()
+        top_bar.addWidget(self.settings_btn)
+        layout.addLayout(top_bar)
 
         # Formulário de cadastro de admin
         form_layout = QFormLayout()
@@ -52,6 +79,18 @@ class DebugWindow(QMainWindow):
             "ID", "Nome", "Email", "Tipo Acesso", "Empresa", "Ativo", "Senha Hash"
         ])
         layout.addWidget(self.table)
+
+    def apply_theme(self):
+        if self.is_dark:
+            self.setStyleSheet(Styles.get_dark_theme())
+            self.settings_btn.menu().actions()[0].setText("🌙 Tema escuro")
+        else:
+            self.setStyleSheet(Styles.get_light_theme())
+            self.settings_btn.menu().actions()[0].setText("☀️ Tema claro")
+            
+    def toggle_theme(self):
+        self.is_dark = not self.is_dark
+        self.apply_theme()
 
     def load_users(self):
         try:
