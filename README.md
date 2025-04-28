@@ -18,6 +18,7 @@ Sistema desktop em Python para gestão de inspeções de vasos de pressão, cald
 - [Estrutura do Banco de Dados](#estrutura-do-banco-de-dados)
 - [Dicas de Manutenção](#dicas-de-manutenção)
 - [Licença](#licença)
+- [Interface Gráfica Moderna](#interface-gráfica-moderna)
 
 ---
 
@@ -241,4 +242,14 @@ seu-repo/
 
 ## Licença
 
-Este projeto é open-source e pode ser adaptado conforme a necessidade da sua empresa ou cliente. 
+Este projeto é open-source e pode ser adaptado conforme a necessidade da sua empresa ou cliente.
+
+## Interface Gráfica Moderna
+
+- As principais janelas do sistema (Admin e Cliente) utilizam abas com ícones personalizados para facilitar a navegação.
+- Os ícones das abas estão localizados na pasta `ui/` e representam: Usuários, Equipamentos, Inspeções e Relatórios.
+- O tamanho dos ícones é ajustado para melhor visualização e ficam centralizados nas abas.
+- O sistema possui suporte a modo claro e escuro. Ao alternar o tema, as cores dos ícones das abas são invertidas automaticamente para garantir contraste e acessibilidade visual.
+- O botão de configurações (engrenagem) permite alternar rapidamente entre os temas.
+
+--- 
