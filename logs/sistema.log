@@ -1,0 +1,72 @@
+2025-04-28 04:16:22,250 - database.connection - ERROR - Erro ao conectar ao banco de dados: ('28000', "[28000] [Microsoft][ODBC SQL Server Driver][SQL Server]Falha de logon do usuário 'None'. (18456) (SQLDriverConnect); [28000] [Microsoft][ODBC SQL Server Driver][SQL Server]Falha de logon do usuário 'None'. (18456)")
+2025-04-28 04:17:20,721 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 04:17:20,843 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 04:17:39,096 - controllers.auth_controller - ERROR - Erro ao realizar login: ('42S22', "[42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'ativo' inválido. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Não foi possível preparar uma ou mais instruções. (8180)")
+2025-04-28 04:19:08,134 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 04:19:08,259 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 04:19:20,128 - controllers.auth_controller - ERROR - Erro ao realizar login: ('42S22', "[42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'ativo' inválido. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'empresa' inválido. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'ativo' inválido. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Não foi possível preparar uma ou mais instruções. (8180)")
+2025-04-28 04:21:15,241 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 04:21:15,371 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 04:21:22,744 - controllers.auth_controller - ERROR - Erro ao realizar login: ('42S22', "[42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'ativo' inválido. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'empresa' inválido. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'ativo' inválido. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Não foi possível preparar uma ou mais instruções. (8180)")
+2025-04-28 04:21:50,147 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 04:21:50,283 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 04:21:56,209 - controllers.auth_controller - ERROR - Erro ao realizar login: ('42S22', "[42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'ativo' inválido. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'empresa' inválido. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'ativo' inválido. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Não foi possível preparar uma ou mais instruções. (8180)")
+2025-04-28 04:23:32,556 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 04:23:32,674 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 04:23:40,600 - controllers.auth_controller - ERROR - Erro ao realizar login: ('42S22', "[42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'ativo' inválido. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'empresa' inválido. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'ativo' inválido. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Não foi possível preparar uma ou mais instruções. (8180)")
+2025-04-28 04:24:42,110 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/None
+2025-04-28 04:24:42,255 - database.connection - ERROR - Erro ao conectar ao banco de dados: ('42000', '[42000] [Microsoft][ODBC SQL Server Driver][SQL Server]Não é possível abrir o banco de dados "None" solicitado pelo logon. Falha de logon. (4060) (SQLDriverConnect); [42000] [Microsoft][ODBC SQL Server Driver][SQL Server]Não é possível abrir o banco de dados "None" solicitado pelo logon. Falha de logon. (4060)')
+2025-04-28 04:33:45,371 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/None
+2025-04-28 04:33:45,514 - database.connection - ERROR - Erro ao conectar ao banco de dados: ('42000', '[42000] [Microsoft][ODBC SQL Server Driver][SQL Server]Não é possível abrir o banco de dados "None" solicitado pelo logon. Falha de logon. (4060) (SQLDriverConnect); [42000] [Microsoft][ODBC SQL Server Driver][SQL Server]Não é possível abrir o banco de dados "None" solicitado pelo logon. Falha de logon. (4060)')
+2025-04-28 04:36:48,611 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/None
+2025-04-28 04:36:48,742 - database.connection - ERROR - Erro ao conectar ao banco de dados: ('42000', '[42000] [Microsoft][ODBC SQL Server Driver][SQL Server]Não é possível abrir o banco de dados "None" solicitado pelo logon. Falha de logon. (4060) (SQLDriverConnect); [42000] [Microsoft][ODBC SQL Server Driver][SQL Server]Não é possível abrir o banco de dados "None" solicitado pelo logon. Falha de logon. (4060)')
+2025-04-28 11:16:25,383 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/None
+2025-04-28 11:16:25,532 - database.connection - ERROR - Erro ao conectar ao banco de dados: ('42000', '[42000] [Microsoft][ODBC SQL Server Driver][SQL Server]Não é possível abrir o banco de dados "None" solicitado pelo logon. Falha de logon. (4060) (SQLDriverConnect); [42000] [Microsoft][ODBC SQL Server Driver][SQL Server]Não é possível abrir o banco de dados "None" solicitado pelo logon. Falha de logon. (4060)')
+2025-04-28 11:19:52,356 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/None
+2025-04-28 11:19:52,492 - database.connection - ERROR - Erro ao conectar ao banco de dados: ('42000', '[42000] [Microsoft][ODBC SQL Server Driver][SQL Server]Não é possível abrir o banco de dados "None" solicitado pelo logon. Falha de logon. (4060) (SQLDriverConnect); [42000] [Microsoft][ODBC SQL Server Driver][SQL Server]Não é possível abrir o banco de dados "None" solicitado pelo logon. Falha de logon. (4060)')
+2025-04-28 11:20:56,923 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 11:20:57,088 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 13:32:51,157 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 13:32:51,319 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 13:33:45,749 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 13:33:45,876 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 13:34:25,832 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 13:34:25,957 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 13:41:05,003 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 13:41:05,130 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 13:43:29,154 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 13:43:29,270 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 13:48:08,153 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 13:48:08,282 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 13:48:32,751 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 13:48:32,849 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 13:49:11,049 - controllers.auth_controller - ERROR - Erro ao obter usuário atual: 'AuthController' object has no attribute 'usuario_id'
+2025-04-28 13:51:10,065 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 13:51:10,185 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 13:51:21,543 - ui.admin_ui - ERROR - Erro ao carregar usuários: 'pyodbc.Row' object has no attribute 'tipo'
+2025-04-28 13:52:41,505 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 13:52:41,629 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 13:52:53,814 - ui.admin_ui - ERROR - Erro ao carregar usuários: 'pyodbc.Row' object has no attribute 'tipo'
+2025-04-28 13:56:29,907 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 13:56:30,032 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 13:56:39,470 - ui.admin_ui - ERROR - Erro ao carregar usuários: 'pyodbc.Row' object has no attribute 'tipo'
+2025-04-28 13:57:15,207 - ui.admin_ui - ERROR - Erro ao adicionar equipamento: could not convert string to float: '150dbi'
+2025-04-28 13:57:28,234 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 13:57:28,443 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 13:59:40,028 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 13:59:40,142 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 14:01:45,947 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 14:01:46,058 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 14:04:19,159 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 14:04:19,295 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 14:05:11,457 - ui.admin_ui - ERROR - Erro ao carregar usuários: 'pyodbc.Row' object has no attribute 'tipo'
+2025-04-28 14:07:09,704 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 14:07:09,849 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 14:07:15,680 - ui.admin_ui - ERROR - Erro ao carregar usuários: 'pyodbc.Row' object has no attribute 'tipo'
+2025-04-28 14:07:42,682 - ui.admin_ui - ERROR - Erro ao carregar usuários: 'pyodbc.Row' object has no attribute 'tipo'
+2025-04-28 14:10:07,576 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 14:10:07,699 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 14:32:55,361 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 14:32:55,497 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 14:35:02,936 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 14:35:03,060 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso

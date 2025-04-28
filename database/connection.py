@@ -29,15 +29,25 @@ class DatabaseConnection:
             database = os.getenv('DB_NAME')
             username = os.getenv('DB_USERNAME')
             password = os.getenv('DB_PASSWORD')
+            trusted_connection = os.getenv('DB_TRUSTED_CONNECTION', 'False').lower() == 'true'
             
-            self.connection_string = (
-                f"DRIVER={{SQL Server}};"
-                f"SERVER={server};"
-                f"DATABASE={database};"
-                f"UID={username};"
-                f"PWD={password}"
-            )
+            if trusted_connection:
+                self.connection_string = (
+                    f"DRIVER={{SQL Server}};"
+                    f"SERVER={server};"
+                    f"DATABASE={database};"
+                    f"Trusted_Connection=yes;"
+                )
+            else:
+                self.connection_string = (
+                    f"DRIVER={{SQL Server}};"
+                    f"SERVER={server};"
+                    f"DATABASE={database};"
+                    f"UID={username};"
+                    f"PWD={password}"
+                )
             
+            logger.info(f"Tentando conectar ao banco de dados: {server}/{database}")
             self.conn = pyodbc.connect(self.connection_string)
             logger.info("Conexão com o banco de dados estabelecida com sucesso")
             

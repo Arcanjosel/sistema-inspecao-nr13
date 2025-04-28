@@ -3,7 +3,7 @@ Controlador responsável pela autenticação e gerenciamento de usuários.
 """
 import bcrypt
 import logging
-from typing import Optional
+from typing import Optional, Tuple
 from database.connection import DatabaseConnection
 from database.models import Usuario
 
@@ -26,7 +26,7 @@ class AuthController:
         """Verifica se a senha corresponde ao hash."""
         return bcrypt.checkpw(password.encode('utf-8'), hashed.encode('utf-8'))
         
-    def login(self, email: str, password: str) -> Optional[Usuario]:
+    def login(self, email: str, password: str) -> Tuple[bool, str, Optional[int]]:
         """
         Realiza o login do usuário.
         
@@ -35,40 +35,48 @@ class AuthController:
             password: Senha do usuário
             
         Returns:
-            Usuario: Objeto do usuário se autenticação bem sucedida
-            None: Se autenticação falhar
+            Tuple[bool, str, Optional[int]]: (sucesso, mensagem, usuario_id)
         """
         try:
             conn = self.db.get_connection()
             cursor = conn.cursor()
             
             cursor.execute(
-                "SELECT * FROM usuarios WHERE email = ? AND ativo = 1",
+                """
+                SELECT id, nome, email, senha_hash, tipo_acesso, empresa, ativo 
+                FROM usuarios 
+                WHERE email = ? AND ativo = 1
+                """,
                 (email,)
             )
             user_data = cursor.fetchone()
             
-            if user_data and self._check_password(password, user_data.senha_hash):
-                return Usuario(
-                    id=user_data.id,
-                    nome=user_data.nome,
-                    email=user_data.email,
-                    senha_hash=user_data.senha_hash,
-                    tipo=user_data.tipo,
-                    empresa=user_data.empresa,
-                    ativo=user_data.ativo
-                )
-            
-            return None
+            if not user_data:
+                return False, "Usuário não encontrado ou inativo", None
+                
+            if not self._check_password(password, user_data[3]):
+                return False, "Senha incorreta", None
+                
+            # Salva o usuário atual para uso posterior
+            self.usuario_atual = {
+                'id': user_data[0],
+                'nome': user_data[1],
+                'email': user_data[2],
+                'senha_hash': user_data[3],
+                'tipo_acesso': user_data[4],
+                'empresa': user_data[5],
+                'ativo': user_data[6]
+            }
+            return True, "Login realizado com sucesso", user_data[0]
             
         except Exception as e:
             logger.error(f"Erro ao realizar login: {str(e)}")
-            raise
+            return False, f"Erro ao realizar login: {str(e)}", None
             
         finally:
             cursor.close()
             
-    def criar_usuario(self, nome: str, email: str, senha: str, tipo: str, empresa: Optional[str] = None) -> bool:
+    def criar_usuario(self, nome: str, email: str, senha: str, tipo_acesso: str, empresa: Optional[str] = None) -> Tuple[bool, str]:
         """
         Cria um novo usuário no sistema.
         
@@ -76,36 +84,49 @@ class AuthController:
             nome: Nome do usuário
             email: Email do usuário
             senha: Senha do usuário
-            tipo: Tipo do usuário ('admin' ou 'cliente')
+            tipo_acesso: Tipo de acesso do usuário ('admin' ou 'cliente')
             empresa: Nome da empresa (opcional)
             
         Returns:
-            bool: True se usuário criado com sucesso
+            Tuple[bool, str]: (sucesso, mensagem)
         """
         try:
             conn = self.db.get_connection()
             cursor = conn.cursor()
             
+            # Verifica se o email já existe
+            cursor.execute("SELECT id FROM usuarios WHERE email = ?", (email,))
+            if cursor.fetchone():
+                return False, "Email já cadastrado"
+            
             senha_hash = self._hash_password(senha)
             
             cursor.execute(
                 """
-                INSERT INTO usuarios (nome, email, senha_hash, tipo, empresa)
+                INSERT INTO usuarios (nome, email, senha_hash, tipo_acesso, empresa)
                 VALUES (?, ?, ?, ?, ?)
                 """,
-                (nome, email, senha_hash, tipo, empresa)
+                (nome, email, senha_hash, tipo_acesso, empresa)
             )
             
             conn.commit()
-            return True
+            return True, "Usuário criado com sucesso"
             
         except Exception as e:
             logger.error(f"Erro ao criar usuário: {str(e)}")
-            conn.rollback()
-            return False
+            return False, f"Erro ao criar usuário: {str(e)}"
             
         finally:
             cursor.close()
+            
+    def get_usuario_atual(self) -> Optional[dict]:
+        """
+        Retorna os dados do usuário atual.
+        
+        Returns:
+            Optional[dict]: Dados do usuário ou None se não houver usuário logado
+        """
+        return getattr(self, 'usuario_atual', None)
             
     def alterar_senha(self, email: str, nova_senha: str) -> bool:
         """

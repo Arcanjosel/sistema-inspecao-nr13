@@ -256,11 +256,19 @@ class AdminWindow(QMainWindow):
                 QMessageBox.warning(self, "Erro", "Preencha todos os campos obrigatórios")
                 return
                 
-            if self.auth_controller.criar_usuario(nome, email, senha, tipo, empresa):
-                QMessageBox.information(self, "Sucesso", "Usuário criado com sucesso")
+            sucesso, mensagem = self.auth_controller.criar_usuario(
+                nome=nome,
+                email=email,
+                senha=senha,
+                tipo_acesso=tipo,
+                empresa=empresa
+            )
+            
+            if sucesso:
+                QMessageBox.information(self, "Sucesso", mensagem)
                 self._load_users()
             else:
-                QMessageBox.warning(self, "Erro", "Erro ao criar usuário")
+                QMessageBox.warning(self, "Erro", mensagem)
                 
         except Exception as e:
             logger.error(f"Erro ao adicionar usuário: {str(e)}")
@@ -280,7 +288,7 @@ class AdminWindow(QMainWindow):
                 self.users_table.setItem(i, 0, QTableWidgetItem(str(user.id)))
                 self.users_table.setItem(i, 1, QTableWidgetItem(user.nome))
                 self.users_table.setItem(i, 2, QTableWidgetItem(user.email))
-                self.users_table.setItem(i, 3, QTableWidgetItem(user.tipo))
+                self.users_table.setItem(i, 3, QTableWidgetItem(user.tipo_acesso))
                 self.users_table.setItem(i, 4, QTableWidgetItem(user.empresa or ""))
                 self.users_table.setItem(i, 5, QTableWidgetItem("Ativo" if user.ativo else "Inativo"))
                 
