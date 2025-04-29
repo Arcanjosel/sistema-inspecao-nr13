@@ -9,6 +9,13 @@ from PyQt5.QtWidgets import (
     QPushButton, QComboBox, QMessageBox, QDateEdit, QTextEdit
 )
 from PyQt5.QtCore import Qt, QDate
+from datetime import datetime
+import os
+import sys
+
+# Adiciona o diretório raiz ao PATH para permitir importações relativas
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from ui.styles import Styles
 
 class BaseModal(QDialog):
@@ -205,8 +212,7 @@ class InspectionModal(BaseModal):
         layout.addWidget(QLabel("Tipo:"))
         layout.addWidget(self.tipo_input)
         
-        self.engenheiro_input = QLineEdit()
-        self.engenheiro_input.setPlaceholderText("Engenheiro Responsável")
+        self.engenheiro_input = QComboBox()
         self.engenheiro_input.setMinimumHeight(36)
         layout.addWidget(QLabel("Engenheiro:"))
         layout.addWidget(self.engenheiro_input)
@@ -243,7 +249,7 @@ class InspectionModal(BaseModal):
             "equipamento_id": int(self.equipamento_input.currentText().split(" - ")[0]),
             "data": self.data_input.date().toPyDate(),
             "tipo": self.tipo_input.currentText(),
-            "engenheiro": self.engenheiro_input.text().strip(),
+            "engenheiro": int(self.engenheiro_input.currentData()),
             "resultado": self.resultado_input.currentText(),
             "recomendacoes": self.recomendacoes_input.toPlainText().strip()
         }
@@ -300,9 +306,14 @@ class ReportModal(BaseModal):
         
     def get_data(self):
         """Retorna os dados do formulário"""
+        # Converte QDate para string no formato que o SQL Server aceita
+        qdate = self.data_input.date()
+        # Formata a data como string YYYY-MM-DD 00:00:00
+        date_str = qdate.toString('yyyy-MM-dd') + ' 00:00:00'
+        
         return {
             "inspecao_id": int(self.inspecao_input.currentText().split(" - ")[0]),
-            "data": self.data_input.date().toPyDate(),
+            "data": date_str,
             "arquivo": self.arquivo_input.text().strip(),
             "observacoes": self.observacoes_input.toPlainText().strip()
         } 

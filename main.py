@@ -21,29 +21,55 @@ from database.models import DatabaseModels
 # Configuração do logging
 logging.basicConfig(
     filename='logs/sistema.log',
-    level=logging.INFO,
+    level=logging.DEBUG,  # Aumentei o nível para DEBUG
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
+
+# Adiciona um handler para mostrar logs no console também
+console = logging.StreamHandler()
+console.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(name)s - %(levelname)s - %(message)s')
+console.setFormatter(formatter)
+logging.getLogger('').addHandler(console)
+
 logger = logging.getLogger(__name__)
 
 class SistemaInspecao:
     def __init__(self):
-        self.app = QApplication(sys.argv)
-        self.auth_controller = AuthController()
-        self.window = None
-        self.login_window = None
-        self.is_dark = True
-        logger.info("Sistema inicializado")
+        logger.debug("Iniciando construtor do SistemaInspecao")
+        try:
+            logger.debug("Criando QApplication")
+            self.app = QApplication(sys.argv)
+            logger.debug("QApplication criado com sucesso")
+            
+            logger.debug("Criando AuthController")
+            self.auth_controller = AuthController()
+            logger.debug("AuthController criado com sucesso")
+            
+            self.window = None
+            self.login_window = None
+            self.is_dark = True
+            logger.info("Sistema inicializado com sucesso")
+        except Exception as e:
+            logger.error(f"ERRO no construtor de SistemaInspecao: {str(e)}")
+            import traceback
+            logger.error(traceback.format_exc())
+            raise
         
     def show_login(self):
         """Exibe a tela de login"""
         try:
+            logger.debug("Criando janela de login")
             self.login_window = LoginWindow(self.auth_controller)
+            logger.debug("Conectando sinal de login_success")
             self.login_window.login_success.connect(self.on_login_success)
+            logger.debug("Exibindo janela de login")
             self.login_window.show()
-            logger.info("Janela de login exibida")
+            logger.info("Janela de login exibida com sucesso")
         except Exception as e:
             logger.error(f"Erro ao mostrar janela de login: {str(e)}")
+            import traceback
+            logger.error(traceback.format_exc())
             raise
         
     def on_login_success(self, usuario_id):
@@ -83,25 +109,84 @@ class SistemaInspecao:
         """Inicia a aplicação"""
         try:
             logger.info("Iniciando aplicação")
+            
+            # Importações para depuração
+            logger.debug("Verificando imports")
+            import ui.login_window
+            logger.debug("Import login_window OK")
+            import ui.admin_ui
+            logger.debug("Import admin_ui OK")
+            import ui.client_ui
+            logger.debug("Import client_ui OK")
+            import ui.modals
+            logger.debug("Import modals OK")
+            
+            # Verificar se estamos no ambiente correto
+            import os
+            logger.debug(f"Diretório atual: {os.getcwd()}")
+            
+            # Exibe a tela de login
+            logger.debug("Chamando show_login()")
             self.show_login()
+            logger.debug("show_login() executado com sucesso")
+            
+            # Adiciona um pequeno delay para dar tempo da janela aparecer
+            import time
+            logger.debug("Aguardando 1 segundo antes de iniciar o loop de eventos")
+            time.sleep(1)
+            
+            logger.info("Executando o loop de eventos da aplicação")
             return self.app.exec_()
         except Exception as e:
             logger.error(f"Erro ao iniciar a aplicação: {str(e)}")
+            import traceback
+            logger.error(traceback.format_exc())
+            print(f"ERRO FATAL: {str(e)}")
+            print(traceback.format_exc())
             return 1
 
 if __name__ == "__main__":
     try:
+        # Tenta criar o diretório de logs se não existir
+        import os
+        if not os.path.exists('logs'):
+            os.makedirs('logs')
+            
+        logger.info("=== INICIANDO APLICAÇÃO ===")
+        
+        # Inicializa o banco de dados
+        logger.info("Inicializando banco de dados")
+        db_models = DatabaseModels()
+        db_models.criar_tabelas()
+        
+        # Recria a tabela relatorios com a nova estrutura
+        logger.info("Recriando tabela relatorios")
+        db_models.recriar_tabela_relatorios()
+        
+        # Cria o usuário admin se não existir
+        logger.info("Verificando usuário admin")
+        auth = AuthController()
+        sucesso, mensagem = auth.criar_usuario(
+            nome="Administrador",
+            email="admin@empresa.com",
+            senha="admin123",  # Altere para uma senha forte!
+            tipo_acesso="admin"
+        )
+        logger.info(f"Resultado da criação do admin: {mensagem}")
+        
+        # Inicia a aplicação
+        logger.info("Criando instância do sistema")
         sistema = SistemaInspecao()
-        sys.exit(sistema.run())
+        logger.info("Executando a aplicação")
+        codigo_saida = sistema.run()
+        
+        logger.info(f"Aplicação encerrada com código {codigo_saida}")
+        sys.exit(codigo_saida)
+        
     except Exception as e:
+        import traceback
         logger.error(f"Erro fatal: {str(e)}")
-        sys.exit(1)
-
-auth = AuthController()
-sucesso, mensagem = auth.criar_usuario(
-    nome="Administrador",
-    email="admin@empresa.com",
-    senha="admin123",  # Altere para uma senha forte!
-    tipo_acesso="admin"
-)
-print(mensagem) 
+        logger.error(traceback.format_exc())
+        print(f"ERRO FATAL: {str(e)}")
+        print(traceback.format_exc())
+        sys.exit(1) 

@@ -6,6 +6,7 @@ import logging
 from typing import Optional, Tuple
 from database.connection import DatabaseConnection
 from database.models import Usuario
+import traceback
 
 logger = logging.getLogger(__name__)
 
@@ -187,6 +188,74 @@ class AuthController:
             logger.error(f"Erro ao desativar usuário: {str(e)}")
             conn.rollback()
             return False
+            
+        finally:
+            cursor.close()
+
+    def get_all_users(self) -> list[dict]:
+        """Retorna todos os usuários do sistema"""
+        try:
+            logger.debug("Buscando todos os usuários")
+            conn = self.db.get_connection()
+            cursor = conn.cursor()
+            
+            cursor.execute("""
+                SELECT id, nome, email, tipo_acesso, empresa
+                FROM usuarios
+                ORDER BY nome
+            """)
+            
+            users = []
+            for row in cursor.fetchall():
+                users.append({
+                    'id': row[0],
+                    'nome': row[1],
+                    'email': row[2],
+                    'tipo_acesso': row[3],
+                    'empresa': row[4]
+                })
+                
+            logger.debug(f"Encontrados {len(users)} usuários")
+            return users
+            
+        except Exception as e:
+            logger.error(f"Erro ao buscar usuários: {str(e)}")
+            logger.error(traceback.format_exc())
+            return []
+            
+        finally:
+            cursor.close()
+
+    def get_all_engineers(self) -> list[dict]:
+        """Retorna todos os engenheiros cadastrados no sistema"""
+        try:
+            logger.debug("Buscando todos os engenheiros")
+            conn = self.db.get_connection()
+            cursor = conn.cursor()
+            
+            cursor.execute("""
+                SELECT id, nome, email, empresa
+                FROM usuarios
+                WHERE tipo_acesso = 'engenheiro'
+                ORDER BY nome
+            """)
+            
+            engineers = []
+            for row in cursor.fetchall():
+                engineers.append({
+                    'id': row[0],
+                    'nome': row[1],
+                    'email': row[2],
+                    'empresa': row[3]
+                })
+                
+            logger.debug(f"Encontrados {len(engineers)} engenheiros")
+            return engineers
+            
+        except Exception as e:
+            logger.error(f"Erro ao buscar engenheiros: {str(e)}")
+            logger.error(traceback.format_exc())
+            return []
             
         finally:
             cursor.close() 

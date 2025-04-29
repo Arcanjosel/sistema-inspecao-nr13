@@ -1,0 +1,394 @@
+2025-04-28 21:10:47,280 - __main__ - INFO - Iniciando aplicação
+2025-04-28 21:10:47,386 - __main__ - INFO - Inicializando banco de dados
+2025-04-28 21:10:47,393 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 21:10:47,533 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 21:10:47,533 - __main__ - INFO - Inicializando controlador de autenticação
+2025-04-28 21:10:47,534 - __main__ - ERROR - Erro ao iniciar aplicação: AuthController.__init__() takes 1 positional argument but 2 were given
+2025-04-28 21:11:58,585 - __main__ - INFO - Iniciando aplicação
+2025-04-28 21:11:58,688 - __main__ - INFO - Inicializando banco de dados
+2025-04-28 21:11:58,695 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 21:11:58,823 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 21:11:58,824 - __main__ - INFO - Inicializando controlador de autenticação
+2025-04-28 21:11:58,824 - __main__ - INFO - Criando janela de login
+2025-04-28 21:11:58,825 - ui.login_window - INFO - Inicializando LoginWindow
+2025-04-28 21:11:58,825 - ui.login_window - INFO - Configurando interface do usuário
+2025-04-28 21:11:58,836 - ui.login_window - INFO - Interface do usuário configurada com sucesso
+2025-04-28 21:11:58,836 - ui.login_window - INFO - Aplicando tema: escuro
+2025-04-28 21:11:58,838 - ui.login_window - INFO - LoginWindow inicializada com sucesso
+2025-04-28 21:11:58,839 - __main__ - INFO - Mostrando janela de login
+2025-04-28 21:11:59,675 - __main__ - INFO - Iniciando loop principal da aplicação
+2025-04-28 21:12:03,243 - ui.login_window - INFO - Aplicando tema: claro
+2025-04-28 21:12:04,303 - ui.login_window - INFO - Aplicando tema: escuro
+2025-04-28 21:12:04,904 - ui.login_window - INFO - Aplicando tema: claro
+2025-04-28 21:12:06,896 - ui.login_window - INFO - Aplicando tema: escuro
+2025-04-28 21:12:13,675 - ui.login_window - INFO - Abrindo janela de debug
+2025-04-28 21:12:23,320 - ui.debug_window - ERROR - Erro ao gerar vasos: 'DatabaseModels' object has no attribute 'criar_equipamento'
+2025-04-28 21:12:25,816 - ui.debug_window - ERROR - Erro ao gerar inspeções: 'DatabaseModels' object has no attribute 'get_equipment_by_company'
+2025-04-28 21:13:25,191 - __main__ - INFO - Iniciando aplicação
+2025-04-28 21:13:25,290 - __main__ - INFO - Inicializando banco de dados
+2025-04-28 21:13:25,303 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 21:13:25,434 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 21:13:25,434 - __main__ - INFO - Inicializando controlador de autenticação
+2025-04-28 21:13:25,435 - __main__ - INFO - Criando janela de login
+2025-04-28 21:13:25,436 - ui.login_window - INFO - Inicializando LoginWindow
+2025-04-28 21:13:25,436 - ui.login_window - INFO - Configurando interface do usuário
+2025-04-28 21:13:25,447 - ui.login_window - INFO - Interface do usuário configurada com sucesso
+2025-04-28 21:13:25,447 - ui.login_window - INFO - Aplicando tema: escuro
+2025-04-28 21:13:25,449 - ui.login_window - INFO - LoginWindow inicializada com sucesso
+2025-04-28 21:13:25,449 - __main__ - INFO - Mostrando janela de login
+2025-04-28 21:13:26,312 - __main__ - INFO - Iniciando loop principal da aplicação
+2025-04-28 21:13:46,873 - ui.login_window - INFO - Tentando realizar login
+2025-04-28 21:13:46,874 - ui.login_window - INFO - Tentando login para o usuário: adm
+2025-04-28 21:13:47,227 - ui.login_window - INFO - Login bem sucedido para o usuário: adm
+2025-04-28 21:13:47,227 - __main__ - INFO - Login bem sucedido - Usuário ID: 2, Tipo: admin
+2025-04-28 21:13:47,228 - __main__ - INFO - Abrindo janela de administrador
+2025-04-28 21:23:13,668 - __main__ - INFO - Iniciando aplicação
+2025-04-28 21:23:13,775 - __main__ - INFO - Inicializando banco de dados
+2025-04-28 21:23:13,782 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 21:23:13,912 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 21:23:13,912 - __main__ - INFO - Inicializando controlador de autenticação
+2025-04-28 21:23:13,913 - __main__ - INFO - Criando janela de login
+2025-04-28 21:23:13,914 - ui.login_window - INFO - Inicializando LoginWindow
+2025-04-28 21:23:13,915 - ui.login_window - INFO - Configurando interface do usuário
+2025-04-28 21:23:13,925 - ui.login_window - INFO - Interface do usuário configurada com sucesso
+2025-04-28 21:23:13,926 - ui.login_window - INFO - Aplicando tema: escuro
+2025-04-28 21:23:13,927 - ui.login_window - INFO - LoginWindow inicializada com sucesso
+2025-04-28 21:23:13,928 - __main__ - INFO - Mostrando janela de login
+2025-04-28 21:23:14,720 - __main__ - INFO - Iniciando loop principal da aplicação
+2025-04-28 21:23:41,392 - ui.login_window - INFO - Tentando realizar login
+2025-04-28 21:23:41,393 - ui.login_window - INFO - Tentando login para o usuário: adm
+2025-04-28 21:23:41,771 - ui.login_window - INFO - Login bem sucedido para o usuário: adm
+2025-04-28 21:23:41,772 - __main__ - INFO - Login bem sucedido - Usuário ID: 2, Tipo: admin
+2025-04-28 21:23:41,772 - __main__ - INFO - Abrindo janela de administrador
+2025-04-28 21:24:45,136 - __main__ - INFO - Iniciando aplicação
+2025-04-28 21:24:45,255 - __main__ - INFO - Inicializando banco de dados
+2025-04-28 21:24:45,261 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 21:24:45,387 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 21:24:45,388 - __main__ - INFO - Inicializando controlador de autenticação
+2025-04-28 21:24:45,388 - __main__ - INFO - Criando janela de login
+2025-04-28 21:24:45,389 - ui.login_window - INFO - Inicializando LoginWindow
+2025-04-28 21:24:45,390 - ui.login_window - INFO - Configurando interface do usuário
+2025-04-28 21:24:45,399 - ui.login_window - INFO - Interface do usuário configurada com sucesso
+2025-04-28 21:24:45,400 - ui.login_window - INFO - Aplicando tema: escuro
+2025-04-28 21:24:45,401 - ui.login_window - INFO - LoginWindow inicializada com sucesso
+2025-04-28 21:24:45,402 - __main__ - INFO - Mostrando janela de login
+2025-04-28 21:24:46,219 - __main__ - INFO - Iniciando loop principal da aplicação
+2025-04-28 21:24:52,371 - ui.login_window - INFO - Tentando realizar login
+2025-04-28 21:24:52,372 - ui.login_window - INFO - Tentando login para o usuário: adm
+2025-04-28 21:24:52,765 - ui.login_window - INFO - Login bem sucedido para o usuário: adm
+2025-04-28 21:24:52,766 - __main__ - INFO - Login bem sucedido - Usuário ID: 2, Tipo: admin
+2025-04-28 21:24:52,766 - __main__ - INFO - Abrindo janela de administrador
+2025-04-28 21:26:18,869 - __main__ - INFO - Iniciando aplicação
+2025-04-28 21:26:18,966 - __main__ - INFO - Inicializando banco de dados
+2025-04-28 21:26:18,976 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 21:26:19,104 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 21:26:19,105 - __main__ - INFO - Inicializando controlador de autenticação
+2025-04-28 21:26:19,105 - __main__ - INFO - Criando janela de login
+2025-04-28 21:26:19,106 - ui.login_window - INFO - Inicializando LoginWindow
+2025-04-28 21:26:19,107 - ui.login_window - INFO - Configurando interface do usuário
+2025-04-28 21:26:19,117 - ui.login_window - INFO - Interface do usuário configurada com sucesso
+2025-04-28 21:26:19,118 - ui.login_window - INFO - Aplicando tema: escuro
+2025-04-28 21:26:19,119 - ui.login_window - INFO - LoginWindow inicializada com sucesso
+2025-04-28 21:26:19,119 - __main__ - INFO - Mostrando janela de login
+2025-04-28 21:26:19,957 - __main__ - INFO - Iniciando loop principal da aplicação
+2025-04-28 21:26:24,883 - ui.login_window - INFO - Tentando realizar login
+2025-04-28 21:26:24,884 - ui.login_window - INFO - Tentando login para o usuário: adm
+2025-04-28 21:26:25,298 - ui.login_window - INFO - Login bem sucedido para o usuário: adm
+2025-04-28 21:26:25,299 - __main__ - INFO - Login bem sucedido - Usuário ID: 2, Tipo: admin
+2025-04-28 21:26:25,299 - __main__ - INFO - Abrindo janela de administrador
+2025-04-28 21:27:40,155 - __main__ - DEBUG - Iniciando função principal
+2025-04-28 21:27:40,276 - __main__ - DEBUG - Inicializando banco de dados
+2025-04-28 21:27:40,283 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 21:27:40,420 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 21:27:40,421 - __main__ - DEBUG - Inicializando controlador de autenticação
+2025-04-28 21:27:40,421 - __main__ - DEBUG - Criando janela de login
+2025-04-28 21:27:40,422 - ui.login_window - INFO - Inicializando LoginWindow
+2025-04-28 21:27:40,423 - ui.login_window - INFO - Configurando interface do usuário
+2025-04-28 21:27:40,433 - ui.login_window - INFO - Interface do usuário configurada com sucesso
+2025-04-28 21:27:40,433 - ui.login_window - INFO - Aplicando tema: escuro
+2025-04-28 21:27:40,435 - ui.login_window - INFO - LoginWindow inicializada com sucesso
+2025-04-28 21:27:40,435 - __main__ - DEBUG - Exibindo janela de login
+2025-04-28 21:27:41,218 - __main__ - DEBUG - Iniciando loop principal
+2025-04-28 21:27:46,476 - ui.login_window - INFO - Tentando realizar login
+2025-04-28 21:27:46,476 - ui.login_window - INFO - Tentando login para o usuário: adm
+2025-04-28 21:27:46,873 - ui.login_window - INFO - Login bem sucedido para o usuário: adm
+2025-04-28 21:27:46,873 - __main__ - DEBUG - Callback de login bem sucedido - ID: 2, Tipo: admin
+2025-04-28 21:27:46,874 - __main__ - DEBUG - Criando janela de administrador
+2025-04-28 21:29:05,131 - __main__ - DEBUG - Iniciando função principal
+2025-04-28 21:29:05,238 - __main__ - DEBUG - Inicializando banco de dados
+2025-04-28 21:29:05,245 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 21:29:05,386 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 21:29:05,387 - __main__ - DEBUG - Inicializando controlador de autenticação
+2025-04-28 21:29:05,387 - __main__ - DEBUG - Criando janela de login
+2025-04-28 21:29:05,388 - ui.login_window - INFO - Inicializando LoginWindow
+2025-04-28 21:29:05,389 - ui.login_window - INFO - Configurando interface do usuário
+2025-04-28 21:29:05,400 - ui.login_window - INFO - Interface do usuário configurada com sucesso
+2025-04-28 21:29:05,400 - ui.login_window - INFO - Aplicando tema: escuro
+2025-04-28 21:29:05,401 - ui.login_window - INFO - LoginWindow inicializada com sucesso
+2025-04-28 21:29:05,402 - __main__ - DEBUG - Exibindo janela de login
+2025-04-28 21:29:06,222 - __main__ - DEBUG - Iniciando loop principal
+2025-04-28 21:29:09,035 - ui.login_window - INFO - Tentando realizar login
+2025-04-28 21:29:09,036 - ui.login_window - INFO - Tentando login para o usuário: adm
+2025-04-28 21:29:09,436 - ui.login_window - INFO - Login bem sucedido para o usuário: adm
+2025-04-28 21:29:09,437 - __main__ - DEBUG - Callback de login bem sucedido - ID: 2, Tipo: admin
+2025-04-28 21:29:09,438 - __main__ - DEBUG - Criando janela de administrador
+2025-04-28 21:29:09,438 - ui.admin_ui - DEBUG - Iniciando construtor do AdminWindow
+2025-04-28 21:29:09,439 - ui.admin_ui - DEBUG - Criando instância do DatabaseModels
+2025-04-28 21:29:09,439 - ui.admin_ui - DEBUG - Criando instância do EquipmentController
+2025-04-28 21:29:09,440 - ui.admin_ui - DEBUG - Criando instância do InspectionController
+2025-04-28 21:29:09,441 - ui.admin_ui - DEBUG - Criando instância do ReportController
+2025-04-28 21:29:09,441 - ui.admin_ui - DEBUG - Iniciando setup da UI
+2025-04-28 21:29:09,442 - ui.admin_ui - DEBUG - Iniciando setup da interface
+2025-04-28 21:29:09,442 - ui.admin_ui - DEBUG - Criando widget central
+2025-04-28 21:29:09,444 - ui.admin_ui - DEBUG - Criando abas
+2025-04-28 21:29:09,445 - ui.admin_ui - DEBUG - Configurando aba de usuários
+2025-04-28 21:29:09,460 - ui.admin_ui - DEBUG - Carregando usuários
+2025-04-28 21:29:09,466 - ui.admin_ui - DEBUG - Configurando aba de equipamentos
+2025-04-28 21:29:09,468 - ui.admin_ui - DEBUG - Carregando equipamentos
+2025-04-28 21:29:09,472 - ui.admin_ui - DEBUG - Configurando aba de inspeções
+2025-04-28 21:29:09,475 - ui.admin_ui - DEBUG - Carregando inspeções
+2025-04-28 21:29:09,480 - ui.admin_ui - DEBUG - Configurando aba de relatórios
+2025-04-28 21:29:09,483 - ui.admin_ui - DEBUG - Carregando relatórios
+2025-04-28 21:29:09,486 - ui.admin_ui - DEBUG - Adicionando abas ao TabWidget
+2025-04-28 21:29:09,487 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-28 21:29:09,592 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-28 21:29:09,600 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-28 21:29:09,608 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-28 21:29:09,615 - ui.admin_ui - DEBUG - Configurando barra inferior
+2025-04-28 21:29:09,626 - ui.admin_ui - INFO - Interface do usuário configurada com sucesso
+2025-04-28 21:29:09,627 - ui.admin_ui - DEBUG - Aplicando tema
+2025-04-28 21:29:09,635 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-28 21:29:09,639 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-28 21:29:09,641 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-28 21:29:09,643 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-28 21:29:09,646 - ui.admin_ui - INFO - AdminWindow inicializada com sucesso
+2025-04-28 22:25:48,021 - __main__ - DEBUG - Iniciando função principal
+2025-04-28 22:25:48,126 - __main__ - DEBUG - Inicializando banco de dados
+2025-04-28 22:25:48,133 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 22:25:48,267 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 22:25:48,268 - __main__ - DEBUG - Inicializando controlador de autenticação
+2025-04-28 22:25:48,269 - __main__ - DEBUG - Criando janela de login
+2025-04-28 22:25:48,270 - ui.login_window - INFO - Inicializando LoginWindow
+2025-04-28 22:25:48,270 - ui.login_window - INFO - Configurando interface do usuário
+2025-04-28 22:25:48,282 - ui.login_window - INFO - Interface do usuário configurada com sucesso
+2025-04-28 22:25:48,282 - ui.login_window - INFO - Aplicando tema: escuro
+2025-04-28 22:25:48,283 - ui.login_window - INFO - LoginWindow inicializada com sucesso
+2025-04-28 22:25:48,284 - __main__ - DEBUG - Exibindo janela de login
+2025-04-28 22:25:49,139 - __main__ - DEBUG - Iniciando loop principal
+2025-04-28 22:25:52,246 - ui.login_window - INFO - Tentando realizar login
+2025-04-28 22:25:52,247 - ui.login_window - INFO - Tentando login para o usuário: adm
+2025-04-28 22:25:52,661 - ui.login_window - INFO - Login bem sucedido para o usuário: adm
+2025-04-28 22:25:52,661 - __main__ - DEBUG - Callback de login bem sucedido - ID: 2, Tipo: admin
+2025-04-28 22:25:52,662 - __main__ - DEBUG - Criando janela de administrador
+2025-04-28 22:25:52,663 - ui.admin_ui - DEBUG - Iniciando construtor do AdminWindow
+2025-04-28 22:25:52,663 - ui.admin_ui - DEBUG - Criando instância do DatabaseModels
+2025-04-28 22:25:52,664 - ui.admin_ui - DEBUG - Criando instância do EquipmentController
+2025-04-28 22:25:52,664 - ui.admin_ui - DEBUG - Criando instância do InspectionController
+2025-04-28 22:25:52,665 - ui.admin_ui - DEBUG - Criando instância do ReportController
+2025-04-28 22:25:52,665 - ui.admin_ui - DEBUG - Iniciando setup da UI
+2025-04-28 22:25:52,666 - ui.admin_ui - DEBUG - Iniciando setup da interface
+2025-04-28 22:25:52,666 - ui.admin_ui - DEBUG - Criando widget central
+2025-04-28 22:25:52,667 - ui.admin_ui - DEBUG - Criando abas
+2025-04-28 22:25:52,668 - ui.admin_ui - DEBUG - Configurando aba de usuários
+2025-04-28 22:25:52,683 - ui.admin_ui - DEBUG - Carregando usuários
+2025-04-28 22:25:52,690 - ui.admin_ui - DEBUG - Configurando aba de equipamentos
+2025-04-28 22:25:52,693 - ui.admin_ui - DEBUG - Carregando equipamentos
+2025-04-28 22:25:52,697 - ui.admin_ui - DEBUG - Configurando aba de inspeções
+2025-04-28 22:25:52,700 - ui.admin_ui - DEBUG - Carregando inspeções
+2025-04-28 22:25:52,706 - ui.admin_ui - DEBUG - Configurando aba de relatórios
+2025-04-28 22:25:52,708 - ui.admin_ui - DEBUG - Carregando relatórios
+2025-04-28 22:25:52,712 - ui.admin_ui - DEBUG - Adicionando abas ao TabWidget
+2025-04-28 22:25:52,713 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-28 22:25:52,835 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-28 22:25:52,844 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-28 22:25:52,853 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-28 22:25:52,861 - ui.admin_ui - DEBUG - Configurando barra inferior
+2025-04-28 22:25:52,875 - ui.admin_ui - INFO - Interface do usuário configurada com sucesso
+2025-04-28 22:25:52,875 - ui.admin_ui - DEBUG - Aplicando tema
+2025-04-28 22:25:52,885 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-28 22:25:52,890 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-28 22:25:52,893 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-28 22:25:52,896 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-28 22:25:52,898 - ui.admin_ui - INFO - AdminWindow inicializada com sucesso
+2025-04-28 22:25:52,899 - __main__ - DEBUG - Exibindo janela do administrador
+2025-04-28 22:25:52,950 - __main__ - INFO - Janela do administrador exibida com sucesso
+2025-04-28 22:28:24,072 - __main__ - DEBUG - Iniciando função principal
+2025-04-28 22:28:24,178 - __main__ - DEBUG - Inicializando banco de dados
+2025-04-28 22:28:24,191 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 22:28:24,334 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 22:28:24,335 - __main__ - DEBUG - Inicializando controlador de autenticação
+2025-04-28 22:28:24,335 - __main__ - DEBUG - Criando janela de login
+2025-04-28 22:28:24,337 - ui.login_window - INFO - Inicializando LoginWindow
+2025-04-28 22:28:24,338 - ui.login_window - INFO - Configurando interface do usuário
+2025-04-28 22:28:24,353 - ui.login_window - INFO - Interface do usuário configurada com sucesso
+2025-04-28 22:28:24,353 - ui.login_window - INFO - Aplicando tema: escuro
+2025-04-28 22:28:24,355 - ui.login_window - INFO - LoginWindow inicializada com sucesso
+2025-04-28 22:28:24,355 - __main__ - DEBUG - Exibindo janela de login
+2025-04-28 22:28:25,184 - __main__ - DEBUG - Iniciando loop principal
+2025-04-28 22:28:28,159 - ui.login_window - INFO - Tentando realizar login
+2025-04-28 22:28:28,159 - ui.login_window - INFO - Tentando login para o usuário: test
+2025-04-28 22:28:28,568 - ui.login_window - INFO - Login bem sucedido para o usuário: test
+2025-04-28 22:28:28,569 - __main__ - DEBUG - Callback de login bem sucedido - ID: 4, Tipo: cliente
+2025-04-28 22:28:28,569 - __main__ - DEBUG - Criando janela de cliente
+2025-04-28 22:28:28,595 - controllers.inspection_controller - ERROR - Erro ao buscar inspeções da empresa test: ('42S22', "[42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'data' inválido. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'tipo' inválido. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'data' inválido. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Não foi possível preparar uma ou mais instruções. (8180)")
+2025-04-28 22:28:28,605 - controllers.report_controller - ERROR - Erro ao buscar relatórios da empresa test: ('42S22', "[42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'data' inválido. (207) (SQLExecDirectW); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'arquivo' inválido. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Nome de coluna 'data' inválido. (207); [42S22] [Microsoft][ODBC SQL Server Driver][SQL Server]Não foi possível preparar uma ou mais instruções. (8180)")
+2025-04-28 22:28:28,743 - __main__ - DEBUG - Exibindo janela do cliente
+2025-04-28 22:28:28,788 - __main__ - INFO - Janela do cliente exibida com sucesso
+2025-04-28 22:51:09,099 - __main__ - DEBUG - Iniciando função principal
+2025-04-28 22:51:09,199 - __main__ - DEBUG - Inicializando banco de dados
+2025-04-28 22:51:09,208 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 22:51:09,341 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 22:51:09,341 - __main__ - DEBUG - Inicializando controlador de autenticação
+2025-04-28 22:51:09,342 - __main__ - DEBUG - Criando janela de login
+2025-04-28 22:51:09,343 - ui.login_window - INFO - Inicializando LoginWindow
+2025-04-28 22:51:09,343 - ui.login_window - INFO - Configurando interface do usuário
+2025-04-28 22:51:09,353 - ui.login_window - INFO - Interface do usuário configurada com sucesso
+2025-04-28 22:51:09,354 - ui.login_window - INFO - Aplicando tema: escuro
+2025-04-28 22:51:09,355 - ui.login_window - INFO - LoginWindow inicializada com sucesso
+2025-04-28 22:51:09,356 - __main__ - DEBUG - Exibindo janela de login
+2025-04-28 22:51:10,203 - __main__ - DEBUG - Iniciando loop principal
+2025-04-28 22:51:14,393 - ui.login_window - INFO - Tentando realizar login
+2025-04-28 22:51:14,393 - ui.login_window - INFO - Tentando login para o usuário: adm
+2025-04-28 22:51:14,804 - ui.login_window - INFO - Login bem sucedido para o usuário: adm
+2025-04-28 22:51:14,805 - __main__ - DEBUG - Callback de login bem sucedido - ID: 2, Tipo: admin
+2025-04-28 22:51:14,806 - __main__ - DEBUG - Criando janela de administrador
+2025-04-28 22:51:14,806 - ui.admin_ui - DEBUG - Iniciando construtor do AdminWindow
+2025-04-28 22:51:14,807 - ui.admin_ui - DEBUG - Criando instância do DatabaseModels
+2025-04-28 22:51:14,808 - ui.admin_ui - DEBUG - Criando instância do EquipmentController
+2025-04-28 22:51:14,808 - ui.admin_ui - DEBUG - Criando instância do InspectionController
+2025-04-28 22:51:14,809 - ui.admin_ui - DEBUG - Criando instância do ReportController
+2025-04-28 22:51:14,809 - ui.admin_ui - DEBUG - Iniciando setup da UI
+2025-04-28 22:51:14,809 - ui.admin_ui - DEBUG - Iniciando setup da interface
+2025-04-28 22:51:14,810 - ui.admin_ui - DEBUG - Criando widget central
+2025-04-28 22:51:14,811 - ui.admin_ui - DEBUG - Criando abas
+2025-04-28 22:51:14,812 - ui.admin_ui - DEBUG - Configurando aba de usuários
+2025-04-28 22:51:14,824 - ui.admin_ui - DEBUG - Carregando usuários
+2025-04-28 22:51:14,831 - ui.admin_ui - DEBUG - Configurando aba de equipamentos
+2025-04-28 22:51:14,834 - ui.admin_ui - DEBUG - Carregando equipamentos
+2025-04-28 22:51:14,837 - ui.admin_ui - DEBUG - Configurando aba de inspeções
+2025-04-28 22:51:14,839 - ui.admin_ui - DEBUG - Carregando inspeções
+2025-04-28 22:51:14,844 - ui.admin_ui - DEBUG - Configurando aba de relatórios
+2025-04-28 22:51:14,846 - ui.admin_ui - DEBUG - Carregando relatórios
+2025-04-28 22:51:14,850 - ui.admin_ui - DEBUG - Adicionando abas ao TabWidget
+2025-04-28 22:51:14,850 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-28 22:51:14,971 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-28 22:51:14,980 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-28 22:51:14,988 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-28 22:51:14,996 - ui.admin_ui - DEBUG - Configurando barra inferior
+2025-04-28 22:51:15,009 - ui.admin_ui - INFO - Interface do usuário configurada com sucesso
+2025-04-28 22:51:15,010 - ui.admin_ui - DEBUG - Aplicando tema
+2025-04-28 22:51:15,022 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-28 22:51:15,026 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-28 22:51:15,029 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-28 22:51:15,032 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-28 22:51:15,034 - ui.admin_ui - INFO - AdminWindow inicializada com sucesso
+2025-04-28 22:51:15,034 - __main__ - DEBUG - Exibindo janela do administrador
+2025-04-28 22:51:15,087 - __main__ - INFO - Janela do administrador exibida com sucesso
+2025-04-28 22:52:10,899 - __main__ - DEBUG - Iniciando função principal
+2025-04-28 22:52:11,001 - __main__ - DEBUG - Inicializando banco de dados
+2025-04-28 22:52:11,009 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 22:52:11,139 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 22:52:11,140 - __main__ - DEBUG - Inicializando controlador de autenticação
+2025-04-28 22:52:11,140 - __main__ - DEBUG - Criando janela de login
+2025-04-28 22:52:11,141 - ui.login_window - INFO - Inicializando LoginWindow
+2025-04-28 22:52:11,142 - ui.login_window - INFO - Configurando interface do usuário
+2025-04-28 22:52:11,152 - ui.login_window - INFO - Interface do usuário configurada com sucesso
+2025-04-28 22:52:11,152 - ui.login_window - INFO - Aplicando tema: escuro
+2025-04-28 22:52:11,154 - ui.login_window - INFO - LoginWindow inicializada com sucesso
+2025-04-28 22:52:11,154 - __main__ - DEBUG - Exibindo janela de login
+2025-04-28 22:52:11,945 - __main__ - DEBUG - Iniciando loop principal
+2025-04-28 22:52:15,400 - ui.login_window - INFO - Tentando realizar login
+2025-04-28 22:52:15,401 - ui.login_window - INFO - Tentando login para o usuário: adm
+2025-04-28 22:52:15,758 - ui.login_window - INFO - Login bem sucedido para o usuário: adm
+2025-04-28 22:52:15,759 - __main__ - DEBUG - Callback de login bem sucedido - ID: 2, Tipo: admin
+2025-04-28 22:52:15,760 - __main__ - DEBUG - Criando janela de administrador
+2025-04-28 22:52:15,761 - ui.admin_ui - DEBUG - Iniciando construtor do AdminWindow
+2025-04-28 22:52:15,761 - ui.admin_ui - DEBUG - Criando instância do DatabaseModels
+2025-04-28 22:52:15,762 - ui.admin_ui - DEBUG - Criando instância do EquipmentController
+2025-04-28 22:52:15,762 - ui.admin_ui - DEBUG - Criando instância do InspectionController
+2025-04-28 22:52:15,763 - ui.admin_ui - DEBUG - Criando instância do ReportController
+2025-04-28 22:52:15,763 - ui.admin_ui - DEBUG - Iniciando setup da UI
+2025-04-28 22:52:15,764 - ui.admin_ui - DEBUG - Iniciando setup da interface
+2025-04-28 22:52:15,764 - ui.admin_ui - DEBUG - Criando widget central
+2025-04-28 22:52:15,765 - ui.admin_ui - DEBUG - Criando abas
+2025-04-28 22:52:15,766 - ui.admin_ui - DEBUG - Configurando aba de usuários
+2025-04-28 22:52:15,776 - ui.admin_ui - DEBUG - Carregando usuários
+2025-04-28 22:52:15,777 - ui.admin_ui - DEBUG - Carregando usuários
+2025-04-28 22:52:15,782 - ui.admin_ui - DEBUG - Configurando aba de equipamentos
+2025-04-28 22:52:15,786 - ui.admin_ui - DEBUG - Carregando equipamentos
+2025-04-28 22:52:15,786 - ui.admin_ui - DEBUG - Carregando equipamentos
+2025-04-28 22:52:15,789 - ui.admin_ui - DEBUG - Configurando aba de inspeções
+2025-04-28 22:52:15,792 - ui.admin_ui - DEBUG - Carregando inspeções
+2025-04-28 22:52:15,793 - ui.admin_ui - DEBUG - Carregando inspeções
+2025-04-28 22:52:15,801 - ui.admin_ui - DEBUG - Configurando aba de relatórios
+2025-04-28 22:52:15,804 - ui.admin_ui - DEBUG - Carregando relatórios
+2025-04-28 22:52:15,804 - ui.admin_ui - DEBUG - Carregando relatórios
+2025-04-28 22:52:15,810 - ui.admin_ui - DEBUG - Adicionando abas ao TabWidget
+2025-04-28 22:52:15,810 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-28 22:52:15,918 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-28 22:52:15,926 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-28 22:52:15,934 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-28 22:52:15,942 - ui.admin_ui - DEBUG - Configurando barra inferior
+2025-04-28 22:52:15,953 - ui.admin_ui - INFO - Interface do usuário configurada com sucesso
+2025-04-28 22:52:15,953 - ui.admin_ui - DEBUG - Aplicando tema
+2025-04-28 22:52:15,962 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-28 22:52:15,966 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-28 22:52:15,969 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-28 22:52:15,971 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-28 22:52:15,974 - ui.admin_ui - INFO - AdminWindow inicializada com sucesso
+2025-04-28 22:52:15,974 - __main__ - DEBUG - Exibindo janela do administrador
+2025-04-28 22:52:16,030 - __main__ - INFO - Janela do administrador exibida com sucesso
+2025-04-28 22:53:50,403 - __main__ - DEBUG - Iniciando função principal
+2025-04-28 22:53:50,493 - __main__ - DEBUG - Inicializando banco de dados
+2025-04-28 22:53:50,500 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-28 22:53:50,626 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-28 22:53:50,627 - __main__ - DEBUG - Inicializando controlador de autenticação
+2025-04-28 22:53:50,627 - __main__ - DEBUG - Criando janela de login
+2025-04-28 22:53:50,628 - ui.login_window - INFO - Inicializando LoginWindow
+2025-04-28 22:53:50,629 - ui.login_window - INFO - Configurando interface do usuário
+2025-04-28 22:53:50,639 - ui.login_window - INFO - Interface do usuário configurada com sucesso
+2025-04-28 22:53:50,640 - ui.login_window - INFO - Aplicando tema: escuro
+2025-04-28 22:53:50,642 - ui.login_window - INFO - LoginWindow inicializada com sucesso
+2025-04-28 22:53:50,643 - __main__ - DEBUG - Exibindo janela de login
+2025-04-28 22:53:51,490 - __main__ - DEBUG - Iniciando loop principal
+2025-04-28 22:53:54,752 - ui.login_window - INFO - Tentando realizar login
+2025-04-28 22:53:54,753 - ui.login_window - INFO - Tentando login para o usuário: adm
+2025-04-28 22:53:55,115 - ui.login_window - INFO - Login bem sucedido para o usuário: adm
+2025-04-28 22:53:55,116 - __main__ - DEBUG - Callback de login bem sucedido - ID: 2, Tipo: admin
+2025-04-28 22:53:55,116 - __main__ - DEBUG - Criando janela de administrador
+2025-04-28 22:53:55,116 - ui.admin_ui - DEBUG - Iniciando construtor do AdminWindow
+2025-04-28 22:53:55,117 - ui.admin_ui - DEBUG - Criando instância do DatabaseModels
+2025-04-28 22:53:55,117 - ui.admin_ui - DEBUG - Criando instância do EquipmentController
+2025-04-28 22:53:55,118 - ui.admin_ui - DEBUG - Criando instância do InspectionController
+2025-04-28 22:53:55,118 - ui.admin_ui - DEBUG - Criando instância do ReportController
+2025-04-28 22:53:55,118 - ui.admin_ui - DEBUG - Iniciando setup da UI
+2025-04-28 22:53:55,119 - ui.admin_ui - DEBUG - Iniciando setup da interface
+2025-04-28 22:53:55,119 - ui.admin_ui - DEBUG - Criando widget central
+2025-04-28 22:53:55,120 - ui.admin_ui - DEBUG - Criando abas
+2025-04-28 22:53:55,121 - ui.admin_ui - DEBUG - Configurando aba de usuários
+2025-04-28 22:53:55,131 - ui.admin_ui - DEBUG - Carregando usuários
+2025-04-28 22:53:55,132 - ui.admin_ui - DEBUG - Carregando usuários
+2025-04-28 22:53:55,136 - ui.admin_ui - DEBUG - Configurando aba de equipamentos
+2025-04-28 22:53:55,139 - ui.admin_ui - DEBUG - Carregando equipamentos
+2025-04-28 22:53:55,140 - ui.admin_ui - DEBUG - Carregando equipamentos
+2025-04-28 22:53:55,143 - ui.admin_ui - DEBUG - Configurando aba de inspeções
+2025-04-28 22:53:55,147 - ui.admin_ui - DEBUG - Carregando inspeções
+2025-04-28 22:53:55,148 - ui.admin_ui - DEBUG - Carregando inspeções
+2025-04-28 22:53:55,155 - ui.admin_ui - DEBUG - Configurando aba de relatórios
+2025-04-28 22:53:55,157 - ui.admin_ui - DEBUG - Carregando relatórios
+2025-04-28 22:53:55,158 - ui.admin_ui - DEBUG - Carregando relatórios
+2025-04-28 22:53:55,161 - ui.admin_ui - DEBUG - Adicionando abas ao TabWidget
+2025-04-28 22:53:55,161 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-28 22:53:55,279 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-28 22:53:55,287 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-28 22:53:55,295 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-28 22:53:55,303 - ui.admin_ui - DEBUG - Configurando barra inferior
+2025-04-28 22:53:55,316 - ui.admin_ui - INFO - Interface do usuário configurada com sucesso
+2025-04-28 22:53:55,316 - ui.admin_ui - DEBUG - Aplicando tema
+2025-04-28 22:53:55,326 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-28 22:53:55,331 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-28 22:53:55,334 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-28 22:53:55,336 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-28 22:53:55,339 - ui.admin_ui - INFO - AdminWindow inicializada com sucesso
+2025-04-28 22:53:55,339 - __main__ - DEBUG - Exibindo janela do administrador
+2025-04-28 22:53:55,390 - __main__ - INFO - Janela do administrador exibida com sucesso

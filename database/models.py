@@ -5,6 +5,10 @@ from datetime import datetime
 from typing import Optional, List
 from dataclasses import dataclass
 from database.connection import DatabaseConnection
+import logging
+
+# Configuração do logger
+logger = logging.getLogger(__name__)
 
 @dataclass
 class Usuario:
@@ -107,7 +111,9 @@ class DatabaseModels:
                     resultado VARCHAR(20) NOT NULL,
                     recomendacoes TEXT,
                     proxima_inspecao DATETIME,
-                    FOREIGN KEY (equipamento_id) REFERENCES equipamentos(id)
+                    engenheiro_id INT,
+                    FOREIGN KEY (equipamento_id) REFERENCES equipamentos(id),
+                    FOREIGN KEY (engenheiro_id) REFERENCES usuarios(id)
                 )
             """)
             
@@ -117,7 +123,7 @@ class DatabaseModels:
                 CREATE TABLE relatorios (
                     id INT IDENTITY(1,1) PRIMARY KEY,
                     inspecao_id INT NOT NULL,
-                    data_emissao DATETIME NOT NULL,
+                    data_emissao DATE NOT NULL,
                     link_arquivo VARCHAR(255) NOT NULL,
                     observacoes TEXT,
                     FOREIGN KEY (inspecao_id) REFERENCES inspecoes(id)
@@ -129,6 +135,40 @@ class DatabaseModels:
             
         except Exception as e:
             logger.error(f"Erro ao criar tabelas: {str(e)}")
+            raise
+        finally:
+            cursor.close() 
+
+    def recriar_tabela_relatorios(self):
+        """Recria a tabela de relatórios."""
+        conn = self.db.get_connection()
+        cursor = conn.cursor()
+        
+        try:
+            # Drop da tabela se existir
+            cursor.execute("""
+                IF EXISTS (SELECT * FROM sys.tables WHERE name = 'relatorios')
+                DROP TABLE relatorios
+            """)
+            
+            # Cria a tabela novamente
+            cursor.execute("""
+                CREATE TABLE relatorios (
+                    id INT IDENTITY(1,1) PRIMARY KEY,
+                    inspecao_id INT NOT NULL,
+                    data_emissao DATE NOT NULL,
+                    link_arquivo VARCHAR(255) NOT NULL,
+                    observacoes TEXT,
+                    FOREIGN KEY (inspecao_id) REFERENCES inspecoes(id)
+                )
+            """)
+            
+            conn.commit()
+            print("Tabela relatorios recriada com sucesso!")
+            
+        except Exception as e:
+            print(f"Erro ao recriar tabela relatorios: {str(e)}")
+            conn.rollback()
             raise
         finally:
             cursor.close() 
