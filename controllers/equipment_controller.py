@@ -245,10 +245,7 @@ class EquipmentController:
             
             cursor.execute("""
                 SELECT id, tag, categoria, empresa_id, fabricante, ano_fabricacao,
-                       pressao_projeto, pressao_trabalho, volume, fluido, ativo,
-                       codigo_projeto, localizacao, data_fabricacao, data_instalacao,
-                       capacidade, diametro, comprimento, espessura, material, temperatura_maxima,
-                       certificado, ultima_inspecao, proxima_inspecao
+                       pressao_projeto, pressao_trabalho, volume, fluido, ativo
                 FROM equipamentos
                 WHERE id = ?
             """, (equipment_id,))
@@ -270,20 +267,7 @@ class EquipmentController:
                 'pressao_trabalho': row[7],
                 'volume': row[8],
                 'fluido': row[9],
-                'ativo': row[10],
-                'codigo_projeto': row[11],
-                'localizacao': row[12],
-                'data_fabricacao': row[13],
-                'data_instalacao': row[14],
-                'capacidade': row[15],
-                'diametro': row[16],
-                'comprimento': row[17],
-                'espessura': row[18],
-                'material': row[19],
-                'temperatura_maxima': row[20],
-                'certificado': row[21],
-                'ultima_inspecao': row[22],
-                'proxima_inspecao': row[23]
+                'ativo': row[10]
             }
             
             logger.debug(f"Equipamento {equipment_id} encontrado: {equipment['tag']}")
@@ -291,6 +275,105 @@ class EquipmentController:
             
         except Exception as e:
             logger.error(f"Erro ao buscar equipamento {equipment_id}: {str(e)}")
+            logger.error(traceback.format_exc())
+            return None
+            
+        finally:
+            cursor.close()
+            
+    def toggle_equipment_status(self, equipment_id, new_status) -> tuple[bool, str]:
+        """
+        Ativa ou desativa um equipamento
+        
+        Args:
+            equipment_id: ID do equipamento a ser alterado
+            new_status: Novo status (1 para ativo, 0 para inativo)
+            
+        Returns:
+            tuple[bool, str]: Sucesso e mensagem
+        """
+        try:
+            logger.debug(f"Alterando status do equipamento {equipment_id} para {new_status}")
+            # Verifica se o equipamento existe
+            equipment = self.get_equipment_by_id(equipment_id)
+            if not equipment:
+                logger.warning(f"Equipamento {equipment_id} não encontrado")
+                return False, "Equipamento não encontrado."
+            
+            # Atualiza o status na tabela
+            conn = self.db_models.db.get_connection()
+            cursor = conn.cursor()
+            
+            cursor.execute(
+                "UPDATE equipamentos SET ativo = ? WHERE id = ?",
+                (new_status, equipment_id)
+            )
+            
+            conn.commit()
+            
+            status_text = "ativado" if new_status == 1 else "desativado"
+            logger.info(f"Equipamento {equipment_id} {status_text} com sucesso")
+            return True, f"Equipamento {status_text} com sucesso."
+            
+        except Exception as e:
+            logger.error(f"Erro ao alterar status do equipamento {equipment_id}: {str(e)}")
+            logger.error(traceback.format_exc())
+            return False, f"Erro ao alterar status do equipamento: {str(e)}"
+            
+        finally:
+            cursor.close()
+            
+    def get_equipment_by_tag(self, tag):
+        """
+        Retorna os dados de um equipamento específico pelo tag
+        
+        Args:
+            tag: Tag do equipamento
+            
+        Returns:
+            dict or None: Dados do equipamento ou None se não encontrado
+        """
+        if not tag:
+            logger.warning("Tag do equipamento não fornecido")
+            return None
+            
+        try:
+            logger.debug(f"Buscando equipamento com tag '{tag}'")
+            conn = self.db_models.db.get_connection()
+            cursor = conn.cursor()
+            
+            cursor.execute("""
+                SELECT id, tag, categoria, empresa_id, fabricante, ano_fabricacao,
+                       pressao_projeto, pressao_trabalho, volume, fluido, ativo
+                FROM equipamentos
+                WHERE tag = ?
+            """, (tag,))
+            
+            row = cursor.fetchone()
+            if not row:
+                logger.warning(f"Nenhum equipamento encontrado com tag '{tag}'")
+                return None
+                
+            # Criar dicionário com os dados do equipamento
+            equipment = {
+                'id': row[0],
+                'tag': row[1],
+                'categoria': row[2],
+                'empresa_id': row[3],
+                'fabricante': row[4],
+                'ano_fabricacao': row[5],
+                'pressao_projeto': row[6],
+                'pressao_trabalho': row[7],
+                'volume': row[8],
+                'fluido': row[9],
+                'ativo': row[10]
+            }
+            
+            logger.debug(f"Equipamento com tag '{tag}' encontrado: ID={equipment['id']}")
+            return equipment
+            
+        except Exception as e:
+            logger.error(f"Erro ao buscar equipamento com tag '{tag}': {str(e)}")
             logger.error(traceback.format_exc())
             return None
             
