@@ -1,7 +1,9 @@
 from database.models import DatabaseModels
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 import traceback
+from db.models import InspecaoModel
+import sqlite3
 
 logger = logging.getLogger(__name__)
 
@@ -9,6 +11,7 @@ class InspectionController:
     def __init__(self, db_models: DatabaseModels):
         logger.debug("Iniciando InspectionController")
         self.db_models = db_models
+        self.model = InspecaoModel(db_models)
         
     def criar_inspecao(self, equipamento_id: int, engenheiro_id: int, 
                       data_inspecao: str, tipo_inspecao: str,
@@ -36,16 +39,26 @@ class InspectionController:
             data_formatada = data_obj.isoformat(timespec='seconds')
             
             # Define valores padrão para campos obrigatórios se não fornecidos
-            resultado = resultado or "pendente"
+            resultado = resultado or "Pendente"
             recomendacoes = recomendacoes or ""
             
+            # Calcula a próxima inspeção (6 meses após a data atual)
+            proxima_inspecao = data_obj + timedelta(days=180)
+            
             cursor.execute("""
-                INSERT INTO inspecoes (equipamento_id, engenheiro_id, 
-                                     data_inspecao, tipo_inspecao,
-                                     resultado, recomendacoes)
-                VALUES (?, ?, ?, ?, ?, ?)
-            """, (equipamento_id, engenheiro_id, data_formatada, 
-                 tipo_inspecao, resultado, recomendacoes))
+                INSERT INTO dbo.inspecoes (
+                    equipamento_id, engenheiro_id, data_inspecao, 
+                    tipo_inspecao, resultado, recomendacoes,
+                    proxima_inspecao, status, prazo_proxima_inspecao
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (
+                equipamento_id, engenheiro_id, data_formatada, 
+                tipo_inspecao, resultado, recomendacoes,
+                proxima_inspecao.isoformat(timespec='seconds'),
+                'Ativo',
+                proxima_inspecao.isoformat(timespec='seconds')
+            ))
             
             conn.commit()
             logger.info(f"Inspeção criada com sucesso para equipamento {equipamento_id}")
@@ -59,57 +72,138 @@ class InspectionController:
         finally:
             cursor.close()
             
-    def get_all_inspections(self) -> list[dict]:
-        """Retorna todas as inspeções do sistema"""
+    def get_all_inspections(self):
+        """Retorna todas as inspeções"""
+        query = """
+            SELECT 
+                i.id,
+                i.equipamento_id,
+                i.data_inspecao,
+                i.tipo_inspecao,
+                i.resultado,
+                i.recomendacoes,
+                i.proxima_inspecao,
+                i.engenheiro_id,
+                i.status,
+                i.prazo_proxima_inspecao,
+                e.tag AS equipamento_tag,
+                e.categoria AS equipamento_categoria,
+                u.nome AS engenheiro_nome
+            FROM dbo.inspecoes i
+            JOIN dbo.equipamentos e ON i.equipamento_id = e.id
+            JOIN dbo.usuarios u ON i.engenheiro_id = u.id
+            ORDER BY i.data_inspecao DESC
+        """
+        conn = self.db_models.db.get_connection()
+        cursor = conn.cursor()
+        
         try:
-            logger.debug("Buscando todas as inspeções")
-            conn = self.db_models.db.get_connection()
-            cursor = conn.cursor()
-            
-            # Query com INNER JOIN para pegar informações relacionadas
-            cursor.execute("""
-                SELECT 
-                    i.id,
-                    i.equipamento_id,
-                    i.engenheiro_id,
-                    i.data_inspecao,
-                    i.tipo_inspecao,
-                    i.resultado,
-                    i.recomendacoes,
-                    e.tag as equipamento_tag,
-                    e.categoria as equipamento_categoria,
-                    u.nome as engenheiro_nome
-                FROM inspecoes i
-                LEFT JOIN equipamentos e ON i.equipamento_id = e.id
-                LEFT JOIN usuarios u ON i.engenheiro_id = u.id
-                ORDER BY i.data_inspecao DESC
-            """)
-            
-            inspections = []
+            cursor.execute(query)
+            columns = [column[0] for column in cursor.description]
+            result = []
             for row in cursor.fetchall():
-                inspections.append({
-                    'id': row[0],
-                    'equipamento_id': row[1],
-                    'engenheiro_id': row[2],
-                    'data': row[3],
-                    'tipo': row[4],
-                    'resultado': row[5],
-                    'recomendacoes': row[6],
-                    'equipamento_tag': row[7],
-                    'equipamento_categoria': row[8],
-                    'engenheiro_nome': row[9]
-                })
-                
-            logger.debug(f"Encontradas {len(inspections)} inspeções")
-            return inspections
-            
+                result.append(dict(zip(columns, row)))
+            return result
         except Exception as e:
             logger.error(f"Erro ao buscar inspeções: {str(e)}")
-            logger.error(traceback.format_exc())
             return []
-            
         finally:
             cursor.close()
+        
+    def get_filtered_inspections(self, filters):
+        """Retorna inspeções com base nos filtros aplicados
+        
+        Args:
+            filters (dict): Dicionário com os filtros a serem aplicados
+        
+        Returns:
+            list: Lista de inspeções que atendem aos filtros
+        """
+        query_parts = [
+            """
+            SELECT 
+                i.id,
+                i.equipamento_id,
+                i.data_inspecao,
+                i.tipo_inspecao,
+                i.resultado,
+                i.recomendacoes,
+                i.proxima_inspecao,
+                i.engenheiro_id,
+                i.status,
+                i.prazo_proxima_inspecao,
+                e.tag AS equipamento_tag,
+                e.categoria AS equipamento_categoria,
+                u.nome AS engenheiro_nome
+            FROM dbo.inspecoes i
+            JOIN dbo.equipamentos e ON i.equipamento_id = e.id
+            JOIN dbo.usuarios u ON i.engenheiro_id = u.id
+            WHERE 1=1
+            """
+        ]
+        params = []
+        
+        # Filtro por data
+        if filters.get('date_from') and filters.get('date_to'):
+            query_parts.append("AND i.data_inspecao BETWEEN ? AND ?")
+            params.append(filters['date_from'])
+            params.append(filters['date_to'])
+        
+        # Filtro por equipamento
+        if filters.get('equipment_id'):
+            query_parts.append("AND i.equipamento_id = ?")
+            params.append(filters['equipment_id'])
+        
+        # Filtro por tipo de inspeção
+        if filters.get('tipo_inspecao'):
+            query_parts.append("AND i.tipo_inspecao = ?")
+            params.append(filters['tipo_inspecao'])
+        
+        # Filtro por resultado
+        if filters.get('resultado'):
+            query_parts.append("AND i.resultado = ?")
+            params.append(filters['resultado'])
+        
+        # Filtro por status
+        if filters.get('status'):
+            query_parts.append("AND i.status = ?")
+            params.append(filters['status'])
+        
+        # Ordena por data (mais recente primeiro)
+        query_parts.append("ORDER BY i.data_inspecao DESC")
+        
+        # Monta a query completa
+        query = " ".join(query_parts)
+        
+        # Executa a consulta
+        conn = self.db_models.db.get_connection()
+        cursor = conn.cursor()
+        
+        try:
+            cursor.execute(query, params)
+            columns = [column[0] for column in cursor.description]
+            result = []
+            for row in cursor.fetchall():
+                result.append(dict(zip(columns, row)))
+            return result
+        except Exception as e:
+            logger.error(f"Erro ao buscar inspeções filtradas: {str(e)}")
+            return []
+        finally:
+            cursor.close()
+            
+    def get_inspection_by_id(self, inspection_id):
+        """Retorna uma inspeção específica pelo ID"""
+        if not inspection_id:
+            logger.warning("ID da inspeção não fornecido")
+            return None
+            
+        try:
+            logger.debug(f"Obtendo inspeção {inspection_id}")
+            return self.model.get_by_id(inspection_id)
+        except Exception as e:
+            logger.error(f"Erro ao obter inspeção {inspection_id}: {str(e)}")
+            return None
             
     def get_inspections_by_engineer(self, engineer_id: int) -> list[dict]:
         """Retorna as inspeções de um engenheiro específico"""
@@ -329,4 +423,224 @@ class InspectionController:
             return []
             
         finally:
-            cursor.close() 
+            cursor.close()
+            
+    def create_inspection(self, inspection_data):
+        """Cria uma nova inspeção"""
+        try:
+            # Verificar campos obrigatórios
+            required_fields = ['equipamento_id', 'engenheiro_id', 'data_inspecao', 
+                              'tipo_inspecao', 'resultado']
+            for field in required_fields:
+                if field not in inspection_data or not inspection_data[field]:
+                    logger.warning(f"Campo obrigatório ausente: {field}")
+                    return False, f"Campo obrigatório ausente: {field}"
+                    
+            # Valores padrão
+            recomendacoes = inspection_data.get('recomendacoes', '')
+            
+            logger.debug(f"Criando inspeção para equipamento {inspection_data['equipamento_id']}")
+            success = self.model.create(
+                equipamento_id=inspection_data['equipamento_id'],
+                engenheiro_id=inspection_data['engenheiro_id'],
+                data_inspecao=inspection_data['data_inspecao'],
+                tipo_inspecao=inspection_data['tipo_inspecao'],
+                resultado=inspection_data['resultado'],
+                recomendacoes=recomendacoes
+            )
+            
+            if success:
+                return True, "Inspeção criada com sucesso"
+            else:
+                return False, "Erro ao criar inspeção"
+                
+        except Exception as e:
+            logger.error(f"Erro ao criar inspeção: {str(e)}")
+            return False, f"Erro ao criar inspeção: {str(e)}"
+            
+    def update_inspection(self, inspection_id, inspection_data):
+        """Atualiza uma inspeção existente"""
+        if not inspection_id:
+            logger.warning("ID da inspeção não fornecido")
+            return False, "ID da inspeção não fornecido"
+            
+        try:
+            # Verificar se a inspeção existe
+            existing_inspection = self.model.get_by_id(inspection_id)
+            if not existing_inspection:
+                logger.warning(f"Inspeção {inspection_id} não encontrada")
+                return False, f"Inspeção {inspection_id} não encontrada"
+                
+            # Verificar campos obrigatórios
+            required_fields = ['equipamento_id', 'engenheiro_id', 'data_inspecao', 
+                              'tipo_inspecao', 'resultado']
+            for field in required_fields:
+                if field not in inspection_data or not inspection_data[field]:
+                    logger.warning(f"Campo obrigatório ausente: {field}")
+                    return False, f"Campo obrigatório ausente: {field}"
+                    
+            # Valores padrão
+            recomendacoes = inspection_data.get('recomendacoes', existing_inspection.get('recomendacoes', ''))
+            
+            logger.debug(f"Atualizando inspeção {inspection_id}")
+            success = self.model.update(
+                id=inspection_id,
+                equipamento_id=inspection_data['equipamento_id'],
+                engenheiro_id=inspection_data['engenheiro_id'],
+                data_inspecao=inspection_data['data_inspecao'],
+                tipo_inspecao=inspection_data['tipo_inspecao'],
+                resultado=inspection_data['resultado'],
+                recomendacoes=recomendacoes
+            )
+            
+            if success:
+                return True, f"Inspeção {inspection_id} atualizada com sucesso"
+            else:
+                return False, f"Erro ao atualizar inspeção {inspection_id}"
+                
+        except Exception as e:
+            logger.error(f"Erro ao atualizar inspeção {inspection_id}: {str(e)}")
+            return False, f"Erro ao atualizar inspeção: {str(e)}"
+            
+    def delete_inspection(self, inspection_id):
+        """Exclui uma inspeção"""
+        if not inspection_id:
+            logger.warning("ID da inspeção não fornecido")
+            return False, "ID da inspeção não fornecido"
+            
+        try:
+            # Verificar se a inspeção existe
+            existing_inspection = self.model.get_by_id(inspection_id)
+            if not existing_inspection:
+                logger.warning(f"Inspeção {inspection_id} não encontrada")
+                return False, f"Inspeção {inspection_id} não encontrada"
+                
+            logger.debug(f"Excluindo inspeção {inspection_id}")
+            success = self.model.delete(inspection_id)
+            
+            if success:
+                return True, f"Inspeção {inspection_id} excluída com sucesso"
+            else:
+                return False, f"Erro ao excluir inspeção {inspection_id}"
+                
+        except Exception as e:
+            logger.error(f"Erro ao excluir inspeção {inspection_id}: {str(e)}")
+            return False, f"Erro ao excluir inspeção: {str(e)}"
+            
+    def get_inspections_by_equipment(self, equipment_id):
+        """Retorna todas as inspeções de um equipamento específico"""
+        if not equipment_id:
+            logger.warning("ID do equipamento não fornecido")
+            return []
+            
+        try:
+            logger.debug(f"Obtendo inspeções do equipamento {equipment_id}")
+            return self.model.get_by_equipment(equipment_id)
+        except Exception as e:
+            logger.error(f"Erro ao obter inspeções do equipamento {equipment_id}: {str(e)}")
+            return []
+            
+    def get_inspections_by_date_range(self, start_date, end_date):
+        """Retorna todas as inspeções dentro de um intervalo de datas"""
+        if not start_date or not end_date:
+            logger.warning("Intervalo de datas incompleto")
+            return []
+            
+        try:
+            logger.debug(f"Obtendo inspeções entre {start_date} e {end_date}")
+            return self.model.get_by_date_range(start_date, end_date)
+        except Exception as e:
+            logger.error(f"Erro ao obter inspeções por intervalo de datas: {str(e)}")
+            return []
+            
+    def get_inspections_by_type(self, inspection_type):
+        """Retorna todas as inspeções de um tipo específico"""
+        if not inspection_type:
+            logger.warning("Tipo de inspeção não fornecido")
+            return []
+            
+        try:
+            logger.debug(f"Obtendo inspeções do tipo {inspection_type}")
+            return self.model.get_by_type(inspection_type)
+        except Exception as e:
+            logger.error(f"Erro ao obter inspeções do tipo {inspection_type}: {str(e)}")
+            return []
+            
+    def get_inspections_by_result(self, result):
+        """Retorna todas as inspeções com um resultado específico"""
+        if result is None:
+            logger.warning("Resultado não fornecido")
+            return []
+            
+        try:
+            logger.debug(f"Obtendo inspeções com resultado {result}")
+            return self.model.get_by_result(result)
+        except Exception as e:
+            logger.error(f"Erro ao obter inspeções com resultado {result}: {str(e)}")
+            return []
+            
+    def add_inspection(self, equipamento_id, engenheiro_id, data, tipo, resultado, recomendacoes):
+        """
+        Adiciona uma nova inspeção ao banco de dados.
+        
+        Args:
+            equipamento_id (int): ID do equipamento inspecionado
+            engenheiro_id (int): ID do engenheiro responsável
+            data (str): Data da inspeção no formato ISO (YYYY-MM-DD)
+            tipo (str): Tipo de inspeção
+            resultado (str): Resultado da inspeção
+            recomendacoes (str): Recomendações da inspeção
+            
+        Returns:
+            bool: True se a inspeção foi adicionada com sucesso, False caso contrário
+        """
+        try:
+            # Valida os parâmetros
+            if not equipamento_id or not engenheiro_id:
+                logging.error("IDs de equipamento ou engenheiro inválidos")
+                return False
+                
+            # Converte os IDs para inteiros se necessário
+            try:
+                equipamento_id = int(equipamento_id)
+                engenheiro_id = int(engenheiro_id)
+            except (ValueError, TypeError):
+                logging.error(f"Erro ao converter IDs: equipamento_id={equipamento_id}, engenheiro_id={engenheiro_id}")
+                return False
+                
+            # Verifica se a data está no formato correto
+            if not data:
+                data = datetime.datetime.now().strftime("%Y-%m-%d")
+                
+            # Comando SQL para inserção
+            sql = """
+                INSERT INTO inspecoes (equipamento_id, engenheiro_id, data, tipo, resultado, recomendacoes)
+                VALUES (?, ?, ?, ?, ?, ?)
+            """
+            
+            # Executa o comando
+            self.cursor.execute(sql, (
+                equipamento_id,
+                engenheiro_id,
+                data,
+                tipo,
+                resultado,
+                recomendacoes
+            ))
+            
+            # Confirma a transação
+            self.conn.commit()
+            
+            logging.info(f"Inspeção adicionada com sucesso: equipamento_id={equipamento_id}, engenheiro_id={engenheiro_id}")
+            return True
+            
+        except sqlite3.Error as e:
+            # Reverte a transação em caso de erro
+            self.conn.rollback()
+            logging.error(f"Erro ao adicionar inspeção: {str(e)}")
+            return False
+        except Exception as e:
+            # Reverte a transação em caso de erro
+            self.conn.rollback()
+            logging.error(f"Erro inesperado ao adicionar inspeção: {str(e)}")
+            return False 

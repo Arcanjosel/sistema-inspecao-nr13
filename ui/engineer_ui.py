@@ -9,19 +9,32 @@ from ui.styles import Styles
 from ui.modals import InspectionModal, ReportModal
 from controllers.inspection_controller import InspectionController
 from controllers.report_controller import ReportController
+from controllers.equipment_controller import EquipmentController
+from controllers.database_models import DatabaseModels
+from controllers.auth_controller import AuthController
 
 class EngineerWindow(QMainWindow):
-    def __init__(self, user_id):
+    def __init__(self, auth_controller, usuario_id):
         super().__init__()
-        self.user_id = user_id
-        self.inspection_controller = InspectionController()
-        self.report_controller = ReportController()
+        self.auth_controller = auth_controller
+        self.usuario_id = usuario_id
+        self.usuario = auth_controller.get_usuario_atual()
+        
+        # Configurar os controllers
+        self.db_models = DatabaseModels()
+        self.equipment_controller = EquipmentController(self.db_models)
+        self.inspection_controller = InspectionController(self.db_models)
+        self.report_controller = ReportController(self.db_models)
+        
         self.is_dark = True
         self.initUI()
         
     def initUI(self):
-        self.setWindowTitle("Sistema de Inspeção - Engenheiro")
+        self.setWindowTitle("Sistema de Inspeções NR-13 - Engenheiro")
         self.setMinimumSize(800, 600)
+        
+        # Definir ícone da janela com o logo da empresa
+        self.setWindowIcon(QIcon("ui/CTREINA_LOGO.png"))
         
         # Widget central
         central_widget = QWidget()
@@ -120,7 +133,7 @@ class EngineerWindow(QMainWindow):
             
     def load_inspections(self):
         """Carrega as inspeções na tabela"""
-        inspections = self.inspection_controller.get_inspections_by_engineer(self.user_id)
+        inspections = self.inspection_controller.get_inspections_by_engineer(self.usuario_id)
         self.inspection_table.setRowCount(len(inspections))
         
         for i, insp in enumerate(inspections):
@@ -133,7 +146,7 @@ class EngineerWindow(QMainWindow):
             
     def load_reports(self):
         """Carrega os relatórios na tabela"""
-        reports = self.report_controller.get_reports_by_engineer(self.user_id)
+        reports = self.report_controller.get_reports_by_engineer(self.usuario_id)
         self.report_table.setRowCount(len(reports))
         
         for i, rep in enumerate(reports):
@@ -157,7 +170,7 @@ class EngineerWindow(QMainWindow):
                 equipamento_id=data['equipamento_id'],
                 data=data['data'],
                 tipo=data['tipo'],
-                engenheiro=self.user_id,
+                engenheiro=self.usuario_id,
                 resultado=data['resultado'],
                 recomendacoes=data['recomendacoes']
             )
@@ -172,7 +185,7 @@ class EngineerWindow(QMainWindow):
         modal = ReportModal(self, self.is_dark)
         
         # Carrega as inspeções do engenheiro no combobox
-        inspections = self.inspection_controller.get_inspections_by_engineer(self.user_id)
+        inspections = self.inspection_controller.get_inspections_by_engineer(self.usuario_id)
         for insp in inspections:
             modal.inspecao_input.addItem(f"{insp['id']} - {insp['tipo']} ({insp['data']})")
             

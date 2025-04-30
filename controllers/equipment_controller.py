@@ -230,4 +230,69 @@ class EquipmentController:
             return False, f"Erro ao deletar equipamento: {str(e)}"
             
         finally:
+            cursor.close()
+            
+    def get_equipment_by_id(self, equipment_id):
+        """Retorna os dados de um equipamento específico pelo ID"""
+        if not equipment_id:
+            logger.warning("ID do equipamento não fornecido")
+            return None
+            
+        try:
+            logger.debug(f"Buscando equipamento com ID {equipment_id}")
+            conn = self.db_models.db.get_connection()
+            cursor = conn.cursor()
+            
+            cursor.execute("""
+                SELECT id, tag, categoria, empresa_id, fabricante, ano_fabricacao,
+                       pressao_projeto, pressao_trabalho, volume, fluido, ativo,
+                       codigo_projeto, localizacao, data_fabricacao, data_instalacao,
+                       capacidade, diametro, comprimento, espessura, material, temperatura_maxima,
+                       certificado, ultima_inspecao, proxima_inspecao
+                FROM equipamentos
+                WHERE id = ?
+            """, (equipment_id,))
+            
+            row = cursor.fetchone()
+            if not row:
+                logger.warning(f"Nenhum equipamento encontrado com ID {equipment_id}")
+                return None
+                
+            # Criar dicionário com os dados do equipamento
+            equipment = {
+                'id': row[0],
+                'tag': row[1],
+                'categoria': row[2],
+                'empresa_id': row[3],
+                'fabricante': row[4],
+                'ano_fabricacao': row[5],
+                'pressao_projeto': row[6],
+                'pressao_trabalho': row[7],
+                'volume': row[8],
+                'fluido': row[9],
+                'ativo': row[10],
+                'codigo_projeto': row[11],
+                'localizacao': row[12],
+                'data_fabricacao': row[13],
+                'data_instalacao': row[14],
+                'capacidade': row[15],
+                'diametro': row[16],
+                'comprimento': row[17],
+                'espessura': row[18],
+                'material': row[19],
+                'temperatura_maxima': row[20],
+                'certificado': row[21],
+                'ultima_inspecao': row[22],
+                'proxima_inspecao': row[23]
+            }
+            
+            logger.debug(f"Equipamento {equipment_id} encontrado: {equipment['tag']}")
+            return equipment
+            
+        except Exception as e:
+            logger.error(f"Erro ao buscar equipamento {equipment_id}: {str(e)}")
+            logger.error(traceback.format_exc())
+            return None
+            
+        finally:
             cursor.close() 

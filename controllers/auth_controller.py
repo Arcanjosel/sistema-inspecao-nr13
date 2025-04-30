@@ -162,12 +162,12 @@ class AuthController:
         finally:
             cursor.close()
             
-    def desativar_usuario(self, email: str) -> bool:
+    def desativar_usuario(self, user_id: int) -> bool:
         """
         Desativa um usuário no sistema.
         
         Args:
-            email: Email do usuário
+            user_id: ID do usuário
             
         Returns:
             bool: True se usuário desativado com sucesso
@@ -177,8 +177,8 @@ class AuthController:
             cursor = conn.cursor()
             
             cursor.execute(
-                "UPDATE usuarios SET ativo = 0 WHERE email = ?",
-                (email,)
+                "UPDATE usuarios SET ativo = 0 WHERE id = ?",
+                (user_id,)
             )
             
             conn.commit()
@@ -186,6 +186,36 @@ class AuthController:
             
         except Exception as e:
             logger.error(f"Erro ao desativar usuário: {str(e)}")
+            conn.rollback()
+            return False
+            
+        finally:
+            cursor.close()
+            
+    def reativar_usuario(self, user_id: int) -> bool:
+        """
+        Reativa um usuário no sistema.
+        
+        Args:
+            user_id: ID do usuário
+            
+        Returns:
+            bool: True se usuário reativado com sucesso
+        """
+        try:
+            conn = self.db.get_connection()
+            cursor = conn.cursor()
+            
+            cursor.execute(
+                "UPDATE usuarios SET ativo = 1 WHERE id = ?",
+                (user_id,)
+            )
+            
+            conn.commit()
+            return True
+            
+        except Exception as e:
+            logger.error(f"Erro ao reativar usuário: {str(e)}")
             conn.rollback()
             return False
             
@@ -200,7 +230,7 @@ class AuthController:
             cursor = conn.cursor()
             
             cursor.execute("""
-                SELECT id, nome, email, tipo_acesso, empresa
+                SELECT id, nome, email, tipo_acesso, empresa, ativo
                 FROM usuarios
                 ORDER BY nome
             """)
@@ -212,7 +242,8 @@ class AuthController:
                     'nome': row[1],
                     'email': row[2],
                     'tipo_acesso': row[3],
-                    'empresa': row[4]
+                    'empresa': row[4],
+                    'ativo': bool(row[5])  # Converte para booleano
                 })
                 
             logger.debug(f"Encontrados {len(users)} usuários")
@@ -247,6 +278,41 @@ class AuthController:
                     'nome': row[1],
                     'email': row[2],
                     'empresa': row[3]
+                })
+                
+            logger.debug(f"Encontrados {len(engineers)} engenheiros")
+            return engineers
+            
+        except Exception as e:
+            logger.error(f"Erro ao buscar engenheiros: {str(e)}")
+            logger.error(traceback.format_exc())
+            return []
+            
+        finally:
+            cursor.close()
+
+    def get_engineers(self):
+        """Retorna todos os usuários com perfil de engenheiro"""
+        try:
+            logger.debug("Buscando todos os engenheiros")
+            conn = self.db.get_connection()
+            cursor = conn.cursor()
+            
+            cursor.execute("""
+                SELECT id, nome, email, tipo_acesso, ativo
+                FROM usuarios
+                WHERE tipo_acesso = 'eng' AND ativo = 1
+                ORDER BY nome
+            """)
+            
+            engineers = []
+            for row in cursor.fetchall():
+                engineers.append({
+                    'id': row[0],
+                    'nome': row[1],
+                    'email': row[2],
+                    'tipo_acesso': row[3],
+                    'ativo': row[4]
                 })
                 
             logger.debug(f"Encontrados {len(engineers)} engenheiros")

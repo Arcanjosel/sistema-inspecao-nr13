@@ -6,7 +6,7 @@ Janelas modais para formulários de cadastro
 """
 from PyQt5.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit,
-    QPushButton, QComboBox, QMessageBox, QDateEdit, QTextEdit
+    QPushButton, QComboBox, QMessageBox, QDateEdit, QTextEdit, QFormLayout, QFileDialog
 )
 from PyQt5.QtCore import Qt, QDate
 from datetime import datetime
@@ -71,7 +71,7 @@ class UserModal(BaseModal):
         layout.addWidget(self.senha_input)
         
         self.tipo_input = QComboBox()
-        self.tipo_input.addItems(["admin", "cliente"])
+        self.tipo_input.addItems(["admin", "cliente", "eng"])
         self.tipo_input.setMinimumHeight(36)
         layout.addWidget(QLabel("Tipo:"))
         layout.addWidget(self.tipo_input)
@@ -107,79 +107,142 @@ class UserModal(BaseModal):
             "empresa": self.empresa_input.text().strip()
         }
 
-class EquipmentModal(BaseModal):
-    """Janela modal para cadastro de equipamentos"""
-    def __init__(self, parent=None, is_dark=True):
-        super().__init__(parent, is_dark)
-        self.setWindowTitle("Cadastrar Equipamento")
-        self.setup_form()
+class EquipmentModal(QDialog):
+    def __init__(self, parent=None, is_dark=False, equipment_data=None):
+        super().__init__(parent)
+        self.is_dark = is_dark
+        self.equipment_data = equipment_data
+        self.setup_ui()
         
-    def setup_form(self):
-        layout = QVBoxLayout(self)
-        layout.setSpacing(16)
-        layout.setContentsMargins(24, 24, 24, 24)
+    def setup_ui(self):
+        """Configura a interface do modal"""
+        self.setWindowTitle("Equipamento")
+        self.setMinimumWidth(450)
+        
+        # Layout principal
+        layout = QVBoxLayout()
+        
+        # Formulário
+        form_layout = QFormLayout()
+        form_layout.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
         
         # Campos do formulário
-        self.tipo_input = QComboBox()
-        self.tipo_input.addItems(["caldeira", "vaso_pressao", "tubulacao"])
-        self.tipo_input.setMinimumHeight(36)
-        layout.addWidget(QLabel("Tipo:"))
-        layout.addWidget(self.tipo_input)
+        self.tag_input = QLineEdit()
+        self.tag_input.setPlaceholderText("Ex: VAP-001")
         
-        self.empresa_input = QLineEdit()
-        self.empresa_input.setPlaceholderText("Empresa")
-        self.empresa_input.setMinimumHeight(36)
-        layout.addWidget(QLabel("Empresa:"))
-        layout.addWidget(self.empresa_input)
+        self.categoria_input = QComboBox()
+        self.categoria_input.addItems([
+            "Vaso de Pressão", "Caldeira", "Tubulação", "Tanque", "Reator", "Outro"
+        ])
         
-        self.localizacao_input = QLineEdit()
-        self.localizacao_input.setPlaceholderText("Localização")
-        self.localizacao_input.setMinimumHeight(36)
-        layout.addWidget(QLabel("Localização:"))
-        layout.addWidget(self.localizacao_input)
+        self.empresa_input = QComboBox()
+        # Preencher com empresas disponíveis depois
         
-        self.codigo_input = QLineEdit()
-        self.codigo_input.setPlaceholderText("Código do Projeto")
-        self.codigo_input.setMinimumHeight(36)
-        layout.addWidget(QLabel("Código:"))
-        layout.addWidget(self.codigo_input)
+        self.fabricante_input = QLineEdit()
+        self.fabricante_input.setPlaceholderText("Ex: Fabricante Industrial Ltda")
         
-        self.pressao_input = QLineEdit()
-        self.pressao_input.setPlaceholderText("Pressão Máxima")
-        self.pressao_input.setMinimumHeight(36)
-        layout.addWidget(QLabel("Pressão:"))
-        layout.addWidget(self.pressao_input)
+        self.ano_fabricacao_input = QLineEdit()
+        self.ano_fabricacao_input.setPlaceholderText("Ex: 2020")
         
-        self.temperatura_input = QLineEdit()
-        self.temperatura_input.setPlaceholderText("Temperatura Máxima")
-        self.temperatura_input.setMinimumHeight(36)
-        layout.addWidget(QLabel("Temperatura:"))
-        layout.addWidget(self.temperatura_input)
+        self.pressao_projeto_input = QLineEdit()
+        self.pressao_projeto_input.setPlaceholderText("Ex: 10.5")
+        
+        self.pressao_trabalho_input = QLineEdit()
+        self.pressao_trabalho_input.setPlaceholderText("Ex: 8.0")
+        
+        self.volume_input = QLineEdit()
+        self.volume_input.setPlaceholderText("Ex: 100.0")
+        
+        self.fluido_input = QLineEdit()
+        self.fluido_input.setPlaceholderText("Ex: Vapor d'água")
+        
+        # Adicionar campos ao formulário
+        form_layout.addRow("Tag:", self.tag_input)
+        form_layout.addRow("Categoria:", self.categoria_input)
+        form_layout.addRow("Empresa:", self.empresa_input)
+        form_layout.addRow("Fabricante:", self.fabricante_input)
+        form_layout.addRow("Ano de Fabricação:", self.ano_fabricacao_input)
+        form_layout.addRow("Pressão de Projeto (kgf/cm²):", self.pressao_projeto_input)
+        form_layout.addRow("Pressão de Trabalho (kgf/cm²):", self.pressao_trabalho_input)
+        form_layout.addRow("Volume (m³):", self.volume_input)
+        form_layout.addRow("Fluido:", self.fluido_input)
+        
+        layout.addLayout(form_layout)
         
         # Botões
-        buttons_layout = QHBoxLayout()
-        
-        self.cancel_button = QPushButton("Cancelar")
-        self.cancel_button.setMinimumHeight(36)
-        self.cancel_button.clicked.connect(self.reject)
-        buttons_layout.addWidget(self.cancel_button)
-        
+        buttons = QHBoxLayout()
         self.save_button = QPushButton("Salvar")
-        self.save_button.setMinimumHeight(36)
         self.save_button.clicked.connect(self.accept)
-        buttons_layout.addWidget(self.save_button)
+        self.cancel_button = QPushButton("Cancelar")
+        self.cancel_button.clicked.connect(self.reject)
         
-        layout.addLayout(buttons_layout)
+        buttons.addWidget(self.save_button)
+        buttons.addWidget(self.cancel_button)
+        layout.addLayout(buttons)
+        
+        self.setLayout(layout)
+        
+        # Carregar dados se for edição
+        self.load_empresas()
+        if self.equipment_data:
+            self.load_equipment_data()
+            
+    def load_empresas(self):
+        """Carrega as empresas no combobox"""
+        try:
+            # Assumindo que temos acesso ao controller através do parent
+            if hasattr(self.parent(), 'auth_controller'):
+                users = self.parent().auth_controller.get_all_users()
+                empresas = []
+                
+                # Filtrar apenas as empresas (usuários tipo 'emp')
+                for user in users:
+                    if user.get('tipo_acesso') == 'emp' and user.get('nome'):
+                        empresas.append(user.get('nome'))
+                
+                # Adicionar ao combobox
+                self.empresa_input.clear()
+                self.empresa_input.addItems(empresas)
+        except Exception as e:
+            print(f"Erro ao carregar empresas: {e}")
+            
+    def load_equipment_data(self):
+        """Carrega os dados do equipamento para edição"""
+        if not self.equipment_data:
+            return
+            
+        self.tag_input.setText(self.equipment_data.get('tag', ''))
+        
+        # Selecionar a categoria correta
+        categoria_idx = self.categoria_input.findText(self.equipment_data.get('categoria', ''))
+        if categoria_idx >= 0:
+            self.categoria_input.setCurrentIndex(categoria_idx)
+            
+        # Selecionar a empresa correta
+        empresa_nome = self.equipment_data.get('empresa_nome', '')
+        empresa_idx = self.empresa_input.findText(empresa_nome)
+        if empresa_idx >= 0:
+            self.empresa_input.setCurrentIndex(empresa_idx)
+            
+        self.fabricante_input.setText(self.equipment_data.get('fabricante', ''))
+        self.ano_fabricacao_input.setText(str(self.equipment_data.get('ano_fabricacao', '')))
+        self.pressao_projeto_input.setText(str(self.equipment_data.get('pressao_projeto', '')))
+        self.pressao_trabalho_input.setText(str(self.equipment_data.get('pressao_trabalho', '')))
+        self.volume_input.setText(str(self.equipment_data.get('volume', '')))
+        self.fluido_input.setText(self.equipment_data.get('fluido', ''))
         
     def get_data(self):
-        """Retorna os dados do formulário"""
+        """Retorna os dados preenchidos no formulário"""
         return {
-            "tipo": self.tipo_input.currentText(),
-            "empresa": self.empresa_input.text().strip(),
-            "localizacao": self.localizacao_input.text().strip(),
-            "codigo": self.codigo_input.text().strip(),
-            "pressao": self.pressao_input.text().strip(),
-            "temperatura": self.temperatura_input.text().strip()
+            'tag': self.tag_input.text().strip(),
+            'categoria': self.categoria_input.currentText(),
+            'empresa': self.empresa_input.currentText(),
+            'fabricante': self.fabricante_input.text().strip(),
+            'ano_fabricacao': self.ano_fabricacao_input.text().strip(),
+            'pressao_projeto': self.pressao_projeto_input.text().strip(),
+            'pressao_trabalho': self.pressao_trabalho_input.text().strip(),
+            'volume': self.volume_input.text().strip(),
+            'fluido': self.fluido_input.text().strip()
         }
 
 class InspectionModal(BaseModal):
@@ -195,38 +258,44 @@ class InspectionModal(BaseModal):
         layout.setContentsMargins(24, 24, 24, 24)
         
         # Campos do formulário
+        form_layout = QFormLayout()
+        form_layout.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
+        
+        # Equipamento
         self.equipamento_input = QComboBox()
         self.equipamento_input.setMinimumHeight(36)
-        layout.addWidget(QLabel("Equipamento:"))
-        layout.addWidget(self.equipamento_input)
+        form_layout.addRow("Equipamento:", self.equipamento_input)
         
-        self.data_input = QDateEdit()
-        self.data_input.setDate(QDate.currentDate())
-        self.data_input.setMinimumHeight(36)
-        layout.addWidget(QLabel("Data:"))
-        layout.addWidget(self.data_input)
-        
-        self.tipo_input = QComboBox()
-        self.tipo_input.addItems(["periodica", "extraordinaria"])
-        self.tipo_input.setMinimumHeight(36)
-        layout.addWidget(QLabel("Tipo:"))
-        layout.addWidget(self.tipo_input)
-        
+        # Engenheiro
         self.engenheiro_input = QComboBox()
         self.engenheiro_input.setMinimumHeight(36)
-        layout.addWidget(QLabel("Engenheiro:"))
-        layout.addWidget(self.engenheiro_input)
+        form_layout.addRow("Engenheiro:", self.engenheiro_input)
         
+        # Data
+        self.data_input = QDateEdit()
+        self.data_input.setDate(QDate.currentDate())
+        self.data_input.setCalendarPopup(True)
+        self.data_input.setMinimumHeight(36)
+        form_layout.addRow("Data:", self.data_input)
+        
+        # Tipo de inspeção
+        self.tipo_input = QComboBox()
+        self.tipo_input.addItems(["Visual", "Ultrassom", "Radiografia", "Periódica", "Inicial", "Outro"])
+        self.tipo_input.setMinimumHeight(36)
+        form_layout.addRow("Tipo:", self.tipo_input)
+        
+        # Resultado
         self.resultado_input = QComboBox()
-        self.resultado_input.addItems(["aprovado", "reprovado", "condicional"])
+        self.resultado_input.addItems(["Aprovado", "Reprovado", "Pendente", "N/A"])
         self.resultado_input.setMinimumHeight(36)
-        layout.addWidget(QLabel("Resultado:"))
-        layout.addWidget(self.resultado_input)
+        form_layout.addRow("Resultado:", self.resultado_input)
         
+        # Recomendações
         self.recomendacoes_input = QTextEdit()
-        self.recomendacoes_input.setPlaceholderText("Recomendações")
-        layout.addWidget(QLabel("Recomendações:"))
-        layout.addWidget(self.recomendacoes_input)
+        self.recomendacoes_input.setPlaceholderText("Recomendações e observações")
+        form_layout.addRow("Recomendações:", self.recomendacoes_input)
+        
+        layout.addLayout(form_layout)
         
         # Botões
         buttons_layout = QHBoxLayout()
@@ -245,75 +314,187 @@ class InspectionModal(BaseModal):
         
     def get_data(self):
         """Retorna os dados do formulário"""
+        # Obtém o ID do equipamento a partir dos dados do combobox
+        equipamento_id = self.equipamento_input.currentData()
+        if equipamento_id is None:
+            # Se não houver dados, tenta extrair da string
+            try:
+                texto = self.equipamento_input.currentText()
+                if "ID:" in texto:
+                    # Extrai o ID da string (formato: "Nome (ID: 123)")
+                    equipamento_id = int(texto.split("ID:")[1].split(")")[0].strip())
+                else:
+                    # Se não conseguir extrair, usa o primeiro item do texto
+                    equipamento_id = int(texto.split(" - ")[0].strip())
+            except (ValueError, IndexError):
+                equipamento_id = 0
+                
+        # Obtém o ID do engenheiro a partir dos dados do combobox
+        engenheiro_id = self.engenheiro_input.currentData()
+        if engenheiro_id is None:
+            # Se não houver dados, tenta extrair da string
+            try:
+                texto = self.engenheiro_input.currentText()
+                if "ID:" in texto:
+                    # Extrai o ID da string (formato: "Nome (ID: 123)")
+                    engenheiro_id = int(texto.split("ID:")[1].split(")")[0].strip())
+                else:
+                    # Se não conseguir extrair, usa o primeiro item do texto
+                    engenheiro_id = 0
+            except (ValueError, IndexError):
+                engenheiro_id = 0
+        
+        # Formata a data para o formato ISO
+        data_str = self.data_input.date().toString("yyyy-MM-dd")
+        
         return {
-            "equipamento_id": int(self.equipamento_input.currentText().split(" - ")[0]),
-            "data": self.data_input.date().toPyDate(),
+            "equipamento_id": equipamento_id,
+            "engenheiro_id": engenheiro_id,
+            "data": data_str,
             "tipo": self.tipo_input.currentText(),
-            "engenheiro": int(self.engenheiro_input.currentData()),
             "resultado": self.resultado_input.currentText(),
             "recomendacoes": self.recomendacoes_input.toPlainText().strip()
         }
 
-class ReportModal(BaseModal):
-    """Janela modal para cadastro de relatórios"""
+class ReportModal(QDialog):
+    """Modal para adicionar/editar relatórios"""
+    
     def __init__(self, parent=None, is_dark=True):
-        super().__init__(parent, is_dark)
-        self.setWindowTitle("Cadastrar Relatório")
-        self.setup_form()
+        super().__init__(parent)
+        self.is_dark = is_dark
+        self.setup_ui()
         
-    def setup_form(self):
+    def setup_ui(self):
+        """Configura a interface do modal"""
+        self.setWindowTitle("Novo Relatório")
+        self.setMinimumWidth(500)
+        self.setModal(True)
+        
+        # Layout principal
         layout = QVBoxLayout(self)
         layout.setSpacing(16)
-        layout.setContentsMargins(24, 24, 24, 24)
         
-        # Campos do formulário
-        self.inspecao_input = QComboBox()
-        self.inspecao_input.setMinimumHeight(36)
-        layout.addWidget(QLabel("Inspeção:"))
-        layout.addWidget(self.inspecao_input)
+        # Formulário
+        form_layout = QFormLayout()
+        form_layout.setSpacing(10)
         
+        # Campo de inspeção
+        self.inspecao_combo = QComboBox()
+        self.inspecao_combo.setMinimumHeight(36)
+        form_layout.addRow("Inspeção:", self.inspecao_combo)
+        
+        # Campo de data
         self.data_input = QDateEdit()
+        self.data_input.setCalendarPopup(True)
         self.data_input.setDate(QDate.currentDate())
         self.data_input.setMinimumHeight(36)
-        layout.addWidget(QLabel("Data:"))
-        layout.addWidget(self.data_input)
+        form_layout.addRow("Data:", self.data_input)
         
+        # Campo de arquivo
+        arquivo_container = QHBoxLayout()
         self.arquivo_input = QLineEdit()
-        self.arquivo_input.setPlaceholderText("Link do Arquivo")
+        self.arquivo_input.setPlaceholderText("Link do arquivo")
         self.arquivo_input.setMinimumHeight(36)
-        layout.addWidget(QLabel("Arquivo:"))
-        layout.addWidget(self.arquivo_input)
+        arquivo_container.addWidget(self.arquivo_input)
         
+        self.browse_btn = QPushButton("Procurar")
+        self.browse_btn.setMinimumHeight(36)
+        self.browse_btn.clicked.connect(self.browse_file)
+        arquivo_container.addWidget(self.browse_btn)
+        
+        form_layout.addRow("Arquivo:", arquivo_container)
+        
+        # Campo de observações
         self.observacoes_input = QTextEdit()
         self.observacoes_input.setPlaceholderText("Observações")
-        layout.addWidget(QLabel("Observações:"))
-        layout.addWidget(self.observacoes_input)
+        self.observacoes_input.setMinimumHeight(100)
+        form_layout.addRow("Observações:", self.observacoes_input)
+        
+        layout.addLayout(form_layout)
         
         # Botões
-        buttons_layout = QHBoxLayout()
+        button_box = QHBoxLayout()
         
-        self.cancel_button = QPushButton("Cancelar")
-        self.cancel_button.setMinimumHeight(36)
-        self.cancel_button.clicked.connect(self.reject)
-        buttons_layout.addWidget(self.cancel_button)
+        # Botão Salvar
+        self.save_btn = QPushButton("Salvar")
+        self.save_btn.setMinimumHeight(36)
+        self.save_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #28a745;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                font-weight: bold;
+                border-radius: 4px;
+                min-width: 100px;
+            }
+            QPushButton:hover {
+                background-color: #218838;
+            }
+        """)
+        self.save_btn.clicked.connect(self.accept)
+        button_box.addWidget(self.save_btn)
         
-        self.save_button = QPushButton("Salvar")
-        self.save_button.setMinimumHeight(36)
-        self.save_button.clicked.connect(self.accept)
-        buttons_layout.addWidget(self.save_button)
+        # Botão Cancelar
+        self.cancel_btn = QPushButton("Cancelar")
+        self.cancel_btn.setMinimumHeight(36)
+        self.cancel_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #6c757d;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                font-weight: bold;
+                border-radius: 4px;
+                min-width: 100px;
+            }
+            QPushButton:hover {
+                background-color: #5a6268;
+            }
+        """)
+        self.cancel_btn.clicked.connect(self.reject)
+        button_box.addWidget(self.cancel_btn)
         
-        layout.addLayout(buttons_layout)
+        layout.addLayout(button_box)
         
+        # Aplica o tema
+        if self.is_dark:
+            self.setStyleSheet("""
+                QDialog {
+                    background-color: #2b2b2b;
+                    color: #ffffff;
+                }
+                QLabel {
+                    color: #ffffff;
+                }
+                QComboBox, QLineEdit, QDateEdit, QTextEdit {
+                    background-color: #333333;
+                    color: #ffffff;
+                    border: 1px solid #555555;
+                    border-radius: 4px;
+                    padding: 5px;
+                }
+                QComboBox:focus, QLineEdit:focus, QDateEdit:focus, QTextEdit:focus {
+                    border: 1px solid #2196F3;
+                }
+            """)
+            
+    def browse_file(self):
+        """Abre diálogo para selecionar arquivo"""
+        file_name, _ = QFileDialog.getOpenFileName(
+            self,
+            "Selecionar Arquivo",
+            "",
+            "Todos os Arquivos (*);;Documentos PDF (*.pdf);;Documentos Word (*.doc *.docx)"
+        )
+        if file_name:
+            self.arquivo_input.setText(file_name)
+            
     def get_data(self):
         """Retorna os dados do formulário"""
-        # Converte QDate para string no formato que o SQL Server aceita
-        qdate = self.data_input.date()
-        # Formata a data como string YYYY-MM-DD 00:00:00
-        date_str = qdate.toString('yyyy-MM-dd') + ' 00:00:00'
-        
         return {
-            "inspecao_id": int(self.inspecao_input.currentText().split(" - ")[0]),
-            "data": date_str,
-            "arquivo": self.arquivo_input.text().strip(),
-            "observacoes": self.observacoes_input.toPlainText().strip()
+            'inspecao_id': self.inspecao_combo.currentData(),
+            'data_emissao': self.data_input.date().toString("yyyy-MM-dd"),
+            'link_arquivo': self.arquivo_input.text(),
+            'observacoes': self.observacoes_input.toPlainText()
         } 

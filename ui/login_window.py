@@ -10,7 +10,7 @@ from PyQt5.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
                             QLabel, QLineEdit, QPushButton, QMessageBox, QComboBox,
                             QCheckBox, QToolButton, QMenu)
 from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtGui import QFont, QIcon
+from PyQt5.QtGui import QFont, QIcon, QPixmap
 
 class LoginWindow(QMainWindow):
     login_success = pyqtSignal(int)  # Sinal emitido quando o login é bem sucedido
@@ -25,7 +25,7 @@ class LoginWindow(QMainWindow):
     def setup_ui(self):
         """Configura a interface do usuário"""
         self.setWindowTitle("Login - Sistema de Inspeções NR-13")
-        self.setFixedSize(420, 420)
+        self.setFixedSize(420, 480)  # Aumentei a altura para acomodar o logo
         
         # Widget central
         central_widget = QWidget()
@@ -33,7 +33,7 @@ class LoginWindow(QMainWindow):
         
         # Layout principal
         layout = QVBoxLayout(central_widget)
-        layout.setSpacing(24)
+        layout.setSpacing(16)
         layout.setContentsMargins(32, 32, 32, 32)
         
         # Barra superior
@@ -57,6 +57,14 @@ class LoginWindow(QMainWindow):
         top_bar.addStretch()
         top_bar.addWidget(self.settings_btn)
         layout.addLayout(top_bar)
+        
+        # Logo da empresa
+        logo_label = QLabel()
+        logo_pixmap = QPixmap("ui/CTREINA_LOGO.png")
+        logo_pixmap = logo_pixmap.scaled(240, 120, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        logo_label.setPixmap(logo_pixmap)
+        logo_label.setAlignment(Qt.AlignCenter)
+        layout.addWidget(logo_label)
         
         # Título
         title_label = QLabel("Sistema de Inspeções NR-13")

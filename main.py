@@ -159,10 +159,6 @@ if __name__ == "__main__":
         db_models = DatabaseModels()
         db_models.criar_tabelas()
         
-        # Recria a tabela relatorios com a nova estrutura
-        logger.info("Recriando tabela relatorios")
-        db_models.recriar_tabela_relatorios()
-        
         # Cria o usuário admin se não existir
         logger.info("Verificando usuário admin")
         auth = AuthController()

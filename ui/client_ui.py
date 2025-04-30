@@ -18,6 +18,7 @@ from PyQt5.QtGui import QIcon
 from ui.modals import InspectionModal, ReportModal
 from controllers.inspection_controller import InspectionController
 from controllers.report_controller import ReportController
+from controllers.equipment_controller import EquipmentController
 
 logger = logging.getLogger(__name__)
 
@@ -26,12 +27,13 @@ class ClientWindow(QMainWindow):
     Janela principal do cliente.
     """
     
-    def __init__(self, auth_controller: AuthController, user_id: int, company: str):
+    def __init__(self, usuario_id, auth_controller):
         super().__init__()
+        self.usuario_id = usuario_id
         self.auth_controller = auth_controller
+        self.usuario = self.auth_controller.get_usuario_atual()
         self.db_models = DatabaseModels()
-        self.user_id = user_id
-        self.company = company
+        self.equipment_controller = EquipmentController(self.db_models)
         self.inspection_controller = InspectionController()
         self.report_controller = ReportController()
         self.is_dark = True
@@ -40,8 +42,11 @@ class ClientWindow(QMainWindow):
         
     def initUI(self):
         """Inicializa a interface do usuário."""
-        self.setWindowTitle('Sistema de Inspeções NR-13 - Cliente')
-        self.setMinimumSize(800, 600)
+        self.setWindowTitle("Sistema de Inspeções NR-13 - Cliente")
+        self.setMinimumSize(900, 600)
+        
+        # Definir ícone da janela com o logo da empresa
+        self.setWindowIcon(QIcon("ui/CTREINA_LOGO.png"))
         
         # Widget central
         central_widget = QWidget()
@@ -53,7 +58,7 @@ class ClientWindow(QMainWindow):
         layout.setContentsMargins(24, 24, 24, 24)
         
         # Título
-        title = QLabel(f"Painel do Cliente - {self.company}")
+        title = QLabel(f"Painel do Cliente - {self.usuario['empresa']}")
         title.setStyleSheet("font-size: 24px; font-weight: bold;")
         layout.addWidget(title)
         
@@ -150,7 +155,7 @@ class ClientWindow(QMainWindow):
         
     def load_inspections(self):
         """Carrega as inspeções na tabela"""
-        inspections = self.inspection_controller.get_inspections_by_company(self.company)
+        inspections = self.inspection_controller.get_inspections_by_company(self.usuario['empresa'])
         self.inspection_table.setRowCount(len(inspections))
         
         for i, insp in enumerate(inspections):
@@ -163,7 +168,7 @@ class ClientWindow(QMainWindow):
             
     def load_reports(self):
         """Carrega os relatórios na tabela"""
-        reports = self.report_controller.get_reports_by_company(self.company)
+        reports = self.report_controller.get_reports_by_company(self.usuario['empresa'])
         self.report_table.setRowCount(len(reports))
         
         for i, rep in enumerate(reports):
@@ -177,7 +182,7 @@ class ClientWindow(QMainWindow):
         modal = InspectionModal(self, self.is_dark)
         
         # Carrega os equipamentos da empresa no combobox
-        equipment = self.inspection_controller.get_equipment_by_company(self.company)
+        equipment = self.equipment_controller.get_equipment_by_company(self.usuario['empresa'])
         for equip in equipment:
             modal.equipamento_input.addItem(f"{equip['id']} - {equip['tipo']}")
             
@@ -202,7 +207,7 @@ class ClientWindow(QMainWindow):
         modal = ReportModal(self, self.is_dark)
         
         # Carrega as inspeções da empresa no combobox
-        inspections = self.inspection_controller.get_inspections_by_company(self.company)
+        inspections = self.inspection_controller.get_inspections_by_company(self.usuario['empresa'])
         for insp in inspections:
             modal.inspecao_input.addItem(f"{insp['id']} - {insp['tipo']} ({insp['data']})")
             

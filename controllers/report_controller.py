@@ -63,15 +63,7 @@ class ReportController:
             conn = self.db_models.db.get_connection()
             cursor = conn.cursor()
             
-            # Imprime as tabelas e colunas disponíveis para diagnóstico
-            logger.debug("Verificando estrutura da tabela relatórios")
-            cursor.execute("SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'relatorios'")
-            colunas_relatorios = cursor.fetchall()
-            for col in colunas_relatorios:
-                logger.debug(f"Coluna em relatórios: {col[3]} ({col[7]})")
-                
-            # Executa a consulta SQL corrigida
-            cursor.execute("""
+            query = """
                 SELECT 
                     r.id,
                     r.inspecao_id,
@@ -83,33 +75,22 @@ class ReportController:
                     e.tag as equipamento_tag,
                     e.categoria as equipamento_categoria,
                     u.nome as engenheiro_nome
-                FROM relatorios r
-                LEFT JOIN inspecoes i ON r.inspecao_id = i.id
-                LEFT JOIN equipamentos e ON i.equipamento_id = e.id
-                LEFT JOIN usuarios u ON i.engenheiro_id = u.id
+                FROM dbo.relatorios r
+                JOIN dbo.inspecoes i ON r.inspecao_id = i.id
+                JOIN dbo.equipamentos e ON i.equipamento_id = e.id
+                JOIN dbo.usuarios u ON i.engenheiro_id = u.id
                 ORDER BY r.data_emissao DESC
-            """)
+            """
             
-            reports = []
+            cursor.execute(query)
+            columns = [column[0] for column in cursor.description]
+            result = []
             for row in cursor.fetchall():
-                reports.append({
-                    'id': row[0],
-                    'inspecao_id': row[1],
-                    'data': row[2],
-                    'arquivo': row[3],
-                    'observacoes': row[4],
-                    'tipo_inspecao': row[5],
-                    'inspecao_resultado': row[6],
-                    'equipamento_tag': row[7],
-                    'equipamento_categoria': row[8],
-                    'engenheiro_nome': row[9]
-                })
-                
-            logger.debug(f"Encontrados {len(reports)} relatórios")
-            for report in reports:
-                logger.debug(f"Relatório {report['id']}: {report}")
-                
-            return reports
+                result.append(dict(zip(columns, row)))
+                logger.debug(f"Relatório {row[0]}: {dict(zip(columns, row))}")
+            
+            logger.debug(f"Encontrados {len(result)} relatórios")
+            return result
             
         except Exception as e:
             logger.error(f"Erro ao buscar relatórios: {str(e)}")
@@ -214,25 +195,38 @@ class ReportController:
     def get_report_by_id(self, report_id: int) -> dict:
         """Retorna um relatório específico pelo ID"""
         try:
+            logger.debug(f"Buscando relatório {report_id}")
             conn = self.db_models.db.get_connection()
             cursor = conn.cursor()
             
-            cursor.execute("""
-                SELECT r.id, i.id as inspecao_id, r.data, r.arquivo, r.observacoes
-                FROM relatorios r
-                JOIN inspecoes i ON r.inspecao_id = i.id
+            query = """
+                SELECT 
+                    r.id,
+                    r.inspecao_id,
+                    r.data_emissao,
+                    r.link_arquivo,
+                    r.observacoes,
+                    i.tipo_inspecao,
+                    i.resultado as inspecao_resultado,
+                    e.tag as equipamento_tag,
+                    e.categoria as equipamento_categoria,
+                    u.nome as engenheiro_nome
+                FROM dbo.relatorios r
+                JOIN dbo.inspecoes i ON r.inspecao_id = i.id
+                JOIN dbo.equipamentos e ON i.equipamento_id = e.id
+                JOIN dbo.usuarios u ON i.engenheiro_id = u.id
                 WHERE r.id = ?
-            """, (report_id,))
+            """
             
+            cursor.execute(query, (report_id,))
             row = cursor.fetchone()
+            
             if row:
-                return {
-                    'id': row[0],
-                    'inspecao_id': row[1],
-                    'data': row[2],
-                    'arquivo': row[3],
-                    'observacoes': row[4]
-                }
+                columns = [column[0] for column in cursor.description]
+                result = dict(zip(columns, row))
+                logger.debug(f"Relatório {report_id}: {result}")
+                return result
+            
             return None
             
         except Exception as e:
