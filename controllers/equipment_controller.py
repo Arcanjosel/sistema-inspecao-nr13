@@ -50,11 +50,11 @@ class EquipmentController:
             cursor.execute("""
                 SELECT e.id, e.tag, e.categoria, e.empresa_id,
                        e.fabricante, e.ano_fabricacao, e.pressao_projeto,
-                       e.pressao_trabalho, e.volume, e.fluido,
+                       e.pressao_trabalho, e.volume, e.fluido, e.ativo,
                        u.nome as empresa_nome
                 FROM equipamentos e
-                JOIN usuarios u ON e.empresa_id = u.id
-                WHERE e.ativo = 1
+                LEFT JOIN usuarios u ON e.empresa_id = u.id
+                ORDER BY e.tag
             """)
             
             equipment = []
@@ -70,7 +70,8 @@ class EquipmentController:
                     'pressao_trabalho': row[7],
                     'volume': row[8],
                     'fluido': row[9],
-                    'empresa_nome': row[10]
+                    'ativo': bool(row[10]),
+                    'empresa_nome': row[11] if row[11] else ''
                 })
                 
             logger.debug(f"Encontrados {len(equipment)} equipamentos")

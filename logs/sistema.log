@@ -8401,3 +8401,1390 @@ AttributeError: 'NoneType' object has no attribute 'text'
 2025-04-30 19:51:14,829 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
 2025-04-30 19:51:14,874 - __main__ - INFO - Janela principal exibida para usuário: admin
 2025-04-30 19:52:02,566 - __main__ - INFO - Aplicação encerrada com código 0
+2025-04-30 19:53:24,858 - __main__ - INFO - === INICIANDO APLICAÇÃO ===
+2025-04-30 19:53:24,859 - __main__ - INFO - Inicializando banco de dados
+2025-04-30 19:53:24,871 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-30 19:53:24,999 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-30 19:53:25,045 - database.models - INFO - Tabelas criadas com sucesso
+2025-04-30 19:53:25,045 - __main__ - INFO - Verificando usuário admin
+2025-04-30 19:53:25,047 - __main__ - INFO - Resultado da criação do admin: Email já cadastrado
+2025-04-30 19:53:25,048 - __main__ - INFO - Criando instância do sistema
+2025-04-30 19:53:25,048 - __main__ - DEBUG - Iniciando construtor do SistemaInspecao
+2025-04-30 19:53:25,048 - __main__ - DEBUG - Criando QApplication
+2025-04-30 19:53:25,127 - __main__ - DEBUG - QApplication criado com sucesso
+2025-04-30 19:53:25,128 - __main__ - DEBUG - Criando AuthController
+2025-04-30 19:53:25,128 - __main__ - DEBUG - AuthController criado com sucesso
+2025-04-30 19:53:25,129 - __main__ - INFO - Sistema inicializado com sucesso
+2025-04-30 19:53:25,129 - __main__ - INFO - Executando a aplicação
+2025-04-30 19:53:25,129 - __main__ - INFO - Iniciando aplicação
+2025-04-30 19:53:25,130 - __main__ - DEBUG - Verificando imports
+2025-04-30 19:53:25,130 - __main__ - DEBUG - Import login_window OK
+2025-04-30 19:53:25,130 - __main__ - DEBUG - Import admin_ui OK
+2025-04-30 19:53:25,131 - __main__ - DEBUG - Import client_ui OK
+2025-04-30 19:53:25,131 - __main__ - DEBUG - Import modals OK
+2025-04-30 19:53:25,132 - __main__ - DEBUG - Diretório atual: C:\Users\jeanc\Documents\C-TREINA\sistema-inspecao-nr13
+2025-04-30 19:53:25,132 - __main__ - DEBUG - Chamando show_login()
+2025-04-30 19:53:25,132 - __main__ - DEBUG - Criando janela de login
+2025-04-30 19:53:25,245 - __main__ - DEBUG - Conectando sinal de login_success
+2025-04-30 19:53:25,245 - __main__ - DEBUG - Exibindo janela de login
+2025-04-30 19:53:25,924 - __main__ - INFO - Janela de login exibida com sucesso
+2025-04-30 19:53:25,925 - __main__ - DEBUG - show_login() executado com sucesso
+2025-04-30 19:53:25,925 - __main__ - DEBUG - Aguardando 1 segundo antes de iniciar o loop de eventos
+2025-04-30 19:53:26,926 - __main__ - INFO - Executando o loop de eventos da aplicação
+2025-04-30 19:53:31,040 - __main__ - INFO - Login bem sucedido para usuário ID: 2
+2025-04-30 19:53:31,049 - ui.admin_ui - DEBUG - Iniciando construtor do AdminWindow
+2025-04-30 19:53:31,049 - ui.admin_ui - DEBUG - Criando instância do DatabaseModels
+2025-04-30 19:53:31,050 - ui.admin_ui - DEBUG - Criando instância do EquipmentController
+2025-04-30 19:53:31,050 - controllers.equipment_controller - DEBUG - Iniciando EquipmentController
+2025-04-30 19:53:31,051 - ui.admin_ui - DEBUG - Criando instância do InspectionController
+2025-04-30 19:53:31,052 - controllers.inspection_controller - DEBUG - Iniciando InspectionController
+2025-04-30 19:53:31,052 - db.models - DEBUG - InspecaoModel inicializado
+2025-04-30 19:53:31,053 - ui.admin_ui - DEBUG - Criando instância do ReportController
+2025-04-30 19:53:31,053 - controllers.report_controller - DEBUG - Iniciando ReportController
+2025-04-30 19:53:31,054 - ui.admin_ui - DEBUG - Iniciando setup da UI
+2025-04-30 19:53:31,054 - ui.admin_ui - DEBUG - Iniciando setup da interface
+2025-04-30 19:53:31,061 - ui.admin_ui - DEBUG - Criando widget central
+2025-04-30 19:53:31,064 - ui.admin_ui - DEBUG - Criando abas
+2025-04-30 19:53:31,066 - ui.admin_ui - DEBUG - Configurando aba de usuários
+2025-04-30 19:53:31,081 - ui.admin_ui - DEBUG - Carregando usuários
+2025-04-30 19:53:31,082 - ui.admin_ui - DEBUG - Carregando usuários
+2025-04-30 19:53:31,083 - controllers.auth_controller - DEBUG - Buscando todos os usuários
+2025-04-30 19:53:31,085 - controllers.auth_controller - DEBUG - Encontrados 8 usuários
+2025-04-30 19:53:31,089 - ui.admin_ui - DEBUG - Configurando aba de equipamentos
+2025-04-30 19:53:31,097 - ui.admin_ui - DEBUG - Carregando equipamentos
+2025-04-30 19:53:31,098 - ui.admin_ui - DEBUG - Carregando equipamentos
+2025-04-30 19:53:31,098 - controllers.equipment_controller - DEBUG - Buscando todos os equipamentos
+2025-04-30 19:53:31,103 - controllers.equipment_controller - DEBUG - Encontrados 6 equipamentos
+2025-04-30 19:53:31,104 - ui.admin_ui - DEBUG - Carregando equipamento ID=1, Tag=caldeira
+2025-04-30 19:53:31,104 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 1
+2025-04-30 19:53:31,105 - ui.admin_ui - DEBUG - Carregando equipamento ID=3, Tag=TAG-001
+2025-04-30 19:53:31,105 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 3
+2025-04-30 19:53:31,106 - ui.admin_ui - DEBUG - Carregando equipamento ID=4, Tag=TAG-002
+2025-04-30 19:53:31,106 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 4
+2025-04-30 19:53:31,106 - ui.admin_ui - DEBUG - Carregando equipamento ID=5, Tag=TAG-003
+2025-04-30 19:53:31,107 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 5
+2025-04-30 19:53:31,107 - ui.admin_ui - DEBUG - Carregando equipamento ID=6, Tag=TAG-001
+2025-04-30 19:53:31,108 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 6
+2025-04-30 19:53:31,108 - ui.admin_ui - DEBUG - Carregando equipamento ID=8, Tag=TAG-003
+2025-04-30 19:53:31,109 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 8
+2025-04-30 19:53:31,109 - ui.admin_ui - DEBUG - Carregados 6 equipamentos na tabela
+2025-04-30 19:53:31,111 - ui.admin_ui - DEBUG - Configurando aba de inspeções
+2025-04-30 19:53:31,114 - ui.admin_ui - DEBUG - Carregando inspeções do banco de dados
+2025-04-30 19:53:31,115 - controllers.equipment_controller - DEBUG - Buscando todos os equipamentos
+2025-04-30 19:53:31,116 - controllers.equipment_controller - DEBUG - Encontrados 6 equipamentos
+2025-04-30 19:53:31,116 - ui.admin_ui - DEBUG - Carregados 6 equipamentos
+2025-04-30 19:53:31,123 - ui.admin_ui - DEBUG - Carregadas 2 inspeções
+2025-04-30 19:53:31,126 - ui.admin_ui - DEBUG - Configurando aba de relatórios
+2025-04-30 19:53:31,129 - ui.admin_ui - DEBUG - Carregando relatórios do banco de dados
+2025-04-30 19:53:31,129 - ui.admin_ui - DEBUG - Carregando relatórios
+2025-04-30 19:53:31,130 - controllers.report_controller - DEBUG - Buscando todos os relatórios
+2025-04-30 19:53:31,137 - controllers.report_controller - DEBUG - Relatório 1: {'id': 1, 'inspecao_id': 13, 'data_emissao': '2025-04-30', 'link_arquivo': 'C:/Users/jeanc/Downloads/Apresentacao_Sistema_Inspecoes_NR13.odp', 'observacoes': 'awd', 'tipo_inspecao': 'periodica', 'inspecao_resultado': 'aprovado', 'equipamento_tag': 'caldeira', 'equipamento_categoria': 'caldeira', 'engenheiro_nome': 'Engenheiro Beta'}
+2025-04-30 19:53:31,138 - controllers.report_controller - DEBUG - Encontrados 1 relatórios
+2025-04-30 19:53:31,150 - ui.admin_ui - DEBUG - Carregados 1 relatórios
+2025-04-30 19:53:31,155 - ui.admin_ui - DEBUG - Adicionando abas ao TabWidget
+2025-04-30 19:53:31,155 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-30 19:53:31,163 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-30 19:53:31,163 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-30 19:53:31,164 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-30 19:53:31,165 - ui.admin_ui - DEBUG - Configurando barra inferior
+2025-04-30 19:53:31,176 - ui.admin_ui - DEBUG - Interface inicializada com sucesso
+2025-04-30 19:53:31,177 - ui.admin_ui - DEBUG - Aplicando tema
+2025-04-30 19:53:31,193 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-30 19:53:31,195 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-30 19:53:31,196 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-30 19:53:31,196 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-30 19:53:31,197 - ui.admin_ui - INFO - AdminWindow inicializada com sucesso
+2025-04-30 19:53:31,201 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-30 19:53:31,202 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-30 19:53:31,202 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-30 19:53:31,203 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-30 19:53:31,258 - __main__ - INFO - Janela principal exibida para usuário: admin
+2025-04-30 19:53:50,441 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-30 19:53:50,442 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-30 19:53:50,443 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-30 19:53:50,444 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-30 19:53:51,293 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-30 19:53:51,293 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-30 19:53:51,294 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-30 19:53:51,295 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-30 19:53:52,348 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-30 19:53:52,350 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-30 19:53:52,351 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-30 19:53:52,352 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-30 19:53:52,717 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-30 19:53:52,718 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-30 19:53:52,718 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-30 19:53:52,719 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-30 19:53:53,457 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-30 19:53:53,458 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-30 19:53:53,459 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-30 19:53:53,460 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-30 19:54:04,054 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-30 19:54:04,055 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-30 19:54:04,056 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-30 19:54:04,057 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-30 19:54:05,937 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-30 19:54:05,938 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-30 19:54:05,938 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-30 19:54:05,939 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-30 19:56:16,402 - __main__ - INFO - Aplicação encerrada com código 0
+2025-04-30 19:56:55,468 - __main__ - INFO - === INICIANDO APLICAÇÃO ===
+2025-04-30 19:56:55,468 - __main__ - INFO - Inicializando banco de dados
+2025-04-30 19:56:55,480 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-30 19:56:55,606 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-30 19:56:55,653 - database.models - INFO - Tabelas criadas com sucesso
+2025-04-30 19:56:55,654 - __main__ - INFO - Verificando usuário admin
+2025-04-30 19:56:55,656 - __main__ - INFO - Resultado da criação do admin: Email já cadastrado
+2025-04-30 19:56:55,657 - __main__ - INFO - Criando instância do sistema
+2025-04-30 19:56:55,657 - __main__ - DEBUG - Iniciando construtor do SistemaInspecao
+2025-04-30 19:56:55,658 - __main__ - DEBUG - Criando QApplication
+2025-04-30 19:56:55,749 - __main__ - DEBUG - QApplication criado com sucesso
+2025-04-30 19:56:55,749 - __main__ - DEBUG - Criando AuthController
+2025-04-30 19:56:55,750 - __main__ - DEBUG - AuthController criado com sucesso
+2025-04-30 19:56:55,750 - __main__ - INFO - Sistema inicializado com sucesso
+2025-04-30 19:56:55,751 - __main__ - INFO - Executando a aplicação
+2025-04-30 19:56:55,751 - __main__ - INFO - Iniciando aplicação
+2025-04-30 19:56:55,751 - __main__ - DEBUG - Verificando imports
+2025-04-30 19:56:55,752 - __main__ - DEBUG - Import login_window OK
+2025-04-30 19:56:55,752 - __main__ - DEBUG - Import admin_ui OK
+2025-04-30 19:56:55,753 - __main__ - DEBUG - Import client_ui OK
+2025-04-30 19:56:55,753 - __main__ - DEBUG - Import modals OK
+2025-04-30 19:56:55,753 - __main__ - DEBUG - Diretório atual: C:\Users\jeanc\Documents\C-TREINA\sistema-inspecao-nr13
+2025-04-30 19:56:55,754 - __main__ - DEBUG - Chamando show_login()
+2025-04-30 19:56:55,754 - __main__ - DEBUG - Criando janela de login
+2025-04-30 19:56:55,885 - __main__ - DEBUG - Conectando sinal de login_success
+2025-04-30 19:56:55,885 - __main__ - DEBUG - Exibindo janela de login
+2025-04-30 19:56:56,585 - __main__ - INFO - Janela de login exibida com sucesso
+2025-04-30 19:56:56,586 - __main__ - DEBUG - show_login() executado com sucesso
+2025-04-30 19:56:56,586 - __main__ - DEBUG - Aguardando 1 segundo antes de iniciar o loop de eventos
+2025-04-30 19:56:57,588 - __main__ - INFO - Executando o loop de eventos da aplicação
+2025-04-30 19:57:00,736 - __main__ - INFO - Login bem sucedido para usuário ID: 2
+2025-04-30 19:57:00,746 - ui.admin_ui - DEBUG - Iniciando construtor do AdminWindow
+2025-04-30 19:57:00,747 - ui.admin_ui - DEBUG - Criando instância do DatabaseModels
+2025-04-30 19:57:00,748 - ui.admin_ui - DEBUG - Criando instância do EquipmentController
+2025-04-30 19:57:00,748 - controllers.equipment_controller - DEBUG - Iniciando EquipmentController
+2025-04-30 19:57:00,749 - ui.admin_ui - DEBUG - Criando instância do InspectionController
+2025-04-30 19:57:00,749 - controllers.inspection_controller - DEBUG - Iniciando InspectionController
+2025-04-30 19:57:00,750 - db.models - DEBUG - InspecaoModel inicializado
+2025-04-30 19:57:00,750 - ui.admin_ui - DEBUG - Criando instância do ReportController
+2025-04-30 19:57:00,751 - controllers.report_controller - DEBUG - Iniciando ReportController
+2025-04-30 19:57:00,751 - ui.admin_ui - DEBUG - Iniciando setup da UI
+2025-04-30 19:57:00,752 - ui.admin_ui - DEBUG - Iniciando setup da interface
+2025-04-30 19:57:00,758 - ui.admin_ui - DEBUG - Criando widget central
+2025-04-30 19:57:00,761 - ui.admin_ui - DEBUG - Criando abas
+2025-04-30 19:57:00,761 - ui.admin_ui - DEBUG - Configurando aba de usuários
+2025-04-30 19:57:00,776 - ui.admin_ui - DEBUG - Carregando usuários
+2025-04-30 19:57:00,777 - ui.admin_ui - DEBUG - Carregando usuários
+2025-04-30 19:57:00,777 - controllers.auth_controller - DEBUG - Buscando todos os usuários
+2025-04-30 19:57:00,779 - controllers.auth_controller - DEBUG - Encontrados 8 usuários
+2025-04-30 19:57:00,783 - ui.admin_ui - DEBUG - Configurando aba de equipamentos
+2025-04-30 19:57:00,789 - ui.admin_ui - DEBUG - Carregando equipamentos
+2025-04-30 19:57:00,790 - ui.admin_ui - DEBUG - Carregando equipamentos
+2025-04-30 19:57:00,790 - controllers.equipment_controller - DEBUG - Buscando todos os equipamentos
+2025-04-30 19:57:00,793 - controllers.equipment_controller - DEBUG - Encontrados 6 equipamentos
+2025-04-30 19:57:00,794 - ui.admin_ui - DEBUG - Carregando equipamento ID=1, Tag=caldeira
+2025-04-30 19:57:00,794 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 1
+2025-04-30 19:57:00,795 - ui.admin_ui - DEBUG - Carregando equipamento ID=3, Tag=TAG-001
+2025-04-30 19:57:00,795 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 3
+2025-04-30 19:57:00,796 - ui.admin_ui - DEBUG - Carregando equipamento ID=4, Tag=TAG-002
+2025-04-30 19:57:00,796 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 4
+2025-04-30 19:57:00,796 - ui.admin_ui - DEBUG - Carregando equipamento ID=5, Tag=TAG-003
+2025-04-30 19:57:00,797 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 5
+2025-04-30 19:57:00,797 - ui.admin_ui - DEBUG - Carregando equipamento ID=6, Tag=TAG-001
+2025-04-30 19:57:00,798 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 6
+2025-04-30 19:57:00,798 - ui.admin_ui - DEBUG - Carregando equipamento ID=8, Tag=TAG-003
+2025-04-30 19:57:00,799 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 8
+2025-04-30 19:57:00,800 - ui.admin_ui - DEBUG - Carregados 6 equipamentos na tabela
+2025-04-30 19:57:00,802 - ui.admin_ui - DEBUG - Configurando aba de inspeções
+2025-04-30 19:57:00,805 - ui.admin_ui - DEBUG - Carregando inspeções do banco de dados
+2025-04-30 19:57:00,805 - controllers.equipment_controller - DEBUG - Buscando todos os equipamentos
+2025-04-30 19:57:00,806 - controllers.equipment_controller - DEBUG - Encontrados 6 equipamentos
+2025-04-30 19:57:00,807 - ui.admin_ui - DEBUG - Carregados 6 equipamentos
+2025-04-30 19:57:00,813 - ui.admin_ui - DEBUG - Carregadas 2 inspeções
+2025-04-30 19:57:00,816 - ui.admin_ui - DEBUG - Configurando aba de relatórios
+2025-04-30 19:57:00,819 - ui.admin_ui - DEBUG - Carregando relatórios do banco de dados
+2025-04-30 19:57:00,819 - ui.admin_ui - DEBUG - Carregando relatórios
+2025-04-30 19:57:00,819 - controllers.report_controller - DEBUG - Buscando todos os relatórios
+2025-04-30 19:57:00,824 - controllers.report_controller - DEBUG - Relatório 1: {'id': 1, 'inspecao_id': 13, 'data_emissao': '2025-04-30', 'link_arquivo': 'C:/Users/jeanc/Downloads/Apresentacao_Sistema_Inspecoes_NR13.odp', 'observacoes': 'awd', 'tipo_inspecao': 'periodica', 'inspecao_resultado': 'aprovado', 'equipamento_tag': 'caldeira', 'equipamento_categoria': 'caldeira', 'engenheiro_nome': 'Engenheiro Beta'}
+2025-04-30 19:57:00,825 - controllers.report_controller - DEBUG - Encontrados 1 relatórios
+2025-04-30 19:57:00,837 - ui.admin_ui - DEBUG - Carregados 1 relatórios
+2025-04-30 19:57:00,840 - ui.admin_ui - DEBUG - Adicionando abas ao TabWidget
+2025-04-30 19:57:00,840 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-30 19:57:00,846 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-30 19:57:00,846 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-30 19:57:00,847 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-30 19:57:00,847 - ui.admin_ui - DEBUG - Configurando barra inferior
+2025-04-30 19:57:00,858 - ui.admin_ui - DEBUG - Interface inicializada com sucesso
+2025-04-30 19:57:00,859 - ui.admin_ui - DEBUG - Aplicando tema
+2025-04-30 19:57:00,875 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-30 19:57:00,878 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-30 19:57:00,878 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-30 19:57:00,879 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-30 19:57:00,880 - ui.admin_ui - INFO - AdminWindow inicializada com sucesso
+2025-04-30 19:57:00,885 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-30 19:57:00,885 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-30 19:57:00,886 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-30 19:57:00,886 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-30 19:57:00,939 - __main__ - INFO - Janela principal exibida para usuário: admin
+2025-04-30 19:57:23,429 - __main__ - INFO - Aplicação encerrada com código 0
+2025-04-30 19:57:48,842 - __main__ - INFO - === INICIANDO APLICAÇÃO ===
+2025-04-30 19:57:48,842 - __main__ - INFO - Inicializando banco de dados
+2025-04-30 19:57:48,856 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-30 19:57:48,995 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-30 19:57:49,044 - database.models - INFO - Tabelas criadas com sucesso
+2025-04-30 19:57:49,044 - __main__ - INFO - Verificando usuário admin
+2025-04-30 19:57:49,047 - __main__ - INFO - Resultado da criação do admin: Email já cadastrado
+2025-04-30 19:57:49,047 - __main__ - INFO - Criando instância do sistema
+2025-04-30 19:57:49,048 - __main__ - DEBUG - Iniciando construtor do SistemaInspecao
+2025-04-30 19:57:49,049 - __main__ - DEBUG - Criando QApplication
+2025-04-30 19:57:49,154 - __main__ - DEBUG - QApplication criado com sucesso
+2025-04-30 19:57:49,155 - __main__ - DEBUG - Criando AuthController
+2025-04-30 19:57:49,155 - __main__ - DEBUG - AuthController criado com sucesso
+2025-04-30 19:57:49,156 - __main__ - INFO - Sistema inicializado com sucesso
+2025-04-30 19:57:49,156 - __main__ - INFO - Executando a aplicação
+2025-04-30 19:57:49,156 - __main__ - INFO - Iniciando aplicação
+2025-04-30 19:57:49,157 - __main__ - DEBUG - Verificando imports
+2025-04-30 19:57:49,157 - __main__ - DEBUG - Import login_window OK
+2025-04-30 19:57:49,158 - __main__ - DEBUG - Import admin_ui OK
+2025-04-30 19:57:49,158 - __main__ - DEBUG - Import client_ui OK
+2025-04-30 19:57:49,159 - __main__ - DEBUG - Import modals OK
+2025-04-30 19:57:49,159 - __main__ - DEBUG - Diretório atual: C:\Users\jeanc\Documents\C-TREINA\sistema-inspecao-nr13
+2025-04-30 19:57:49,159 - __main__ - DEBUG - Chamando show_login()
+2025-04-30 19:57:49,160 - __main__ - DEBUG - Criando janela de login
+2025-04-30 19:57:49,293 - __main__ - DEBUG - Conectando sinal de login_success
+2025-04-30 19:57:49,294 - __main__ - DEBUG - Exibindo janela de login
+2025-04-30 19:57:50,018 - __main__ - INFO - Janela de login exibida com sucesso
+2025-04-30 19:57:50,018 - __main__ - DEBUG - show_login() executado com sucesso
+2025-04-30 19:57:50,019 - __main__ - DEBUG - Aguardando 1 segundo antes de iniciar o loop de eventos
+2025-04-30 19:57:51,019 - __main__ - INFO - Executando o loop de eventos da aplicação
+2025-04-30 19:57:53,910 - __main__ - INFO - Login bem sucedido para usuário ID: 2
+2025-04-30 19:57:53,919 - ui.admin_ui - DEBUG - Iniciando construtor do AdminWindow
+2025-04-30 19:57:53,919 - ui.admin_ui - DEBUG - Criando instância do DatabaseModels
+2025-04-30 19:57:53,920 - ui.admin_ui - DEBUG - Criando instância do EquipmentController
+2025-04-30 19:57:53,920 - controllers.equipment_controller - DEBUG - Iniciando EquipmentController
+2025-04-30 19:57:53,921 - ui.admin_ui - DEBUG - Criando instância do InspectionController
+2025-04-30 19:57:53,921 - controllers.inspection_controller - DEBUG - Iniciando InspectionController
+2025-04-30 19:57:53,922 - db.models - DEBUG - InspecaoModel inicializado
+2025-04-30 19:57:53,922 - ui.admin_ui - DEBUG - Criando instância do ReportController
+2025-04-30 19:57:53,923 - controllers.report_controller - DEBUG - Iniciando ReportController
+2025-04-30 19:57:53,924 - ui.admin_ui - DEBUG - Iniciando setup da UI
+2025-04-30 19:57:53,924 - ui.admin_ui - DEBUG - Iniciando setup da interface
+2025-04-30 19:57:53,935 - ui.admin_ui - DEBUG - Criando widget central
+2025-04-30 19:57:53,938 - ui.admin_ui - DEBUG - Criando abas
+2025-04-30 19:57:53,939 - ui.admin_ui - DEBUG - Configurando aba de usuários
+2025-04-30 19:57:53,956 - ui.admin_ui - DEBUG - Carregando usuários
+2025-04-30 19:57:53,956 - ui.admin_ui - DEBUG - Carregando usuários
+2025-04-30 19:57:53,957 - controllers.auth_controller - DEBUG - Buscando todos os usuários
+2025-04-30 19:57:53,958 - controllers.auth_controller - DEBUG - Encontrados 8 usuários
+2025-04-30 19:57:53,962 - ui.admin_ui - DEBUG - Configurando aba de equipamentos
+2025-04-30 19:57:53,967 - ui.admin_ui - DEBUG - Carregando equipamentos
+2025-04-30 19:57:53,967 - ui.admin_ui - DEBUG - Carregando equipamentos
+2025-04-30 19:57:53,968 - controllers.equipment_controller - DEBUG - Buscando todos os equipamentos
+2025-04-30 19:57:53,971 - controllers.equipment_controller - DEBUG - Encontrados 6 equipamentos
+2025-04-30 19:57:53,972 - ui.admin_ui - DEBUG - Carregando equipamento ID=1, Tag=caldeira
+2025-04-30 19:57:53,972 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 1
+2025-04-30 19:57:53,972 - ui.admin_ui - DEBUG - Carregando equipamento ID=3, Tag=TAG-001
+2025-04-30 19:57:53,973 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 3
+2025-04-30 19:57:53,973 - ui.admin_ui - DEBUG - Carregando equipamento ID=4, Tag=TAG-002
+2025-04-30 19:57:53,973 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 4
+2025-04-30 19:57:53,974 - ui.admin_ui - DEBUG - Carregando equipamento ID=5, Tag=TAG-003
+2025-04-30 19:57:53,974 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 5
+2025-04-30 19:57:53,975 - ui.admin_ui - DEBUG - Carregando equipamento ID=6, Tag=TAG-001
+2025-04-30 19:57:53,975 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 6
+2025-04-30 19:57:53,975 - ui.admin_ui - DEBUG - Carregando equipamento ID=8, Tag=TAG-003
+2025-04-30 19:57:53,976 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 8
+2025-04-30 19:57:53,976 - ui.admin_ui - DEBUG - Carregados 6 equipamentos na tabela
+2025-04-30 19:57:53,978 - ui.admin_ui - DEBUG - Configurando aba de inspeções
+2025-04-30 19:57:53,982 - ui.admin_ui - DEBUG - Carregando inspeções do banco de dados
+2025-04-30 19:57:53,982 - controllers.equipment_controller - DEBUG - Buscando todos os equipamentos
+2025-04-30 19:57:53,983 - controllers.equipment_controller - DEBUG - Encontrados 6 equipamentos
+2025-04-30 19:57:53,983 - ui.admin_ui - DEBUG - Carregados 6 equipamentos
+2025-04-30 19:57:53,987 - ui.admin_ui - DEBUG - Carregadas 2 inspeções
+2025-04-30 19:57:53,990 - ui.admin_ui - DEBUG - Configurando aba de relatórios
+2025-04-30 19:57:53,994 - ui.admin_ui - DEBUG - Carregando relatórios do banco de dados
+2025-04-30 19:57:53,994 - ui.admin_ui - DEBUG - Carregando relatórios
+2025-04-30 19:57:53,994 - controllers.report_controller - DEBUG - Buscando todos os relatórios
+2025-04-30 19:57:53,999 - controllers.report_controller - DEBUG - Relatório 1: {'id': 1, 'inspecao_id': 13, 'data_emissao': '2025-04-30', 'link_arquivo': 'C:/Users/jeanc/Downloads/Apresentacao_Sistema_Inspecoes_NR13.odp', 'observacoes': 'awd', 'tipo_inspecao': 'periodica', 'inspecao_resultado': 'aprovado', 'equipamento_tag': 'caldeira', 'equipamento_categoria': 'caldeira', 'engenheiro_nome': 'Engenheiro Beta'}
+2025-04-30 19:57:54,000 - controllers.report_controller - DEBUG - Encontrados 1 relatórios
+2025-04-30 19:57:54,012 - ui.admin_ui - DEBUG - Carregados 1 relatórios
+2025-04-30 19:57:54,015 - ui.admin_ui - DEBUG - Adicionando abas ao TabWidget
+2025-04-30 19:57:54,015 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-30 19:57:54,021 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-30 19:57:54,022 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-30 19:57:54,023 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-30 19:57:54,023 - ui.admin_ui - DEBUG - Configurando barra inferior
+2025-04-30 19:57:54,034 - ui.admin_ui - DEBUG - Interface inicializada com sucesso
+2025-04-30 19:57:54,035 - ui.admin_ui - DEBUG - Aplicando tema
+2025-04-30 19:57:54,050 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-30 19:57:54,052 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-30 19:57:54,053 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-30 19:57:54,053 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-30 19:57:54,054 - ui.admin_ui - INFO - AdminWindow inicializada com sucesso
+2025-04-30 19:57:54,058 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-30 19:57:54,059 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-30 19:57:54,059 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-30 19:57:54,060 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-30 19:57:54,117 - __main__ - INFO - Janela principal exibida para usuário: admin
+2025-04-30 19:57:57,986 - __main__ - INFO - Aplicação encerrada com código 0
+2025-04-30 19:58:31,214 - __main__ - INFO - === INICIANDO APLICAÇÃO ===
+2025-04-30 19:58:31,215 - __main__ - INFO - Inicializando banco de dados
+2025-04-30 19:58:31,222 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-30 19:58:31,342 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-30 19:58:31,381 - database.models - INFO - Tabelas criadas com sucesso
+2025-04-30 19:58:31,382 - __main__ - INFO - Verificando usuário admin
+2025-04-30 19:58:31,384 - __main__ - INFO - Resultado da criação do admin: Email já cadastrado
+2025-04-30 19:58:31,385 - __main__ - INFO - Criando instância do sistema
+2025-04-30 19:58:31,385 - __main__ - DEBUG - Iniciando construtor do SistemaInspecao
+2025-04-30 19:58:31,385 - __main__ - DEBUG - Criando QApplication
+2025-04-30 19:58:31,467 - __main__ - DEBUG - QApplication criado com sucesso
+2025-04-30 19:58:31,468 - __main__ - DEBUG - Criando AuthController
+2025-04-30 19:58:31,468 - __main__ - DEBUG - AuthController criado com sucesso
+2025-04-30 19:58:31,469 - __main__ - INFO - Sistema inicializado com sucesso
+2025-04-30 19:58:31,469 - __main__ - INFO - Executando a aplicação
+2025-04-30 19:58:31,469 - __main__ - INFO - Iniciando aplicação
+2025-04-30 19:58:31,469 - __main__ - DEBUG - Verificando imports
+2025-04-30 19:58:31,470 - __main__ - DEBUG - Import login_window OK
+2025-04-30 19:58:31,470 - __main__ - DEBUG - Import admin_ui OK
+2025-04-30 19:58:31,470 - __main__ - DEBUG - Import client_ui OK
+2025-04-30 19:58:31,470 - __main__ - DEBUG - Import modals OK
+2025-04-30 19:58:31,471 - __main__ - DEBUG - Diretório atual: C:\Users\jeanc\Documents\C-TREINA\sistema-inspecao-nr13
+2025-04-30 19:58:31,471 - __main__ - DEBUG - Chamando show_login()
+2025-04-30 19:58:31,471 - __main__ - DEBUG - Criando janela de login
+2025-04-30 19:58:31,588 - __main__ - DEBUG - Conectando sinal de login_success
+2025-04-30 19:58:31,589 - __main__ - DEBUG - Exibindo janela de login
+2025-04-30 19:58:32,290 - __main__ - INFO - Janela de login exibida com sucesso
+2025-04-30 19:58:32,290 - __main__ - DEBUG - show_login() executado com sucesso
+2025-04-30 19:58:32,291 - __main__ - DEBUG - Aguardando 1 segundo antes de iniciar o loop de eventos
+2025-04-30 19:58:33,292 - __main__ - INFO - Executando o loop de eventos da aplicação
+2025-04-30 19:58:36,468 - __main__ - INFO - Login bem sucedido para usuário ID: 2
+2025-04-30 19:58:36,478 - ui.admin_ui - DEBUG - Iniciando construtor do AdminWindow
+2025-04-30 19:58:36,478 - ui.admin_ui - DEBUG - Criando instância do DatabaseModels
+2025-04-30 19:58:36,479 - ui.admin_ui - DEBUG - Criando instância do EquipmentController
+2025-04-30 19:58:36,480 - controllers.equipment_controller - DEBUG - Iniciando EquipmentController
+2025-04-30 19:58:36,480 - ui.admin_ui - DEBUG - Criando instância do InspectionController
+2025-04-30 19:58:36,481 - controllers.inspection_controller - DEBUG - Iniciando InspectionController
+2025-04-30 19:58:36,482 - db.models - DEBUG - InspecaoModel inicializado
+2025-04-30 19:58:36,483 - ui.admin_ui - DEBUG - Criando instância do ReportController
+2025-04-30 19:58:36,483 - controllers.report_controller - DEBUG - Iniciando ReportController
+2025-04-30 19:58:36,484 - ui.admin_ui - DEBUG - Iniciando setup da UI
+2025-04-30 19:58:36,485 - ui.admin_ui - DEBUG - Iniciando setup da interface
+2025-04-30 19:58:36,496 - ui.admin_ui - DEBUG - Criando widget central
+2025-04-30 19:58:36,498 - ui.admin_ui - DEBUG - Criando abas
+2025-04-30 19:58:36,499 - ui.admin_ui - DEBUG - Configurando aba de usuários
+2025-04-30 19:58:36,517 - ui.admin_ui - DEBUG - Carregando usuários
+2025-04-30 19:58:36,517 - ui.admin_ui - DEBUG - Carregando usuários
+2025-04-30 19:58:36,517 - controllers.auth_controller - DEBUG - Buscando todos os usuários
+2025-04-30 19:58:36,519 - controllers.auth_controller - DEBUG - Encontrados 8 usuários
+2025-04-30 19:58:36,523 - ui.admin_ui - DEBUG - Configurando aba de equipamentos
+2025-04-30 19:58:36,529 - ui.admin_ui - DEBUG - Carregando equipamentos
+2025-04-30 19:58:36,530 - ui.admin_ui - DEBUG - Carregando equipamentos
+2025-04-30 19:58:36,530 - controllers.equipment_controller - DEBUG - Buscando todos os equipamentos
+2025-04-30 19:58:36,533 - controllers.equipment_controller - DEBUG - Encontrados 6 equipamentos
+2025-04-30 19:58:36,534 - ui.admin_ui - DEBUG - Carregando equipamento ID=1, Tag=caldeira
+2025-04-30 19:58:36,534 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 1
+2025-04-30 19:58:36,534 - ui.admin_ui - DEBUG - Carregando equipamento ID=3, Tag=TAG-001
+2025-04-30 19:58:36,535 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 3
+2025-04-30 19:58:36,535 - ui.admin_ui - DEBUG - Carregando equipamento ID=4, Tag=TAG-002
+2025-04-30 19:58:36,535 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 4
+2025-04-30 19:58:36,536 - ui.admin_ui - DEBUG - Carregando equipamento ID=5, Tag=TAG-003
+2025-04-30 19:58:36,536 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 5
+2025-04-30 19:58:36,536 - ui.admin_ui - DEBUG - Carregando equipamento ID=6, Tag=TAG-001
+2025-04-30 19:58:36,537 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 6
+2025-04-30 19:58:36,537 - ui.admin_ui - DEBUG - Carregando equipamento ID=8, Tag=TAG-003
+2025-04-30 19:58:36,537 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 8
+2025-04-30 19:58:36,538 - ui.admin_ui - DEBUG - Carregados 6 equipamentos na tabela
+2025-04-30 19:58:36,540 - ui.admin_ui - DEBUG - Configurando aba de inspeções
+2025-04-30 19:58:36,542 - ui.admin_ui - DEBUG - Carregando inspeções do banco de dados
+2025-04-30 19:58:36,543 - controllers.equipment_controller - DEBUG - Buscando todos os equipamentos
+2025-04-30 19:58:36,544 - controllers.equipment_controller - DEBUG - Encontrados 6 equipamentos
+2025-04-30 19:58:36,544 - ui.admin_ui - DEBUG - Carregados 6 equipamentos
+2025-04-30 19:58:36,548 - ui.admin_ui - DEBUG - Carregadas 2 inspeções
+2025-04-30 19:58:36,551 - ui.admin_ui - DEBUG - Configurando aba de relatórios
+2025-04-30 19:58:36,554 - ui.admin_ui - DEBUG - Carregando relatórios do banco de dados
+2025-04-30 19:58:36,555 - ui.admin_ui - DEBUG - Carregando relatórios
+2025-04-30 19:58:36,555 - controllers.report_controller - DEBUG - Buscando todos os relatórios
+2025-04-30 19:58:36,560 - controllers.report_controller - DEBUG - Relatório 1: {'id': 1, 'inspecao_id': 13, 'data_emissao': '2025-04-30', 'link_arquivo': 'C:/Users/jeanc/Downloads/Apresentacao_Sistema_Inspecoes_NR13.odp', 'observacoes': 'awd', 'tipo_inspecao': 'periodica', 'inspecao_resultado': 'aprovado', 'equipamento_tag': 'caldeira', 'equipamento_categoria': 'caldeira', 'engenheiro_nome': 'Engenheiro Beta'}
+2025-04-30 19:58:36,560 - controllers.report_controller - DEBUG - Encontrados 1 relatórios
+2025-04-30 19:58:36,572 - ui.admin_ui - DEBUG - Carregados 1 relatórios
+2025-04-30 19:58:36,575 - ui.admin_ui - DEBUG - Adicionando abas ao TabWidget
+2025-04-30 19:58:36,576 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-30 19:58:36,582 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-30 19:58:36,583 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-30 19:58:36,583 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-30 19:58:36,584 - ui.admin_ui - DEBUG - Configurando barra inferior
+2025-04-30 19:58:36,594 - ui.admin_ui - DEBUG - Interface inicializada com sucesso
+2025-04-30 19:58:36,594 - ui.admin_ui - DEBUG - Aplicando tema
+2025-04-30 19:58:36,610 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-30 19:58:36,612 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-30 19:58:36,613 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-30 19:58:36,613 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-30 19:58:36,614 - ui.admin_ui - INFO - AdminWindow inicializada com sucesso
+2025-04-30 19:58:36,618 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-30 19:58:36,618 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-30 19:58:36,619 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-30 19:58:36,619 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-30 19:58:36,675 - __main__ - INFO - Janela principal exibida para usuário: admin
+2025-04-30 20:06:18,525 - __main__ - INFO - Aplicação encerrada com código 0
+2025-04-30 20:06:51,575 - __main__ - INFO - === INICIANDO APLICAÇÃO ===
+2025-04-30 20:06:51,576 - __main__ - INFO - Inicializando banco de dados
+2025-04-30 20:06:51,583 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-30 20:06:51,769 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-30 20:06:51,848 - database.models - INFO - Tabelas criadas com sucesso
+2025-04-30 20:06:51,849 - __main__ - INFO - Verificando usuário admin
+2025-04-30 20:06:51,854 - __main__ - INFO - Resultado da criação do admin: Email já cadastrado
+2025-04-30 20:06:51,854 - __main__ - INFO - Criando instância do sistema
+2025-04-30 20:06:51,855 - __main__ - DEBUG - Iniciando construtor do SistemaInspecao
+2025-04-30 20:06:51,856 - __main__ - DEBUG - Criando QApplication
+2025-04-30 20:06:51,946 - __main__ - DEBUG - QApplication criado com sucesso
+2025-04-30 20:06:51,947 - __main__ - DEBUG - Criando AuthController
+2025-04-30 20:06:51,947 - __main__ - DEBUG - AuthController criado com sucesso
+2025-04-30 20:06:51,948 - __main__ - INFO - Sistema inicializado com sucesso
+2025-04-30 20:06:51,948 - __main__ - INFO - Executando a aplicação
+2025-04-30 20:06:51,949 - __main__ - INFO - Iniciando aplicação
+2025-04-30 20:06:51,949 - __main__ - DEBUG - Verificando imports
+2025-04-30 20:06:51,950 - __main__ - DEBUG - Import login_window OK
+2025-04-30 20:06:51,950 - __main__ - DEBUG - Import admin_ui OK
+2025-04-30 20:06:51,951 - __main__ - DEBUG - Import client_ui OK
+2025-04-30 20:06:51,951 - __main__ - DEBUG - Import modals OK
+2025-04-30 20:06:51,951 - __main__ - DEBUG - Diretório atual: C:\Users\jeanc\Documents\C-TREINA\sistema-inspecao-nr13
+2025-04-30 20:06:51,952 - __main__ - DEBUG - Chamando show_login()
+2025-04-30 20:06:51,952 - __main__ - DEBUG - Criando janela de login
+2025-04-30 20:06:52,075 - __main__ - DEBUG - Conectando sinal de login_success
+2025-04-30 20:06:52,076 - __main__ - DEBUG - Exibindo janela de login
+2025-04-30 20:06:52,740 - __main__ - INFO - Janela de login exibida com sucesso
+2025-04-30 20:06:52,740 - __main__ - DEBUG - show_login() executado com sucesso
+2025-04-30 20:06:52,741 - __main__ - DEBUG - Aguardando 1 segundo antes de iniciar o loop de eventos
+2025-04-30 20:06:53,742 - __main__ - INFO - Executando o loop de eventos da aplicação
+2025-04-30 20:06:56,649 - __main__ - INFO - Login bem sucedido para usuário ID: 2
+2025-04-30 20:06:56,659 - ui.admin_ui - DEBUG - Iniciando construtor do AdminWindow
+2025-04-30 20:06:56,659 - ui.admin_ui - DEBUG - Criando instância do DatabaseModels
+2025-04-30 20:06:56,660 - ui.admin_ui - DEBUG - Criando instância do EquipmentController
+2025-04-30 20:06:56,661 - controllers.equipment_controller - DEBUG - Iniciando EquipmentController
+2025-04-30 20:06:56,661 - ui.admin_ui - DEBUG - Criando instância do InspectionController
+2025-04-30 20:06:56,662 - controllers.inspection_controller - DEBUG - Iniciando InspectionController
+2025-04-30 20:06:56,662 - db.models - DEBUG - InspecaoModel inicializado
+2025-04-30 20:06:56,663 - ui.admin_ui - DEBUG - Criando instância do ReportController
+2025-04-30 20:06:56,663 - controllers.report_controller - DEBUG - Iniciando ReportController
+2025-04-30 20:06:56,664 - ui.admin_ui - DEBUG - Iniciando setup da UI
+2025-04-30 20:06:56,665 - ui.admin_ui - DEBUG - Iniciando setup da interface
+2025-04-30 20:06:56,675 - ui.admin_ui - DEBUG - Criando widget central
+2025-04-30 20:06:56,678 - ui.admin_ui - DEBUG - Criando abas
+2025-04-30 20:06:56,679 - ui.admin_ui - DEBUG - Configurando aba de usuários
+2025-04-30 20:06:56,691 - ui.admin_ui - DEBUG - Carregando usuários
+2025-04-30 20:06:56,691 - ui.admin_ui - DEBUG - Carregando usuários
+2025-04-30 20:06:56,692 - controllers.auth_controller - DEBUG - Buscando todos os usuários
+2025-04-30 20:06:56,694 - controllers.auth_controller - DEBUG - Encontrados 8 usuários
+2025-04-30 20:06:56,697 - ui.admin_ui - DEBUG - Configurando aba de equipamentos
+2025-04-30 20:06:56,703 - ui.admin_ui - DEBUG - Carregando equipamentos
+2025-04-30 20:06:56,704 - ui.admin_ui - DEBUG - Carregando equipamentos
+2025-04-30 20:06:56,704 - controllers.equipment_controller - DEBUG - Buscando todos os equipamentos
+2025-04-30 20:06:56,710 - controllers.equipment_controller - DEBUG - Encontrados 6 equipamentos
+2025-04-30 20:06:56,711 - ui.admin_ui - DEBUG - Carregando equipamento ID=1, Tag=caldeira
+2025-04-30 20:06:56,711 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 1
+2025-04-30 20:06:56,712 - ui.admin_ui - DEBUG - Carregando equipamento ID=3, Tag=TAG-001
+2025-04-30 20:06:56,712 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 3
+2025-04-30 20:06:56,713 - ui.admin_ui - DEBUG - Carregando equipamento ID=4, Tag=TAG-002
+2025-04-30 20:06:56,713 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 4
+2025-04-30 20:06:56,714 - ui.admin_ui - DEBUG - Carregando equipamento ID=5, Tag=TAG-003
+2025-04-30 20:06:56,714 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 5
+2025-04-30 20:06:56,714 - ui.admin_ui - DEBUG - Carregando equipamento ID=6, Tag=TAG-001
+2025-04-30 20:06:56,715 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 6
+2025-04-30 20:06:56,715 - ui.admin_ui - DEBUG - Carregando equipamento ID=8, Tag=TAG-003
+2025-04-30 20:06:56,716 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 8
+2025-04-30 20:06:56,716 - ui.admin_ui - DEBUG - Carregados 6 equipamentos na tabela
+2025-04-30 20:06:56,718 - ui.admin_ui - DEBUG - Configurando aba de inspeções
+2025-04-30 20:06:56,721 - ui.admin_ui - DEBUG - Carregando inspeções do banco de dados
+2025-04-30 20:06:56,721 - controllers.equipment_controller - DEBUG - Buscando todos os equipamentos
+2025-04-30 20:06:56,722 - controllers.equipment_controller - DEBUG - Encontrados 6 equipamentos
+2025-04-30 20:06:56,723 - ui.admin_ui - DEBUG - Carregados 6 equipamentos
+2025-04-30 20:06:56,728 - ui.admin_ui - DEBUG - Carregadas 2 inspeções
+2025-04-30 20:06:56,731 - ui.admin_ui - DEBUG - Configurando aba de relatórios
+2025-04-30 20:06:56,734 - ui.admin_ui - DEBUG - Carregando relatórios do banco de dados
+2025-04-30 20:06:56,734 - ui.admin_ui - DEBUG - Carregando relatórios
+2025-04-30 20:06:56,734 - controllers.report_controller - DEBUG - Buscando todos os relatórios
+2025-04-30 20:06:56,739 - controllers.report_controller - DEBUG - Relatório 1: {'id': 1, 'inspecao_id': 13, 'data_emissao': '2025-04-30', 'link_arquivo': 'C:/Users/jeanc/Downloads/Apresentacao_Sistema_Inspecoes_NR13.odp', 'observacoes': 'awd', 'tipo_inspecao': 'periodica', 'inspecao_resultado': 'aprovado', 'equipamento_tag': 'caldeira', 'equipamento_categoria': 'caldeira', 'engenheiro_nome': 'Engenheiro Beta'}
+2025-04-30 20:06:56,740 - controllers.report_controller - DEBUG - Encontrados 1 relatórios
+2025-04-30 20:06:56,752 - ui.admin_ui - DEBUG - Carregados 1 relatórios
+2025-04-30 20:06:56,755 - ui.admin_ui - DEBUG - Adicionando abas ao TabWidget
+2025-04-30 20:06:56,755 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-30 20:06:56,761 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-30 20:06:56,761 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-30 20:06:56,762 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-30 20:06:56,762 - ui.admin_ui - DEBUG - Configurando barra inferior
+2025-04-30 20:06:56,772 - ui.admin_ui - DEBUG - Interface inicializada com sucesso
+2025-04-30 20:06:56,773 - ui.admin_ui - DEBUG - Aplicando tema
+2025-04-30 20:06:56,798 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-30 20:06:56,801 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-30 20:06:56,802 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-30 20:06:56,803 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-30 20:06:56,804 - ui.admin_ui - INFO - AdminWindow inicializada com sucesso
+2025-04-30 20:06:56,809 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-30 20:06:56,810 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-30 20:06:56,810 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-30 20:06:56,811 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-30 20:06:56,862 - __main__ - INFO - Janela principal exibida para usuário: admin
+2025-04-30 20:07:00,980 - __main__ - INFO - Aplicação encerrada com código 0
+2025-04-30 20:07:41,297 - __main__ - INFO - === INICIANDO APLICAÇÃO ===
+2025-04-30 20:07:41,297 - __main__ - INFO - Inicializando banco de dados
+2025-04-30 20:07:41,304 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-30 20:07:41,433 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-30 20:07:41,486 - database.models - INFO - Tabelas criadas com sucesso
+2025-04-30 20:07:41,487 - __main__ - INFO - Verificando usuário admin
+2025-04-30 20:07:41,489 - __main__ - INFO - Resultado da criação do admin: Email já cadastrado
+2025-04-30 20:07:41,489 - __main__ - INFO - Criando instância do sistema
+2025-04-30 20:07:41,490 - __main__ - DEBUG - Iniciando construtor do SistemaInspecao
+2025-04-30 20:07:41,490 - __main__ - DEBUG - Criando QApplication
+2025-04-30 20:07:41,576 - __main__ - DEBUG - QApplication criado com sucesso
+2025-04-30 20:07:41,576 - __main__ - DEBUG - Criando AuthController
+2025-04-30 20:07:41,577 - __main__ - DEBUG - AuthController criado com sucesso
+2025-04-30 20:07:41,577 - __main__ - INFO - Sistema inicializado com sucesso
+2025-04-30 20:07:41,577 - __main__ - INFO - Executando a aplicação
+2025-04-30 20:07:41,578 - __main__ - INFO - Iniciando aplicação
+2025-04-30 20:07:41,578 - __main__ - DEBUG - Verificando imports
+2025-04-30 20:07:41,578 - __main__ - DEBUG - Import login_window OK
+2025-04-30 20:07:41,579 - __main__ - DEBUG - Import admin_ui OK
+2025-04-30 20:07:41,579 - __main__ - DEBUG - Import client_ui OK
+2025-04-30 20:07:41,579 - __main__ - DEBUG - Import modals OK
+2025-04-30 20:07:41,580 - __main__ - DEBUG - Diretório atual: C:\Users\jeanc\Documents\C-TREINA\sistema-inspecao-nr13
+2025-04-30 20:07:41,580 - __main__ - DEBUG - Chamando show_login()
+2025-04-30 20:07:41,580 - __main__ - DEBUG - Criando janela de login
+2025-04-30 20:07:41,704 - __main__ - DEBUG - Conectando sinal de login_success
+2025-04-30 20:07:41,704 - __main__ - DEBUG - Exibindo janela de login
+2025-04-30 20:07:42,372 - __main__ - INFO - Janela de login exibida com sucesso
+2025-04-30 20:07:42,372 - __main__ - DEBUG - show_login() executado com sucesso
+2025-04-30 20:07:42,373 - __main__ - DEBUG - Aguardando 1 segundo antes de iniciar o loop de eventos
+2025-04-30 20:07:43,374 - __main__ - INFO - Executando o loop de eventos da aplicação
+2025-04-30 20:07:47,703 - __main__ - INFO - Login bem sucedido para usuário ID: 2
+2025-04-30 20:07:47,713 - ui.admin_ui - DEBUG - Iniciando construtor do AdminWindow
+2025-04-30 20:07:47,714 - ui.admin_ui - DEBUG - Criando instância do DatabaseModels
+2025-04-30 20:07:47,715 - ui.admin_ui - DEBUG - Criando instância do EquipmentController
+2025-04-30 20:07:47,715 - controllers.equipment_controller - DEBUG - Iniciando EquipmentController
+2025-04-30 20:07:47,716 - ui.admin_ui - DEBUG - Criando instância do InspectionController
+2025-04-30 20:07:47,716 - controllers.inspection_controller - DEBUG - Iniciando InspectionController
+2025-04-30 20:07:47,717 - db.models - DEBUG - InspecaoModel inicializado
+2025-04-30 20:07:47,718 - ui.admin_ui - DEBUG - Criando instância do ReportController
+2025-04-30 20:07:47,718 - controllers.report_controller - DEBUG - Iniciando ReportController
+2025-04-30 20:07:47,719 - ui.admin_ui - DEBUG - Iniciando setup da UI
+2025-04-30 20:07:47,720 - ui.admin_ui - DEBUG - Iniciando setup da interface
+2025-04-30 20:07:47,730 - ui.admin_ui - DEBUG - Criando widget central
+2025-04-30 20:07:47,738 - ui.admin_ui - DEBUG - Criando abas
+2025-04-30 20:07:47,739 - ui.admin_ui - DEBUG - Configurando aba de usuários
+2025-04-30 20:07:47,753 - ui.admin_ui - DEBUG - Carregando usuários
+2025-04-30 20:07:47,754 - ui.admin_ui - DEBUG - Carregando usuários
+2025-04-30 20:07:47,754 - controllers.auth_controller - DEBUG - Buscando todos os usuários
+2025-04-30 20:07:47,756 - controllers.auth_controller - DEBUG - Encontrados 8 usuários
+2025-04-30 20:07:47,760 - ui.admin_ui - DEBUG - Configurando aba de equipamentos
+2025-04-30 20:07:47,765 - ui.admin_ui - DEBUG - Carregando equipamentos
+2025-04-30 20:07:47,765 - ui.admin_ui - DEBUG - Carregando equipamentos
+2025-04-30 20:07:47,766 - controllers.equipment_controller - DEBUG - Buscando todos os equipamentos
+2025-04-30 20:07:47,769 - controllers.equipment_controller - DEBUG - Encontrados 6 equipamentos
+2025-04-30 20:07:47,770 - ui.admin_ui - DEBUG - Carregando equipamento ID=1, Tag=caldeira
+2025-04-30 20:07:47,770 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 1
+2025-04-30 20:07:47,771 - ui.admin_ui - DEBUG - Carregando equipamento ID=3, Tag=TAG-001
+2025-04-30 20:07:47,772 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 3
+2025-04-30 20:07:47,772 - ui.admin_ui - DEBUG - Carregando equipamento ID=4, Tag=TAG-002
+2025-04-30 20:07:47,772 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 4
+2025-04-30 20:07:47,773 - ui.admin_ui - DEBUG - Carregando equipamento ID=5, Tag=TAG-003
+2025-04-30 20:07:47,773 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 5
+2025-04-30 20:07:47,773 - ui.admin_ui - DEBUG - Carregando equipamento ID=6, Tag=TAG-001
+2025-04-30 20:07:47,774 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 6
+2025-04-30 20:07:47,774 - ui.admin_ui - DEBUG - Carregando equipamento ID=8, Tag=TAG-003
+2025-04-30 20:07:47,775 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 8
+2025-04-30 20:07:47,775 - ui.admin_ui - DEBUG - Carregados 6 equipamentos na tabela
+2025-04-30 20:07:47,778 - ui.admin_ui - DEBUG - Configurando aba de inspeções
+2025-04-30 20:07:47,781 - ui.admin_ui - DEBUG - Carregando inspeções do banco de dados
+2025-04-30 20:07:47,781 - controllers.equipment_controller - DEBUG - Buscando todos os equipamentos
+2025-04-30 20:07:47,782 - controllers.equipment_controller - DEBUG - Encontrados 6 equipamentos
+2025-04-30 20:07:47,782 - ui.admin_ui - DEBUG - Carregados 6 equipamentos
+2025-04-30 20:07:47,786 - ui.admin_ui - DEBUG - Carregadas 2 inspeções
+2025-04-30 20:07:47,789 - ui.admin_ui - DEBUG - Configurando aba de relatórios
+2025-04-30 20:07:47,792 - ui.admin_ui - DEBUG - Carregando relatórios do banco de dados
+2025-04-30 20:07:47,792 - ui.admin_ui - DEBUG - Carregando relatórios
+2025-04-30 20:07:47,793 - controllers.report_controller - DEBUG - Buscando todos os relatórios
+2025-04-30 20:07:47,797 - controllers.report_controller - DEBUG - Relatório 1: {'id': 1, 'inspecao_id': 13, 'data_emissao': '2025-04-30', 'link_arquivo': 'C:/Users/jeanc/Downloads/Apresentacao_Sistema_Inspecoes_NR13.odp', 'observacoes': 'awd', 'tipo_inspecao': 'periodica', 'inspecao_resultado': 'aprovado', 'equipamento_tag': 'caldeira', 'equipamento_categoria': 'caldeira', 'engenheiro_nome': 'Engenheiro Beta'}
+2025-04-30 20:07:47,798 - controllers.report_controller - DEBUG - Encontrados 1 relatórios
+2025-04-30 20:07:47,810 - ui.admin_ui - DEBUG - Carregados 1 relatórios
+2025-04-30 20:07:47,813 - ui.admin_ui - DEBUG - Adicionando abas ao TabWidget
+2025-04-30 20:07:47,813 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-30 20:07:47,820 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-30 20:07:47,821 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-30 20:07:47,821 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-30 20:07:47,822 - ui.admin_ui - DEBUG - Configurando barra inferior
+2025-04-30 20:07:47,833 - ui.admin_ui - DEBUG - Interface inicializada com sucesso
+2025-04-30 20:07:47,833 - ui.admin_ui - DEBUG - Aplicando tema
+2025-04-30 20:07:47,850 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-30 20:07:47,852 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-30 20:07:47,853 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-30 20:07:47,854 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-30 20:07:47,855 - ui.admin_ui - INFO - AdminWindow inicializada com sucesso
+2025-04-30 20:07:47,860 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-30 20:07:47,861 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-30 20:07:47,861 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-30 20:07:47,862 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-30 20:07:47,915 - __main__ - INFO - Janela principal exibida para usuário: admin
+2025-04-30 20:10:02,929 - ui.admin_ui - DEBUG - Ativando/desativando equipamento selecionado
+2025-04-30 20:10:02,929 - ui.admin_ui - DEBUG - Linha selecionada: 4
+2025-04-30 20:10:02,930 - ui.admin_ui - DEBUG - Tag do equipamento: TAG-001
+2025-04-30 20:10:02,930 - ui.admin_ui - DEBUG - Tentativa 1 - ID do equipamento obtido via UserRole: 6
+2025-04-30 20:15:34,399 - __main__ - INFO - Aplicação encerrada com código 0
+2025-04-30 20:15:39,283 - __main__ - INFO - === INICIANDO APLICAÇÃO ===
+2025-04-30 20:15:39,284 - __main__ - INFO - Inicializando banco de dados
+2025-04-30 20:15:39,296 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-30 20:15:39,415 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-30 20:15:39,463 - database.models - INFO - Tabelas criadas com sucesso
+2025-04-30 20:15:39,464 - __main__ - INFO - Verificando usuário admin
+2025-04-30 20:15:39,467 - __main__ - INFO - Resultado da criação do admin: Email já cadastrado
+2025-04-30 20:15:39,467 - __main__ - INFO - Criando instância do sistema
+2025-04-30 20:15:39,468 - __main__ - DEBUG - Iniciando construtor do SistemaInspecao
+2025-04-30 20:15:39,468 - __main__ - DEBUG - Criando QApplication
+2025-04-30 20:15:39,577 - __main__ - DEBUG - QApplication criado com sucesso
+2025-04-30 20:15:39,578 - __main__ - DEBUG - Criando AuthController
+2025-04-30 20:15:39,578 - __main__ - DEBUG - AuthController criado com sucesso
+2025-04-30 20:15:39,579 - __main__ - INFO - Sistema inicializado com sucesso
+2025-04-30 20:15:39,579 - __main__ - INFO - Executando a aplicação
+2025-04-30 20:15:39,580 - __main__ - INFO - Iniciando aplicação
+2025-04-30 20:15:39,580 - __main__ - DEBUG - Verificando imports
+2025-04-30 20:15:39,580 - __main__ - DEBUG - Import login_window OK
+2025-04-30 20:15:39,581 - __main__ - DEBUG - Import admin_ui OK
+2025-04-30 20:15:39,581 - __main__ - DEBUG - Import client_ui OK
+2025-04-30 20:15:39,582 - __main__ - DEBUG - Import modals OK
+2025-04-30 20:15:39,582 - __main__ - DEBUG - Diretório atual: C:\Users\jeanc\Documents\C-TREINA\sistema-inspecao-nr13
+2025-04-30 20:15:39,582 - __main__ - DEBUG - Chamando show_login()
+2025-04-30 20:15:39,583 - __main__ - DEBUG - Criando janela de login
+2025-04-30 20:15:39,728 - __main__ - DEBUG - Conectando sinal de login_success
+2025-04-30 20:15:39,729 - __main__ - DEBUG - Exibindo janela de login
+2025-04-30 20:15:40,376 - __main__ - INFO - Janela de login exibida com sucesso
+2025-04-30 20:15:40,377 - __main__ - DEBUG - show_login() executado com sucesso
+2025-04-30 20:15:40,377 - __main__ - DEBUG - Aguardando 1 segundo antes de iniciar o loop de eventos
+2025-04-30 20:15:41,379 - __main__ - INFO - Executando o loop de eventos da aplicação
+2025-04-30 20:15:44,481 - __main__ - INFO - Login bem sucedido para usuário ID: 2
+2025-04-30 20:15:44,488 - ui.admin_ui - DEBUG - Iniciando construtor do AdminWindow
+2025-04-30 20:15:44,489 - ui.admin_ui - DEBUG - Criando instância do DatabaseModels
+2025-04-30 20:15:44,489 - ui.admin_ui - DEBUG - Criando instância do EquipmentController
+2025-04-30 20:15:44,490 - controllers.equipment_controller - DEBUG - Iniciando EquipmentController
+2025-04-30 20:15:44,490 - ui.admin_ui - DEBUG - Criando instância do InspectionController
+2025-04-30 20:15:44,491 - controllers.inspection_controller - DEBUG - Iniciando InspectionController
+2025-04-30 20:15:44,491 - db.models - DEBUG - InspecaoModel inicializado
+2025-04-30 20:15:44,492 - ui.admin_ui - DEBUG - Criando instância do ReportController
+2025-04-30 20:15:44,492 - controllers.report_controller - DEBUG - Iniciando ReportController
+2025-04-30 20:15:44,493 - ui.admin_ui - DEBUG - Iniciando setup da UI
+2025-04-30 20:15:44,493 - ui.admin_ui - DEBUG - Iniciando setup da interface
+2025-04-30 20:15:44,499 - ui.admin_ui - DEBUG - Criando widget central
+2025-04-30 20:15:44,504 - ui.admin_ui - DEBUG - Criando abas
+2025-04-30 20:15:44,505 - ui.admin_ui - DEBUG - Configurando aba de usuários
+2025-04-30 20:15:44,520 - ui.admin_ui - DEBUG - Carregando usuários
+2025-04-30 20:15:44,520 - ui.admin_ui - DEBUG - Carregando usuários
+2025-04-30 20:15:44,520 - controllers.auth_controller - DEBUG - Buscando todos os usuários
+2025-04-30 20:15:44,522 - controllers.auth_controller - DEBUG - Encontrados 8 usuários
+2025-04-30 20:15:44,526 - ui.admin_ui - DEBUG - Configurando aba de equipamentos
+2025-04-30 20:15:44,531 - ui.admin_ui - DEBUG - Carregando equipamentos
+2025-04-30 20:15:44,531 - ui.admin_ui - DEBUG - Carregando equipamentos
+2025-04-30 20:15:44,531 - controllers.equipment_controller - DEBUG - Buscando todos os equipamentos
+2025-04-30 20:15:44,535 - controllers.equipment_controller - DEBUG - Encontrados 6 equipamentos
+2025-04-30 20:15:44,536 - ui.admin_ui - DEBUG - Carregando equipamento ID=1, Tag=caldeira
+2025-04-30 20:15:44,536 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 1
+2025-04-30 20:15:44,537 - ui.admin_ui - DEBUG - Carregando equipamento ID=3, Tag=TAG-001
+2025-04-30 20:15:44,537 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 3
+2025-04-30 20:15:44,537 - ui.admin_ui - DEBUG - Carregando equipamento ID=4, Tag=TAG-002
+2025-04-30 20:15:44,538 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 4
+2025-04-30 20:15:44,538 - ui.admin_ui - DEBUG - Carregando equipamento ID=5, Tag=TAG-003
+2025-04-30 20:15:44,538 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 5
+2025-04-30 20:15:44,539 - ui.admin_ui - DEBUG - Carregando equipamento ID=6, Tag=TAG-001
+2025-04-30 20:15:44,539 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 6
+2025-04-30 20:15:44,539 - ui.admin_ui - DEBUG - Carregando equipamento ID=8, Tag=TAG-003
+2025-04-30 20:15:44,540 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 8
+2025-04-30 20:15:44,540 - ui.admin_ui - DEBUG - Carregados 6 equipamentos na tabela
+2025-04-30 20:15:44,542 - ui.admin_ui - DEBUG - Configurando aba de inspeções
+2025-04-30 20:15:44,545 - ui.admin_ui - DEBUG - Carregando inspeções do banco de dados
+2025-04-30 20:15:44,546 - controllers.equipment_controller - DEBUG - Buscando todos os equipamentos
+2025-04-30 20:15:44,546 - controllers.equipment_controller - DEBUG - Encontrados 6 equipamentos
+2025-04-30 20:15:44,547 - ui.admin_ui - DEBUG - Carregados 6 equipamentos
+2025-04-30 20:15:44,552 - ui.admin_ui - DEBUG - Carregadas 2 inspeções
+2025-04-30 20:15:44,555 - ui.admin_ui - DEBUG - Configurando aba de relatórios
+2025-04-30 20:15:44,558 - ui.admin_ui - DEBUG - Carregando relatórios do banco de dados
+2025-04-30 20:15:44,559 - ui.admin_ui - DEBUG - Carregando relatórios
+2025-04-30 20:15:44,559 - controllers.report_controller - DEBUG - Buscando todos os relatórios
+2025-04-30 20:15:44,564 - controllers.report_controller - DEBUG - Relatório 1: {'id': 1, 'inspecao_id': 13, 'data_emissao': '2025-04-30', 'link_arquivo': 'C:/Users/jeanc/Downloads/Apresentacao_Sistema_Inspecoes_NR13.odp', 'observacoes': 'awd', 'tipo_inspecao': 'periodica', 'inspecao_resultado': 'aprovado', 'equipamento_tag': 'caldeira', 'equipamento_categoria': 'caldeira', 'engenheiro_nome': 'Engenheiro Beta'}
+2025-04-30 20:15:44,565 - controllers.report_controller - DEBUG - Encontrados 1 relatórios
+2025-04-30 20:15:44,576 - ui.admin_ui - DEBUG - Carregados 1 relatórios
+2025-04-30 20:15:44,579 - ui.admin_ui - DEBUG - Adicionando abas ao TabWidget
+2025-04-30 20:15:44,579 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-30 20:15:44,586 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-30 20:15:44,587 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-30 20:15:44,587 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-30 20:15:44,588 - ui.admin_ui - DEBUG - Configurando barra inferior
+2025-04-30 20:15:44,599 - ui.admin_ui - DEBUG - Interface inicializada com sucesso
+2025-04-30 20:15:44,599 - ui.admin_ui - DEBUG - Aplicando tema
+2025-04-30 20:15:44,615 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-30 20:15:44,617 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-30 20:15:44,618 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-30 20:15:44,619 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-30 20:15:44,620 - ui.admin_ui - INFO - AdminWindow inicializada com sucesso
+2025-04-30 20:15:44,624 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-30 20:15:44,625 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-30 20:15:44,626 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-30 20:15:44,627 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-30 20:15:44,680 - __main__ - INFO - Janela principal exibida para usuário: admin
+2025-04-30 20:15:53,408 - ui.admin_ui - DEBUG - Ativando/desativando equipamento selecionado
+2025-04-30 20:15:53,409 - ui.admin_ui - DEBUG - Linha selecionada: 5
+2025-04-30 20:15:53,410 - ui.admin_ui - DEBUG - Tag do equipamento: TAG-003
+2025-04-30 20:15:53,410 - ui.admin_ui - DEBUG - Tentativa 1 - ID do equipamento obtido via UserRole: 8
+2025-04-30 20:15:57,568 - ui.admin_ui - DEBUG - Ativando/desativando equipamento selecionado
+2025-04-30 20:15:57,568 - ui.admin_ui - DEBUG - Linha selecionada: 0
+2025-04-30 20:15:57,569 - ui.admin_ui - DEBUG - Tag do equipamento: caldeira
+2025-04-30 20:15:57,569 - ui.admin_ui - DEBUG - Tentativa 1 - ID do equipamento obtido via UserRole: 1
+2025-04-30 20:15:58,947 - controllers.equipment_controller - DEBUG - Alterando status do equipamento 1 para 0
+2025-04-30 20:15:58,947 - controllers.equipment_controller - DEBUG - Buscando equipamento com ID 1
+2025-04-30 20:15:58,949 - controllers.equipment_controller - DEBUG - Equipamento 1 encontrado: caldeira
+2025-04-30 20:15:58,952 - controllers.equipment_controller - INFO - Equipamento 1 desativado com sucesso
+2025-04-30 20:15:58,952 - ui.admin_ui - DEBUG - Carregando equipamentos
+2025-04-30 20:15:58,953 - controllers.equipment_controller - DEBUG - Buscando todos os equipamentos
+2025-04-30 20:15:58,954 - controllers.equipment_controller - DEBUG - Encontrados 5 equipamentos
+2025-04-30 20:15:58,954 - ui.admin_ui - DEBUG - Carregando equipamento ID=3, Tag=TAG-001
+2025-04-30 20:15:58,954 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 3
+2025-04-30 20:15:58,955 - ui.admin_ui - DEBUG - Carregando equipamento ID=4, Tag=TAG-002
+2025-04-30 20:15:58,955 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 4
+2025-04-30 20:15:58,956 - ui.admin_ui - DEBUG - Carregando equipamento ID=5, Tag=TAG-003
+2025-04-30 20:15:58,956 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 5
+2025-04-30 20:15:58,957 - ui.admin_ui - DEBUG - Carregando equipamento ID=6, Tag=TAG-001
+2025-04-30 20:15:58,957 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 6
+2025-04-30 20:15:58,957 - ui.admin_ui - DEBUG - Carregando equipamento ID=8, Tag=TAG-003
+2025-04-30 20:15:58,958 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 8
+2025-04-30 20:15:58,958 - ui.admin_ui - DEBUG - Carregados 5 equipamentos na tabela
+2025-04-30 20:18:30,089 - __main__ - INFO - === INICIANDO APLICAÇÃO ===
+2025-04-30 20:18:30,089 - __main__ - INFO - Inicializando banco de dados
+2025-04-30 20:18:30,095 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-30 20:18:30,258 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-30 20:18:30,304 - database.models - INFO - Tabelas criadas com sucesso
+2025-04-30 20:18:30,304 - __main__ - INFO - Verificando usuário admin
+2025-04-30 20:18:30,306 - __main__ - INFO - Resultado da criação do admin: Email já cadastrado
+2025-04-30 20:18:30,306 - __main__ - INFO - Criando instância do sistema
+2025-04-30 20:18:30,307 - __main__ - DEBUG - Iniciando construtor do SistemaInspecao
+2025-04-30 20:18:30,307 - __main__ - DEBUG - Criando QApplication
+2025-04-30 20:18:30,390 - __main__ - DEBUG - QApplication criado com sucesso
+2025-04-30 20:18:30,391 - __main__ - DEBUG - Criando AuthController
+2025-04-30 20:18:30,391 - __main__ - DEBUG - AuthController criado com sucesso
+2025-04-30 20:18:30,391 - __main__ - INFO - Sistema inicializado com sucesso
+2025-04-30 20:18:30,392 - __main__ - INFO - Executando a aplicação
+2025-04-30 20:18:30,392 - __main__ - INFO - Iniciando aplicação
+2025-04-30 20:18:30,392 - __main__ - DEBUG - Verificando imports
+2025-04-30 20:18:30,393 - __main__ - DEBUG - Import login_window OK
+2025-04-30 20:18:30,393 - __main__ - DEBUG - Import admin_ui OK
+2025-04-30 20:18:30,394 - __main__ - DEBUG - Import client_ui OK
+2025-04-30 20:18:30,394 - __main__ - DEBUG - Import modals OK
+2025-04-30 20:18:30,394 - __main__ - DEBUG - Diretório atual: C:\Users\jeanc\Documents\C-TREINA\sistema-inspecao-nr13
+2025-04-30 20:18:30,395 - __main__ - DEBUG - Chamando show_login()
+2025-04-30 20:18:30,395 - __main__ - DEBUG - Criando janela de login
+2025-04-30 20:18:30,522 - __main__ - DEBUG - Conectando sinal de login_success
+2025-04-30 20:18:30,523 - __main__ - DEBUG - Exibindo janela de login
+2025-04-30 20:18:31,218 - __main__ - INFO - Janela de login exibida com sucesso
+2025-04-30 20:18:31,218 - __main__ - DEBUG - show_login() executado com sucesso
+2025-04-30 20:18:31,219 - __main__ - DEBUG - Aguardando 1 segundo antes de iniciar o loop de eventos
+2025-04-30 20:18:32,220 - __main__ - INFO - Executando o loop de eventos da aplicação
+2025-04-30 20:18:35,503 - __main__ - INFO - Login bem sucedido para usuário ID: 2
+2025-04-30 20:18:35,511 - ui.admin_ui - DEBUG - Iniciando construtor do AdminWindow
+2025-04-30 20:18:35,511 - ui.admin_ui - DEBUG - Criando instância do DatabaseModels
+2025-04-30 20:18:35,512 - ui.admin_ui - DEBUG - Criando instância do EquipmentController
+2025-04-30 20:18:35,512 - controllers.equipment_controller - DEBUG - Iniciando EquipmentController
+2025-04-30 20:18:35,513 - ui.admin_ui - DEBUG - Criando instância do InspectionController
+2025-04-30 20:18:35,513 - controllers.inspection_controller - DEBUG - Iniciando InspectionController
+2025-04-30 20:18:35,514 - db.models - DEBUG - InspecaoModel inicializado
+2025-04-30 20:18:35,515 - ui.admin_ui - DEBUG - Criando instância do ReportController
+2025-04-30 20:18:35,515 - controllers.report_controller - DEBUG - Iniciando ReportController
+2025-04-30 20:18:35,516 - ui.admin_ui - DEBUG - Iniciando setup da UI
+2025-04-30 20:18:35,516 - ui.admin_ui - DEBUG - Iniciando setup da interface
+2025-04-30 20:18:35,527 - ui.admin_ui - DEBUG - Criando widget central
+2025-04-30 20:18:35,532 - ui.admin_ui - DEBUG - Criando abas
+2025-04-30 20:18:35,532 - ui.admin_ui - DEBUG - Configurando aba de usuários
+2025-04-30 20:18:35,545 - ui.admin_ui - DEBUG - Carregando usuários
+2025-04-30 20:18:35,545 - ui.admin_ui - DEBUG - Carregando usuários
+2025-04-30 20:18:35,546 - controllers.auth_controller - DEBUG - Buscando todos os usuários
+2025-04-30 20:18:35,547 - controllers.auth_controller - DEBUG - Encontrados 8 usuários
+2025-04-30 20:18:35,550 - ui.admin_ui - DEBUG - Configurando aba de equipamentos
+2025-04-30 20:18:35,557 - ui.admin_ui - DEBUG - Carregando equipamentos
+2025-04-30 20:18:35,558 - ui.admin_ui - DEBUG - Carregando equipamentos
+2025-04-30 20:18:35,558 - controllers.equipment_controller - DEBUG - Buscando todos os equipamentos
+2025-04-30 20:18:35,562 - controllers.equipment_controller - DEBUG - Encontrados 8 equipamentos
+2025-04-30 20:18:35,563 - ui.admin_ui - DEBUG - Carregando equipamento ID=1, Tag=caldeira
+2025-04-30 20:18:35,563 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 1
+2025-04-30 20:18:35,563 - ui.admin_ui - DEBUG - Carregando equipamento ID=2, Tag=caldeira
+2025-04-30 20:18:35,564 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 2
+2025-04-30 20:18:35,564 - ui.admin_ui - DEBUG - Carregando equipamento ID=3, Tag=TAG-001
+2025-04-30 20:18:35,564 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 3
+2025-04-30 20:18:35,565 - ui.admin_ui - DEBUG - Carregando equipamento ID=6, Tag=TAG-001
+2025-04-30 20:18:35,565 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 6
+2025-04-30 20:18:35,565 - ui.admin_ui - DEBUG - Carregando equipamento ID=4, Tag=TAG-002
+2025-04-30 20:18:35,566 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 4
+2025-04-30 20:18:35,566 - ui.admin_ui - DEBUG - Carregando equipamento ID=7, Tag=TAG-002
+2025-04-30 20:18:35,566 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 7
+2025-04-30 20:18:35,566 - ui.admin_ui - DEBUG - Carregando equipamento ID=5, Tag=TAG-003
+2025-04-30 20:18:35,567 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 5
+2025-04-30 20:18:35,567 - ui.admin_ui - DEBUG - Carregando equipamento ID=8, Tag=TAG-003
+2025-04-30 20:18:35,567 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 8
+2025-04-30 20:18:35,568 - ui.admin_ui - DEBUG - Carregados 8 equipamentos na tabela
+2025-04-30 20:18:35,570 - ui.admin_ui - DEBUG - Configurando aba de inspeções
+2025-04-30 20:18:35,572 - ui.admin_ui - DEBUG - Carregando inspeções do banco de dados
+2025-04-30 20:18:35,573 - controllers.equipment_controller - DEBUG - Buscando todos os equipamentos
+2025-04-30 20:18:35,573 - controllers.equipment_controller - DEBUG - Encontrados 8 equipamentos
+2025-04-30 20:18:35,574 - ui.admin_ui - DEBUG - Carregados 8 equipamentos
+2025-04-30 20:18:35,580 - ui.admin_ui - DEBUG - Carregadas 2 inspeções
+2025-04-30 20:18:35,583 - ui.admin_ui - DEBUG - Configurando aba de relatórios
+2025-04-30 20:18:35,585 - ui.admin_ui - DEBUG - Carregando relatórios do banco de dados
+2025-04-30 20:18:35,586 - ui.admin_ui - DEBUG - Carregando relatórios
+2025-04-30 20:18:35,586 - controllers.report_controller - DEBUG - Buscando todos os relatórios
+2025-04-30 20:18:35,590 - controllers.report_controller - DEBUG - Relatório 1: {'id': 1, 'inspecao_id': 13, 'data_emissao': '2025-04-30', 'link_arquivo': 'C:/Users/jeanc/Downloads/Apresentacao_Sistema_Inspecoes_NR13.odp', 'observacoes': 'awd', 'tipo_inspecao': 'periodica', 'inspecao_resultado': 'aprovado', 'equipamento_tag': 'caldeira', 'equipamento_categoria': 'caldeira', 'engenheiro_nome': 'Engenheiro Beta'}
+2025-04-30 20:18:35,591 - controllers.report_controller - DEBUG - Encontrados 1 relatórios
+2025-04-30 20:18:35,598 - ui.admin_ui - DEBUG - Carregados 1 relatórios
+2025-04-30 20:18:35,605 - ui.admin_ui - DEBUG - Adicionando abas ao TabWidget
+2025-04-30 20:18:35,605 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-30 20:18:35,610 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-30 20:18:35,611 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-30 20:18:35,612 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-30 20:18:35,612 - ui.admin_ui - DEBUG - Configurando barra inferior
+2025-04-30 20:18:35,623 - ui.admin_ui - DEBUG - Interface inicializada com sucesso
+2025-04-30 20:18:35,623 - ui.admin_ui - DEBUG - Aplicando tema
+2025-04-30 20:18:35,649 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-30 20:18:35,650 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-30 20:18:35,651 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-30 20:18:35,652 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-30 20:18:35,652 - ui.admin_ui - INFO - AdminWindow inicializada com sucesso
+2025-04-30 20:18:35,656 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-30 20:18:35,657 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-30 20:18:35,658 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-30 20:18:35,658 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-30 20:18:35,710 - __main__ - INFO - Janela principal exibida para usuário: admin
+2025-04-30 20:18:42,588 - ui.admin_ui - DEBUG - Ativando/desativando equipamento selecionado
+2025-04-30 20:18:42,588 - ui.admin_ui - DEBUG - Linha selecionada: 1
+2025-04-30 20:18:42,589 - ui.admin_ui - DEBUG - Tag do equipamento: caldeira
+2025-04-30 20:18:42,589 - ui.admin_ui - DEBUG - Tentativa 1 - ID do equipamento obtido via UserRole: 2
+2025-04-30 20:18:43,991 - controllers.equipment_controller - DEBUG - Alterando status do equipamento 2 para 1
+2025-04-30 20:18:43,992 - controllers.equipment_controller - DEBUG - Buscando equipamento com ID 2
+2025-04-30 20:18:43,994 - controllers.equipment_controller - DEBUG - Equipamento 2 encontrado: caldeira
+2025-04-30 20:18:43,996 - controllers.equipment_controller - INFO - Equipamento 2 ativado com sucesso
+2025-04-30 20:18:43,997 - ui.admin_ui - DEBUG - Carregando equipamentos
+2025-04-30 20:18:43,997 - controllers.equipment_controller - DEBUG - Buscando todos os equipamentos
+2025-04-30 20:18:43,998 - controllers.equipment_controller - DEBUG - Encontrados 8 equipamentos
+2025-04-30 20:18:43,999 - ui.admin_ui - DEBUG - Carregando equipamento ID=1, Tag=caldeira
+2025-04-30 20:18:43,999 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 1
+2025-04-30 20:18:44,000 - ui.admin_ui - DEBUG - Carregando equipamento ID=2, Tag=caldeira
+2025-04-30 20:18:44,000 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 2
+2025-04-30 20:18:44,000 - ui.admin_ui - DEBUG - Carregando equipamento ID=3, Tag=TAG-001
+2025-04-30 20:18:44,001 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 3
+2025-04-30 20:18:44,001 - ui.admin_ui - DEBUG - Carregando equipamento ID=6, Tag=TAG-001
+2025-04-30 20:18:44,002 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 6
+2025-04-30 20:18:44,002 - ui.admin_ui - DEBUG - Carregando equipamento ID=4, Tag=TAG-002
+2025-04-30 20:18:44,002 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 4
+2025-04-30 20:18:44,003 - ui.admin_ui - DEBUG - Carregando equipamento ID=7, Tag=TAG-002
+2025-04-30 20:18:44,003 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 7
+2025-04-30 20:18:44,004 - ui.admin_ui - DEBUG - Carregando equipamento ID=5, Tag=TAG-003
+2025-04-30 20:18:44,004 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 5
+2025-04-30 20:18:44,005 - ui.admin_ui - DEBUG - Carregando equipamento ID=8, Tag=TAG-003
+2025-04-30 20:18:44,005 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 8
+2025-04-30 20:18:44,005 - ui.admin_ui - DEBUG - Carregados 8 equipamentos na tabela
+2025-04-30 20:18:50,582 - ui.admin_ui - DEBUG - Ativando/desativando equipamento selecionado
+2025-04-30 20:18:50,583 - ui.admin_ui - DEBUG - Linha selecionada: 0
+2025-04-30 20:18:50,583 - ui.admin_ui - DEBUG - Tag do equipamento: caldeira
+2025-04-30 20:18:50,584 - ui.admin_ui - DEBUG - Tentativa 1 - ID do equipamento obtido via UserRole: 1
+2025-04-30 20:18:52,893 - controllers.equipment_controller - DEBUG - Alterando status do equipamento 1 para 1
+2025-04-30 20:18:52,893 - controllers.equipment_controller - DEBUG - Buscando equipamento com ID 1
+2025-04-30 20:18:52,894 - controllers.equipment_controller - DEBUG - Equipamento 1 encontrado: caldeira
+2025-04-30 20:18:52,896 - controllers.equipment_controller - INFO - Equipamento 1 ativado com sucesso
+2025-04-30 20:18:52,896 - ui.admin_ui - DEBUG - Carregando equipamentos
+2025-04-30 20:18:52,897 - controllers.equipment_controller - DEBUG - Buscando todos os equipamentos
+2025-04-30 20:18:52,897 - controllers.equipment_controller - DEBUG - Encontrados 8 equipamentos
+2025-04-30 20:18:52,898 - ui.admin_ui - DEBUG - Carregando equipamento ID=1, Tag=caldeira
+2025-04-30 20:18:52,898 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 1
+2025-04-30 20:18:52,899 - ui.admin_ui - DEBUG - Carregando equipamento ID=2, Tag=caldeira
+2025-04-30 20:18:52,899 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 2
+2025-04-30 20:18:52,900 - ui.admin_ui - DEBUG - Carregando equipamento ID=3, Tag=TAG-001
+2025-04-30 20:18:52,900 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 3
+2025-04-30 20:18:52,900 - ui.admin_ui - DEBUG - Carregando equipamento ID=6, Tag=TAG-001
+2025-04-30 20:18:52,901 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 6
+2025-04-30 20:18:52,901 - ui.admin_ui - DEBUG - Carregando equipamento ID=4, Tag=TAG-002
+2025-04-30 20:18:52,901 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 4
+2025-04-30 20:18:52,902 - ui.admin_ui - DEBUG - Carregando equipamento ID=7, Tag=TAG-002
+2025-04-30 20:18:52,902 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 7
+2025-04-30 20:18:52,903 - ui.admin_ui - DEBUG - Carregando equipamento ID=5, Tag=TAG-003
+2025-04-30 20:18:52,903 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 5
+2025-04-30 20:18:52,903 - ui.admin_ui - DEBUG - Carregando equipamento ID=8, Tag=TAG-003
+2025-04-30 20:18:52,904 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 8
+2025-04-30 20:18:52,904 - ui.admin_ui - DEBUG - Carregados 8 equipamentos na tabela
+2025-04-30 20:19:00,110 - __main__ - INFO - Aplicação encerrada com código 0
+2025-04-30 20:23:06,637 - __main__ - INFO - === INICIANDO APLICAÇÃO ===
+2025-04-30 20:23:06,637 - __main__ - INFO - Inicializando banco de dados
+2025-04-30 20:23:06,644 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-30 20:23:06,766 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-30 20:23:06,816 - database.models - INFO - Tabelas criadas com sucesso
+2025-04-30 20:23:06,816 - __main__ - INFO - Verificando usuário admin
+2025-04-30 20:23:06,818 - __main__ - INFO - Resultado da criação do admin: Email já cadastrado
+2025-04-30 20:23:06,818 - __main__ - INFO - Criando instância do sistema
+2025-04-30 20:23:06,818 - __main__ - DEBUG - Iniciando construtor do SistemaInspecao
+2025-04-30 20:23:06,819 - __main__ - DEBUG - Criando QApplication
+2025-04-30 20:23:06,906 - __main__ - DEBUG - QApplication criado com sucesso
+2025-04-30 20:23:06,906 - __main__ - DEBUG - Criando AuthController
+2025-04-30 20:23:06,907 - __main__ - DEBUG - AuthController criado com sucesso
+2025-04-30 20:23:06,907 - __main__ - INFO - Sistema inicializado com sucesso
+2025-04-30 20:23:06,907 - __main__ - INFO - Executando a aplicação
+2025-04-30 20:23:06,908 - __main__ - INFO - Iniciando aplicação
+2025-04-30 20:23:06,909 - __main__ - DEBUG - Verificando imports
+2025-04-30 20:23:06,909 - __main__ - DEBUG - Import login_window OK
+2025-04-30 20:23:06,909 - __main__ - DEBUG - Import admin_ui OK
+2025-04-30 20:23:06,910 - __main__ - DEBUG - Import client_ui OK
+2025-04-30 20:23:06,910 - __main__ - DEBUG - Import modals OK
+2025-04-30 20:23:06,911 - __main__ - DEBUG - Diretório atual: C:\Users\jeanc\Documents\C-TREINA\sistema-inspecao-nr13
+2025-04-30 20:23:06,911 - __main__ - DEBUG - Chamando show_login()
+2025-04-30 20:23:06,912 - __main__ - DEBUG - Criando janela de login
+2025-04-30 20:23:07,030 - __main__ - DEBUG - Conectando sinal de login_success
+2025-04-30 20:23:07,030 - __main__ - DEBUG - Exibindo janela de login
+2025-04-30 20:23:07,711 - __main__ - INFO - Janela de login exibida com sucesso
+2025-04-30 20:23:07,711 - __main__ - DEBUG - show_login() executado com sucesso
+2025-04-30 20:23:07,711 - __main__ - DEBUG - Aguardando 1 segundo antes de iniciar o loop de eventos
+2025-04-30 20:23:08,713 - __main__ - INFO - Executando o loop de eventos da aplicação
+2025-04-30 20:23:11,789 - __main__ - INFO - Login bem sucedido para usuário ID: 2
+2025-04-30 20:23:11,798 - ui.admin_ui - DEBUG - Iniciando construtor do AdminWindow
+2025-04-30 20:23:11,799 - ui.admin_ui - DEBUG - Criando instância do DatabaseModels
+2025-04-30 20:23:11,799 - ui.admin_ui - DEBUG - Criando instância do EquipmentController
+2025-04-30 20:23:11,799 - controllers.equipment_controller - DEBUG - Iniciando EquipmentController
+2025-04-30 20:23:11,800 - ui.admin_ui - DEBUG - Criando instância do InspectionController
+2025-04-30 20:23:11,800 - controllers.inspection_controller - DEBUG - Iniciando InspectionController
+2025-04-30 20:23:11,801 - db.models - DEBUG - InspecaoModel inicializado
+2025-04-30 20:23:11,801 - ui.admin_ui - DEBUG - Criando instância do ReportController
+2025-04-30 20:23:11,801 - controllers.report_controller - DEBUG - Iniciando ReportController
+2025-04-30 20:23:11,802 - ui.admin_ui - DEBUG - Iniciando setup da UI
+2025-04-30 20:23:11,802 - ui.admin_ui - DEBUG - Iniciando setup da interface
+2025-04-30 20:23:11,813 - ui.admin_ui - DEBUG - Criando widget central
+2025-04-30 20:23:11,818 - ui.admin_ui - DEBUG - Criando abas
+2025-04-30 20:23:11,819 - ui.admin_ui - DEBUG - Configurando aba de usuários
+2025-04-30 20:23:11,836 - ui.admin_ui - DEBUG - Carregando usuários
+2025-04-30 20:23:11,837 - ui.admin_ui - DEBUG - Carregando usuários
+2025-04-30 20:23:11,837 - controllers.auth_controller - DEBUG - Buscando todos os usuários
+2025-04-30 20:23:11,839 - controllers.auth_controller - DEBUG - Encontrados 8 usuários
+2025-04-30 20:23:11,842 - ui.admin_ui - DEBUG - Configurando aba de equipamentos
+2025-04-30 20:23:11,847 - ui.admin_ui - DEBUG - Carregando equipamentos
+2025-04-30 20:23:11,847 - ui.admin_ui - DEBUG - Carregando equipamentos
+2025-04-30 20:23:11,848 - controllers.equipment_controller - DEBUG - Buscando todos os equipamentos
+2025-04-30 20:23:11,851 - controllers.equipment_controller - DEBUG - Encontrados 8 equipamentos
+2025-04-30 20:23:11,852 - ui.admin_ui - DEBUG - Carregando equipamento ID=1, Tag=caldeira
+2025-04-30 20:23:11,852 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 1
+2025-04-30 20:23:11,853 - ui.admin_ui - DEBUG - Carregando equipamento ID=2, Tag=caldeira
+2025-04-30 20:23:11,853 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 2
+2025-04-30 20:23:11,853 - ui.admin_ui - DEBUG - Carregando equipamento ID=3, Tag=TAG-001
+2025-04-30 20:23:11,854 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 3
+2025-04-30 20:23:11,854 - ui.admin_ui - DEBUG - Carregando equipamento ID=6, Tag=TAG-001
+2025-04-30 20:23:11,854 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 6
+2025-04-30 20:23:11,855 - ui.admin_ui - DEBUG - Carregando equipamento ID=4, Tag=TAG-002
+2025-04-30 20:23:11,855 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 4
+2025-04-30 20:23:11,855 - ui.admin_ui - DEBUG - Carregando equipamento ID=7, Tag=TAG-002
+2025-04-30 20:23:11,856 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 7
+2025-04-30 20:23:11,856 - ui.admin_ui - DEBUG - Carregando equipamento ID=5, Tag=TAG-003
+2025-04-30 20:23:11,856 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 5
+2025-04-30 20:23:11,857 - ui.admin_ui - DEBUG - Carregando equipamento ID=8, Tag=TAG-003
+2025-04-30 20:23:11,857 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 8
+2025-04-30 20:23:11,858 - ui.admin_ui - DEBUG - Carregados 8 equipamentos na tabela
+2025-04-30 20:23:11,861 - ui.admin_ui - DEBUG - Configurando aba de inspeções
+2025-04-30 20:23:11,864 - ui.admin_ui - DEBUG - Carregando inspeções do banco de dados
+2025-04-30 20:23:11,864 - controllers.equipment_controller - DEBUG - Buscando todos os equipamentos
+2025-04-30 20:23:11,865 - controllers.equipment_controller - DEBUG - Encontrados 8 equipamentos
+2025-04-30 20:23:11,865 - ui.admin_ui - DEBUG - Carregados 8 equipamentos
+2025-04-30 20:23:11,869 - ui.admin_ui - DEBUG - Carregadas 2 inspeções
+2025-04-30 20:23:11,872 - ui.admin_ui - DEBUG - Configurando aba de relatórios
+2025-04-30 20:23:11,875 - ui.admin_ui - DEBUG - Carregando relatórios do banco de dados
+2025-04-30 20:23:11,875 - ui.admin_ui - DEBUG - Carregando relatórios
+2025-04-30 20:23:11,876 - controllers.report_controller - DEBUG - Buscando todos os relatórios
+2025-04-30 20:23:11,880 - controllers.report_controller - DEBUG - Relatório 1: {'id': 1, 'inspecao_id': 13, 'data_emissao': '2025-04-30', 'link_arquivo': 'C:/Users/jeanc/Downloads/Apresentacao_Sistema_Inspecoes_NR13.odp', 'observacoes': 'awd', 'tipo_inspecao': 'periodica', 'inspecao_resultado': 'aprovado', 'equipamento_tag': 'caldeira', 'equipamento_categoria': 'caldeira', 'engenheiro_nome': 'Engenheiro Beta'}
+2025-04-30 20:23:11,881 - controllers.report_controller - DEBUG - Encontrados 1 relatórios
+2025-04-30 20:23:11,893 - ui.admin_ui - DEBUG - Carregados 1 relatórios
+2025-04-30 20:23:11,896 - ui.admin_ui - DEBUG - Adicionando abas ao TabWidget
+2025-04-30 20:23:11,896 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-30 20:23:11,903 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-30 20:23:11,904 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-30 20:23:11,904 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-30 20:23:11,905 - ui.admin_ui - DEBUG - Configurando barra inferior
+2025-04-30 20:23:11,914 - ui.admin_ui - DEBUG - Interface inicializada com sucesso
+2025-04-30 20:23:11,914 - ui.admin_ui - DEBUG - Aplicando tema
+2025-04-30 20:23:11,931 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-30 20:23:11,933 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-30 20:23:11,933 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-30 20:23:11,934 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-30 20:23:11,935 - ui.admin_ui - INFO - AdminWindow inicializada com sucesso
+2025-04-30 20:23:11,942 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-30 20:23:11,943 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-30 20:23:11,944 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-30 20:23:11,945 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-30 20:23:11,996 - __main__ - INFO - Janela principal exibida para usuário: admin
+2025-04-30 20:24:05,710 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-30 20:24:05,711 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-30 20:24:05,712 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-30 20:24:05,713 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-30 20:24:06,506 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-30 20:24:06,507 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-30 20:24:06,508 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-30 20:24:06,509 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-30 20:26:26,914 - __main__ - INFO - === INICIANDO APLICAÇÃO ===
+2025-04-30 20:26:26,914 - __main__ - INFO - Inicializando banco de dados
+2025-04-30 20:26:26,920 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-30 20:26:27,043 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-30 20:26:27,089 - database.models - INFO - Tabelas criadas com sucesso
+2025-04-30 20:26:27,090 - __main__ - INFO - Verificando usuário admin
+2025-04-30 20:26:27,092 - __main__ - INFO - Resultado da criação do admin: Email já cadastrado
+2025-04-30 20:26:27,092 - __main__ - INFO - Criando instância do sistema
+2025-04-30 20:26:27,092 - __main__ - DEBUG - Iniciando construtor do SistemaInspecao
+2025-04-30 20:26:27,092 - __main__ - DEBUG - Criando QApplication
+2025-04-30 20:26:27,175 - __main__ - DEBUG - QApplication criado com sucesso
+2025-04-30 20:26:27,175 - __main__ - DEBUG - Criando AuthController
+2025-04-30 20:26:27,176 - __main__ - DEBUG - AuthController criado com sucesso
+2025-04-30 20:26:27,176 - __main__ - INFO - Sistema inicializado com sucesso
+2025-04-30 20:26:27,176 - __main__ - INFO - Executando a aplicação
+2025-04-30 20:26:27,176 - __main__ - INFO - Iniciando aplicação
+2025-04-30 20:26:27,177 - __main__ - DEBUG - Verificando imports
+2025-04-30 20:26:27,177 - __main__ - DEBUG - Import login_window OK
+2025-04-30 20:26:27,177 - __main__ - DEBUG - Import admin_ui OK
+2025-04-30 20:26:27,178 - __main__ - DEBUG - Import client_ui OK
+2025-04-30 20:26:27,178 - __main__ - DEBUG - Import modals OK
+2025-04-30 20:26:27,178 - __main__ - DEBUG - Diretório atual: C:\Users\jeanc\Documents\C-TREINA\sistema-inspecao-nr13
+2025-04-30 20:26:27,179 - __main__ - DEBUG - Chamando show_login()
+2025-04-30 20:26:27,179 - __main__ - DEBUG - Criando janela de login
+2025-04-30 20:26:27,296 - __main__ - DEBUG - Conectando sinal de login_success
+2025-04-30 20:26:27,297 - __main__ - DEBUG - Exibindo janela de login
+2025-04-30 20:26:27,990 - __main__ - INFO - Janela de login exibida com sucesso
+2025-04-30 20:26:27,990 - __main__ - DEBUG - show_login() executado com sucesso
+2025-04-30 20:26:27,990 - __main__ - DEBUG - Aguardando 1 segundo antes de iniciar o loop de eventos
+2025-04-30 20:26:28,992 - __main__ - INFO - Executando o loop de eventos da aplicação
+2025-04-30 20:26:30,370 - __main__ - INFO - Aplicação encerrada com código 0
+2025-04-30 20:26:37,124 - __main__ - INFO - Login bem sucedido para usuário ID: 2
+2025-04-30 20:26:37,132 - ui.admin_ui - DEBUG - Iniciando construtor do AdminWindow
+2025-04-30 20:26:37,133 - ui.admin_ui - DEBUG - Criando instância do DatabaseModels
+2025-04-30 20:26:37,133 - ui.admin_ui - DEBUG - Criando instância do EquipmentController
+2025-04-30 20:26:37,134 - controllers.equipment_controller - DEBUG - Iniciando EquipmentController
+2025-04-30 20:26:37,134 - ui.admin_ui - DEBUG - Criando instância do InspectionController
+2025-04-30 20:26:37,135 - controllers.inspection_controller - DEBUG - Iniciando InspectionController
+2025-04-30 20:26:37,135 - db.models - DEBUG - InspecaoModel inicializado
+2025-04-30 20:26:37,136 - ui.admin_ui - DEBUG - Criando instância do ReportController
+2025-04-30 20:26:37,136 - controllers.report_controller - DEBUG - Iniciando ReportController
+2025-04-30 20:26:37,137 - ui.admin_ui - DEBUG - Iniciando setup da UI
+2025-04-30 20:26:37,137 - ui.admin_ui - DEBUG - Iniciando setup da interface
+2025-04-30 20:26:37,148 - ui.admin_ui - DEBUG - Criando widget central
+2025-04-30 20:26:37,153 - ui.admin_ui - DEBUG - Criando abas
+2025-04-30 20:26:37,154 - ui.admin_ui - DEBUG - Configurando aba de usuários
+2025-04-30 20:26:37,170 - ui.admin_ui - DEBUG - Carregando usuários
+2025-04-30 20:26:37,170 - ui.admin_ui - DEBUG - Carregando usuários
+2025-04-30 20:26:37,170 - controllers.auth_controller - DEBUG - Buscando todos os usuários
+2025-04-30 20:26:37,172 - controllers.auth_controller - DEBUG - Encontrados 8 usuários
+2025-04-30 20:26:37,177 - ui.admin_ui - DEBUG - Configurando aba de equipamentos
+2025-04-30 20:26:37,182 - ui.admin_ui - DEBUG - Carregando equipamentos
+2025-04-30 20:26:37,182 - ui.admin_ui - DEBUG - Carregando equipamentos
+2025-04-30 20:26:37,183 - controllers.equipment_controller - DEBUG - Buscando todos os equipamentos
+2025-04-30 20:26:37,186 - controllers.equipment_controller - DEBUG - Encontrados 8 equipamentos
+2025-04-30 20:26:37,187 - ui.admin_ui - DEBUG - Carregando equipamento ID=1, Tag=caldeira
+2025-04-30 20:26:37,187 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 1
+2025-04-30 20:26:37,187 - ui.admin_ui - DEBUG - Carregando equipamento ID=2, Tag=caldeira
+2025-04-30 20:26:37,188 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 2
+2025-04-30 20:26:37,188 - ui.admin_ui - DEBUG - Carregando equipamento ID=3, Tag=TAG-001
+2025-04-30 20:26:37,189 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 3
+2025-04-30 20:26:37,189 - ui.admin_ui - DEBUG - Carregando equipamento ID=6, Tag=TAG-001
+2025-04-30 20:26:37,189 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 6
+2025-04-30 20:26:37,190 - ui.admin_ui - DEBUG - Carregando equipamento ID=4, Tag=TAG-002
+2025-04-30 20:26:37,191 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 4
+2025-04-30 20:26:37,191 - ui.admin_ui - DEBUG - Carregando equipamento ID=7, Tag=TAG-002
+2025-04-30 20:26:37,191 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 7
+2025-04-30 20:26:37,192 - ui.admin_ui - DEBUG - Carregando equipamento ID=5, Tag=TAG-003
+2025-04-30 20:26:37,192 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 5
+2025-04-30 20:26:37,192 - ui.admin_ui - DEBUG - Carregando equipamento ID=8, Tag=TAG-003
+2025-04-30 20:26:37,193 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 8
+2025-04-30 20:26:37,193 - ui.admin_ui - DEBUG - Carregados 8 equipamentos na tabela
+2025-04-30 20:26:37,195 - ui.admin_ui - DEBUG - Configurando aba de inspeções
+2025-04-30 20:26:37,198 - ui.admin_ui - DEBUG - Carregando inspeções do banco de dados
+2025-04-30 20:26:37,198 - controllers.equipment_controller - DEBUG - Buscando todos os equipamentos
+2025-04-30 20:26:37,199 - controllers.equipment_controller - DEBUG - Encontrados 8 equipamentos
+2025-04-30 20:26:37,200 - ui.admin_ui - DEBUG - Carregados 8 equipamentos
+2025-04-30 20:26:37,204 - ui.admin_ui - DEBUG - Carregadas 2 inspeções
+2025-04-30 20:26:37,207 - ui.admin_ui - DEBUG - Configurando aba de relatórios
+2025-04-30 20:26:37,210 - ui.admin_ui - DEBUG - Carregando relatórios do banco de dados
+2025-04-30 20:26:37,211 - ui.admin_ui - DEBUG - Carregando relatórios
+2025-04-30 20:26:37,211 - controllers.report_controller - DEBUG - Buscando todos os relatórios
+2025-04-30 20:26:37,216 - controllers.report_controller - DEBUG - Relatório 1: {'id': 1, 'inspecao_id': 13, 'data_emissao': '2025-04-30', 'link_arquivo': 'C:/Users/jeanc/Downloads/Apresentacao_Sistema_Inspecoes_NR13.odp', 'observacoes': 'awd', 'tipo_inspecao': 'periodica', 'inspecao_resultado': 'aprovado', 'equipamento_tag': 'caldeira', 'equipamento_categoria': 'caldeira', 'engenheiro_nome': 'Engenheiro Beta'}
+2025-04-30 20:26:37,217 - controllers.report_controller - DEBUG - Encontrados 1 relatórios
+2025-04-30 20:26:37,228 - ui.admin_ui - DEBUG - Carregados 1 relatórios
+2025-04-30 20:26:37,231 - ui.admin_ui - DEBUG - Adicionando abas ao TabWidget
+2025-04-30 20:26:37,231 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-30 20:26:37,237 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-30 20:26:37,237 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-30 20:26:37,238 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-30 20:26:37,239 - ui.admin_ui - DEBUG - Configurando barra inferior
+2025-04-30 20:26:37,251 - ui.admin_ui - DEBUG - Interface inicializada com sucesso
+2025-04-30 20:26:37,251 - ui.admin_ui - DEBUG - Aplicando tema
+2025-04-30 20:26:37,267 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-30 20:26:37,268 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-30 20:26:37,269 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-30 20:26:37,270 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-30 20:26:37,270 - ui.admin_ui - INFO - AdminWindow inicializada com sucesso
+2025-04-30 20:26:37,274 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-30 20:26:37,275 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-30 20:26:37,275 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-30 20:26:37,276 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-30 20:26:37,319 - __main__ - INFO - Janela principal exibida para usuário: admin
+2025-04-30 20:26:43,480 - ui.admin_ui - DEBUG - Ativando/desativando equipamento selecionado
+2025-04-30 20:26:43,481 - ui.admin_ui - DEBUG - Linha selecionada: 6
+2025-04-30 20:26:43,482 - ui.admin_ui - DEBUG - Tag do equipamento: TAG-003
+2025-04-30 20:26:43,482 - ui.admin_ui - DEBUG - Tentativa 1 - ID do equipamento obtido via UserRole: 5
+2025-04-30 20:26:44,649 - controllers.equipment_controller - DEBUG - Alterando status do equipamento 5 para 0
+2025-04-30 20:26:44,650 - controllers.equipment_controller - DEBUG - Buscando equipamento com ID 5
+2025-04-30 20:26:44,652 - controllers.equipment_controller - DEBUG - Equipamento 5 encontrado: TAG-003
+2025-04-30 20:26:44,654 - controllers.equipment_controller - INFO - Equipamento 5 desativado com sucesso
+2025-04-30 20:26:44,655 - ui.admin_ui - DEBUG - Carregando equipamentos
+2025-04-30 20:26:44,655 - controllers.equipment_controller - DEBUG - Buscando todos os equipamentos
+2025-04-30 20:26:44,656 - controllers.equipment_controller - DEBUG - Encontrados 8 equipamentos
+2025-04-30 20:26:44,656 - ui.admin_ui - DEBUG - Carregando equipamento ID=1, Tag=caldeira
+2025-04-30 20:26:44,657 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 1
+2025-04-30 20:26:44,657 - ui.admin_ui - DEBUG - Carregando equipamento ID=2, Tag=caldeira
+2025-04-30 20:26:44,658 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 2
+2025-04-30 20:26:44,658 - ui.admin_ui - DEBUG - Carregando equipamento ID=3, Tag=TAG-001
+2025-04-30 20:26:44,659 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 3
+2025-04-30 20:26:44,659 - ui.admin_ui - DEBUG - Carregando equipamento ID=6, Tag=TAG-001
+2025-04-30 20:26:44,660 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 6
+2025-04-30 20:26:44,660 - ui.admin_ui - DEBUG - Carregando equipamento ID=4, Tag=TAG-002
+2025-04-30 20:26:44,660 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 4
+2025-04-30 20:26:44,661 - ui.admin_ui - DEBUG - Carregando equipamento ID=7, Tag=TAG-002
+2025-04-30 20:26:44,661 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 7
+2025-04-30 20:26:44,662 - ui.admin_ui - DEBUG - Carregando equipamento ID=5, Tag=TAG-003
+2025-04-30 20:26:44,662 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 5
+2025-04-30 20:26:44,663 - ui.admin_ui - DEBUG - Carregando equipamento ID=8, Tag=TAG-003
+2025-04-30 20:26:44,663 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 8
+2025-04-30 20:26:44,663 - ui.admin_ui - DEBUG - Carregados 8 equipamentos na tabela
+2025-04-30 20:26:47,038 - ui.admin_ui - DEBUG - Ativando/desativando equipamento selecionado
+2025-04-30 20:26:47,039 - ui.admin_ui - DEBUG - Linha selecionada: 6
+2025-04-30 20:26:47,039 - ui.admin_ui - DEBUG - Tag do equipamento: TAG-003
+2025-04-30 20:26:47,039 - ui.admin_ui - DEBUG - Tentativa 1 - ID do equipamento obtido via UserRole: 5
+2025-04-30 20:26:47,841 - controllers.equipment_controller - DEBUG - Alterando status do equipamento 5 para 1
+2025-04-30 20:26:47,841 - controllers.equipment_controller - DEBUG - Buscando equipamento com ID 5
+2025-04-30 20:26:47,842 - controllers.equipment_controller - DEBUG - Equipamento 5 encontrado: TAG-003
+2025-04-30 20:26:47,843 - controllers.equipment_controller - INFO - Equipamento 5 ativado com sucesso
+2025-04-30 20:26:47,844 - ui.admin_ui - DEBUG - Carregando equipamentos
+2025-04-30 20:26:47,844 - controllers.equipment_controller - DEBUG - Buscando todos os equipamentos
+2025-04-30 20:26:47,845 - controllers.equipment_controller - DEBUG - Encontrados 8 equipamentos
+2025-04-30 20:26:47,845 - ui.admin_ui - DEBUG - Carregando equipamento ID=1, Tag=caldeira
+2025-04-30 20:26:47,845 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 1
+2025-04-30 20:26:47,846 - ui.admin_ui - DEBUG - Carregando equipamento ID=2, Tag=caldeira
+2025-04-30 20:26:47,846 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 2
+2025-04-30 20:26:47,847 - ui.admin_ui - DEBUG - Carregando equipamento ID=3, Tag=TAG-001
+2025-04-30 20:26:47,847 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 3
+2025-04-30 20:26:47,847 - ui.admin_ui - DEBUG - Carregando equipamento ID=6, Tag=TAG-001
+2025-04-30 20:26:47,848 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 6
+2025-04-30 20:26:47,848 - ui.admin_ui - DEBUG - Carregando equipamento ID=4, Tag=TAG-002
+2025-04-30 20:26:47,848 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 4
+2025-04-30 20:26:47,849 - ui.admin_ui - DEBUG - Carregando equipamento ID=7, Tag=TAG-002
+2025-04-30 20:26:47,849 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 7
+2025-04-30 20:26:47,849 - ui.admin_ui - DEBUG - Carregando equipamento ID=5, Tag=TAG-003
+2025-04-30 20:26:47,850 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 5
+2025-04-30 20:26:47,850 - ui.admin_ui - DEBUG - Carregando equipamento ID=8, Tag=TAG-003
+2025-04-30 20:26:47,850 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 8
+2025-04-30 20:26:47,851 - ui.admin_ui - DEBUG - Carregados 8 equipamentos na tabela
+2025-04-30 20:26:51,290 - __main__ - INFO - Aplicação encerrada com código 0
+2025-04-30 20:27:40,632 - __main__ - INFO - === INICIANDO APLICAÇÃO ===
+2025-04-30 20:27:40,632 - __main__ - INFO - Inicializando banco de dados
+2025-04-30 20:27:40,639 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-30 20:27:40,756 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-30 20:27:40,811 - database.models - INFO - Tabelas criadas com sucesso
+2025-04-30 20:27:40,812 - __main__ - INFO - Verificando usuário admin
+2025-04-30 20:27:40,815 - __main__ - INFO - Resultado da criação do admin: Email já cadastrado
+2025-04-30 20:27:40,816 - __main__ - INFO - Criando instância do sistema
+2025-04-30 20:27:40,816 - __main__ - DEBUG - Iniciando construtor do SistemaInspecao
+2025-04-30 20:27:40,816 - __main__ - DEBUG - Criando QApplication
+2025-04-30 20:27:40,895 - __main__ - DEBUG - QApplication criado com sucesso
+2025-04-30 20:27:40,895 - __main__ - DEBUG - Criando AuthController
+2025-04-30 20:27:40,895 - __main__ - DEBUG - AuthController criado com sucesso
+2025-04-30 20:27:40,896 - __main__ - INFO - Sistema inicializado com sucesso
+2025-04-30 20:27:40,896 - __main__ - INFO - Executando a aplicação
+2025-04-30 20:27:40,897 - __main__ - INFO - Iniciando aplicação
+2025-04-30 20:27:40,897 - __main__ - DEBUG - Verificando imports
+2025-04-30 20:27:40,897 - __main__ - DEBUG - Import login_window OK
+2025-04-30 20:27:40,898 - __main__ - DEBUG - Import admin_ui OK
+2025-04-30 20:27:40,898 - __main__ - DEBUG - Import client_ui OK
+2025-04-30 20:27:40,899 - __main__ - DEBUG - Import modals OK
+2025-04-30 20:27:40,899 - __main__ - DEBUG - Diretório atual: C:\Users\jeanc\Documents\C-TREINA\sistema-inspecao-nr13
+2025-04-30 20:27:40,900 - __main__ - DEBUG - Chamando show_login()
+2025-04-30 20:27:40,900 - __main__ - DEBUG - Criando janela de login
+2025-04-30 20:27:41,014 - __main__ - DEBUG - Conectando sinal de login_success
+2025-04-30 20:27:41,015 - __main__ - DEBUG - Exibindo janela de login
+2025-04-30 20:27:41,691 - __main__ - INFO - Janela de login exibida com sucesso
+2025-04-30 20:27:41,692 - __main__ - DEBUG - show_login() executado com sucesso
+2025-04-30 20:27:41,692 - __main__ - DEBUG - Aguardando 1 segundo antes de iniciar o loop de eventos
+2025-04-30 20:27:42,693 - __main__ - INFO - Executando o loop de eventos da aplicação
+2025-04-30 20:27:46,386 - __main__ - INFO - Login bem sucedido para usuário ID: 2
+2025-04-30 20:27:46,393 - ui.admin_ui - DEBUG - Iniciando construtor do AdminWindow
+2025-04-30 20:27:46,394 - ui.admin_ui - DEBUG - Criando instância do DatabaseModels
+2025-04-30 20:27:46,394 - ui.admin_ui - DEBUG - Criando instância do EquipmentController
+2025-04-30 20:27:46,394 - controllers.equipment_controller - DEBUG - Iniciando EquipmentController
+2025-04-30 20:27:46,395 - ui.admin_ui - DEBUG - Criando instância do InspectionController
+2025-04-30 20:27:46,395 - controllers.inspection_controller - DEBUG - Iniciando InspectionController
+2025-04-30 20:27:46,396 - db.models - DEBUG - InspecaoModel inicializado
+2025-04-30 20:27:46,396 - ui.admin_ui - DEBUG - Criando instância do ReportController
+2025-04-30 20:27:46,397 - controllers.report_controller - DEBUG - Iniciando ReportController
+2025-04-30 20:27:46,397 - ui.admin_ui - DEBUG - Iniciando setup da UI
+2025-04-30 20:27:46,398 - ui.admin_ui - DEBUG - Iniciando setup da interface
+2025-04-30 20:27:46,408 - ui.admin_ui - DEBUG - Criando widget central
+2025-04-30 20:27:46,417 - ui.admin_ui - DEBUG - Criando abas
+2025-04-30 20:27:46,418 - ui.admin_ui - DEBUG - Configurando aba de usuários
+2025-04-30 20:27:46,430 - ui.admin_ui - DEBUG - Carregando usuários
+2025-04-30 20:27:46,431 - ui.admin_ui - DEBUG - Carregando usuários
+2025-04-30 20:27:46,431 - controllers.auth_controller - DEBUG - Buscando todos os usuários
+2025-04-30 20:27:46,433 - controllers.auth_controller - DEBUG - Encontrados 8 usuários
+2025-04-30 20:27:46,436 - ui.admin_ui - DEBUG - Configurando aba de equipamentos
+2025-04-30 20:27:46,441 - ui.admin_ui - DEBUG - Carregando equipamentos
+2025-04-30 20:27:46,441 - ui.admin_ui - DEBUG - Carregando equipamentos
+2025-04-30 20:27:46,442 - controllers.equipment_controller - DEBUG - Buscando todos os equipamentos
+2025-04-30 20:27:46,446 - controllers.equipment_controller - DEBUG - Encontrados 8 equipamentos
+2025-04-30 20:27:46,446 - ui.admin_ui - DEBUG - Carregando equipamento ID=1, Tag=caldeira
+2025-04-30 20:27:46,447 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 1
+2025-04-30 20:27:46,447 - ui.admin_ui - DEBUG - Carregando equipamento ID=2, Tag=caldeira
+2025-04-30 20:27:46,448 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 2
+2025-04-30 20:27:46,448 - ui.admin_ui - DEBUG - Carregando equipamento ID=3, Tag=TAG-001
+2025-04-30 20:27:46,449 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 3
+2025-04-30 20:27:46,449 - ui.admin_ui - DEBUG - Carregando equipamento ID=6, Tag=TAG-001
+2025-04-30 20:27:46,449 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 6
+2025-04-30 20:27:46,450 - ui.admin_ui - DEBUG - Carregando equipamento ID=4, Tag=TAG-002
+2025-04-30 20:27:46,450 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 4
+2025-04-30 20:27:46,451 - ui.admin_ui - DEBUG - Carregando equipamento ID=7, Tag=TAG-002
+2025-04-30 20:27:46,451 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 7
+2025-04-30 20:27:46,451 - ui.admin_ui - DEBUG - Carregando equipamento ID=5, Tag=TAG-003
+2025-04-30 20:27:46,452 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 5
+2025-04-30 20:27:46,452 - ui.admin_ui - DEBUG - Carregando equipamento ID=8, Tag=TAG-003
+2025-04-30 20:27:46,453 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 8
+2025-04-30 20:27:46,453 - ui.admin_ui - DEBUG - Carregados 8 equipamentos na tabela
+2025-04-30 20:27:46,456 - ui.admin_ui - DEBUG - Configurando aba de inspeções
+2025-04-30 20:27:46,458 - ui.admin_ui - DEBUG - Carregando inspeções do banco de dados
+2025-04-30 20:27:46,459 - controllers.equipment_controller - DEBUG - Buscando todos os equipamentos
+2025-04-30 20:27:46,460 - controllers.equipment_controller - DEBUG - Encontrados 8 equipamentos
+2025-04-30 20:27:46,460 - ui.admin_ui - DEBUG - Carregados 8 equipamentos
+2025-04-30 20:27:46,465 - ui.admin_ui - DEBUG - Carregadas 2 inspeções
+2025-04-30 20:27:46,468 - ui.admin_ui - DEBUG - Configurando aba de relatórios
+2025-04-30 20:27:46,470 - ui.admin_ui - DEBUG - Carregando relatórios do banco de dados
+2025-04-30 20:27:46,471 - ui.admin_ui - DEBUG - Carregando relatórios
+2025-04-30 20:27:46,471 - controllers.report_controller - DEBUG - Buscando todos os relatórios
+2025-04-30 20:27:46,477 - controllers.report_controller - DEBUG - Relatório 1: {'id': 1, 'inspecao_id': 13, 'data_emissao': '2025-04-30', 'link_arquivo': 'C:/Users/jeanc/Downloads/Apresentacao_Sistema_Inspecoes_NR13.odp', 'observacoes': 'awd', 'tipo_inspecao': 'periodica', 'inspecao_resultado': 'aprovado', 'equipamento_tag': 'caldeira', 'equipamento_categoria': 'caldeira', 'engenheiro_nome': 'Engenheiro Beta'}
+2025-04-30 20:27:46,478 - controllers.report_controller - DEBUG - Encontrados 1 relatórios
+2025-04-30 20:27:46,490 - ui.admin_ui - DEBUG - Carregados 1 relatórios
+2025-04-30 20:27:46,494 - ui.admin_ui - DEBUG - Adicionando abas ao TabWidget
+2025-04-30 20:27:46,494 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-30 20:27:46,501 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-30 20:27:46,502 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-30 20:27:46,503 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-30 20:27:46,504 - ui.admin_ui - DEBUG - Configurando barra inferior
+2025-04-30 20:27:46,515 - ui.admin_ui - DEBUG - Interface inicializada com sucesso
+2025-04-30 20:27:46,516 - ui.admin_ui - DEBUG - Aplicando tema
+2025-04-30 20:27:46,532 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-30 20:27:46,534 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-30 20:27:46,535 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-30 20:27:46,536 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-30 20:27:46,537 - ui.admin_ui - INFO - AdminWindow inicializada com sucesso
+2025-04-30 20:27:46,541 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-30 20:27:46,541 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-30 20:27:46,542 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-30 20:27:46,543 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-30 20:27:46,587 - __main__ - INFO - Janela principal exibida para usuário: admin
+2025-04-30 20:28:06,275 - __main__ - INFO - Aplicação encerrada com código 0
+2025-04-30 20:31:01,597 - __main__ - INFO - === INICIANDO APLICAÇÃO ===
+2025-04-30 20:31:01,598 - __main__ - INFO - Inicializando banco de dados
+2025-04-30 20:31:01,605 - database.connection - INFO - Tentando conectar ao banco de dados: DESKTOP-GUFFT6G\MSSQLSERVER01/sistema_inspecao_db
+2025-04-30 20:31:01,726 - database.connection - INFO - Conexão com o banco de dados estabelecida com sucesso
+2025-04-30 20:31:01,775 - database.models - INFO - Tabelas criadas com sucesso
+2025-04-30 20:31:01,775 - __main__ - INFO - Verificando usuário admin
+2025-04-30 20:31:01,777 - __main__ - INFO - Resultado da criação do admin: Email já cadastrado
+2025-04-30 20:31:01,777 - __main__ - INFO - Criando instância do sistema
+2025-04-30 20:31:01,778 - __main__ - DEBUG - Iniciando construtor do SistemaInspecao
+2025-04-30 20:31:01,778 - __main__ - DEBUG - Criando QApplication
+2025-04-30 20:31:01,869 - __main__ - DEBUG - QApplication criado com sucesso
+2025-04-30 20:31:01,869 - __main__ - DEBUG - Criando AuthController
+2025-04-30 20:31:01,869 - __main__ - DEBUG - AuthController criado com sucesso
+2025-04-30 20:31:01,870 - __main__ - INFO - Sistema inicializado com sucesso
+2025-04-30 20:31:01,870 - __main__ - INFO - Executando a aplicação
+2025-04-30 20:31:01,870 - __main__ - INFO - Iniciando aplicação
+2025-04-30 20:31:01,871 - __main__ - DEBUG - Verificando imports
+2025-04-30 20:31:01,871 - __main__ - DEBUG - Import login_window OK
+2025-04-30 20:31:01,871 - __main__ - DEBUG - Import admin_ui OK
+2025-04-30 20:31:01,872 - __main__ - DEBUG - Import client_ui OK
+2025-04-30 20:31:01,872 - __main__ - DEBUG - Import modals OK
+2025-04-30 20:31:01,872 - __main__ - DEBUG - Diretório atual: C:\Users\jeanc\Documents\C-TREINA\sistema-inspecao-nr13
+2025-04-30 20:31:01,873 - __main__ - DEBUG - Chamando show_login()
+2025-04-30 20:31:01,873 - __main__ - DEBUG - Criando janela de login
+2025-04-30 20:31:01,998 - __main__ - DEBUG - Conectando sinal de login_success
+2025-04-30 20:31:01,998 - __main__ - DEBUG - Exibindo janela de login
+2025-04-30 20:31:02,686 - __main__ - INFO - Janela de login exibida com sucesso
+2025-04-30 20:31:02,687 - __main__ - DEBUG - show_login() executado com sucesso
+2025-04-30 20:31:02,687 - __main__ - DEBUG - Aguardando 1 segundo antes de iniciar o loop de eventos
+2025-04-30 20:31:03,688 - __main__ - INFO - Executando o loop de eventos da aplicação
+2025-04-30 20:31:10,373 - __main__ - INFO - Login bem sucedido para usuário ID: 2
+2025-04-30 20:31:10,380 - ui.admin_ui - DEBUG - Iniciando construtor do AdminWindow
+2025-04-30 20:31:10,381 - ui.admin_ui - DEBUG - Criando instância do DatabaseModels
+2025-04-30 20:31:10,381 - ui.admin_ui - DEBUG - Criando instância do EquipmentController
+2025-04-30 20:31:10,382 - controllers.equipment_controller - DEBUG - Iniciando EquipmentController
+2025-04-30 20:31:10,382 - ui.admin_ui - DEBUG - Criando instância do InspectionController
+2025-04-30 20:31:10,383 - controllers.inspection_controller - DEBUG - Iniciando InspectionController
+2025-04-30 20:31:10,383 - db.models - DEBUG - InspecaoModel inicializado
+2025-04-30 20:31:10,384 - ui.admin_ui - DEBUG - Criando instância do ReportController
+2025-04-30 20:31:10,384 - controllers.report_controller - DEBUG - Iniciando ReportController
+2025-04-30 20:31:10,385 - ui.admin_ui - DEBUG - Iniciando setup da UI
+2025-04-30 20:31:10,385 - ui.admin_ui - DEBUG - Iniciando setup da interface
+2025-04-30 20:31:10,391 - ui.admin_ui - DEBUG - Criando widget central
+2025-04-30 20:31:10,396 - ui.admin_ui - DEBUG - Criando abas
+2025-04-30 20:31:10,397 - ui.admin_ui - DEBUG - Configurando aba de usuários
+2025-04-30 20:31:10,411 - ui.admin_ui - DEBUG - Carregando usuários
+2025-04-30 20:31:10,412 - ui.admin_ui - DEBUG - Carregando usuários
+2025-04-30 20:31:10,412 - controllers.auth_controller - DEBUG - Buscando todos os usuários
+2025-04-30 20:31:10,414 - controllers.auth_controller - DEBUG - Encontrados 8 usuários
+2025-04-30 20:31:10,418 - ui.admin_ui - DEBUG - Configurando aba de equipamentos
+2025-04-30 20:31:10,423 - ui.admin_ui - DEBUG - Carregando equipamentos
+2025-04-30 20:31:10,424 - ui.admin_ui - DEBUG - Carregando equipamentos
+2025-04-30 20:31:10,424 - controllers.equipment_controller - DEBUG - Buscando todos os equipamentos
+2025-04-30 20:31:10,430 - controllers.equipment_controller - DEBUG - Encontrados 8 equipamentos
+2025-04-30 20:31:10,430 - ui.admin_ui - DEBUG - Carregando equipamento ID=1, Tag=caldeira
+2025-04-30 20:31:10,431 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 1
+2025-04-30 20:31:10,431 - ui.admin_ui - DEBUG - Carregando equipamento ID=2, Tag=caldeira
+2025-04-30 20:31:10,432 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 2
+2025-04-30 20:31:10,432 - ui.admin_ui - DEBUG - Carregando equipamento ID=3, Tag=TAG-001
+2025-04-30 20:31:10,432 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 3
+2025-04-30 20:31:10,433 - ui.admin_ui - DEBUG - Carregando equipamento ID=6, Tag=TAG-001
+2025-04-30 20:31:10,433 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 6
+2025-04-30 20:31:10,434 - ui.admin_ui - DEBUG - Carregando equipamento ID=4, Tag=TAG-002
+2025-04-30 20:31:10,434 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 4
+2025-04-30 20:31:10,435 - ui.admin_ui - DEBUG - Carregando equipamento ID=7, Tag=TAG-002
+2025-04-30 20:31:10,435 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 7
+2025-04-30 20:31:10,436 - ui.admin_ui - DEBUG - Carregando equipamento ID=5, Tag=TAG-003
+2025-04-30 20:31:10,436 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 5
+2025-04-30 20:31:10,437 - ui.admin_ui - DEBUG - Carregando equipamento ID=8, Tag=TAG-003
+2025-04-30 20:31:10,438 - ui.admin_ui - DEBUG - ID armazenado no item da tabela: 8
+2025-04-30 20:31:10,438 - ui.admin_ui - DEBUG - Carregados 8 equipamentos na tabela
+2025-04-30 20:31:10,441 - ui.admin_ui - DEBUG - Configurando aba de inspeções
+2025-04-30 20:31:10,445 - ui.admin_ui - DEBUG - Carregando inspeções do banco de dados
+2025-04-30 20:31:10,445 - controllers.equipment_controller - DEBUG - Buscando todos os equipamentos
+2025-04-30 20:31:10,446 - controllers.equipment_controller - DEBUG - Encontrados 8 equipamentos
+2025-04-30 20:31:10,447 - ui.admin_ui - DEBUG - Carregados 8 equipamentos
+2025-04-30 20:31:10,451 - ui.admin_ui - DEBUG - Carregadas 2 inspeções
+2025-04-30 20:31:10,454 - ui.admin_ui - DEBUG - Configurando aba de relatórios
+2025-04-30 20:31:10,457 - ui.admin_ui - DEBUG - Carregando relatórios do banco de dados
+2025-04-30 20:31:10,457 - ui.admin_ui - DEBUG - Carregando relatórios
+2025-04-30 20:31:10,458 - controllers.report_controller - DEBUG - Buscando todos os relatórios
+2025-04-30 20:31:10,462 - controllers.report_controller - DEBUG - Relatório 1: {'id': 1, 'inspecao_id': 13, 'data_emissao': '2025-04-30', 'link_arquivo': 'C:/Users/jeanc/Downloads/Apresentacao_Sistema_Inspecoes_NR13.odp', 'observacoes': 'awd', 'tipo_inspecao': 'periodica', 'inspecao_resultado': 'aprovado', 'equipamento_tag': 'caldeira', 'equipamento_categoria': 'caldeira', 'engenheiro_nome': 'Engenheiro Beta'}
+2025-04-30 20:31:10,464 - controllers.report_controller - DEBUG - Encontrados 1 relatórios
+2025-04-30 20:31:10,475 - ui.admin_ui - DEBUG - Carregados 1 relatórios
+2025-04-30 20:31:10,478 - ui.admin_ui - DEBUG - Adicionando abas ao TabWidget
+2025-04-30 20:31:10,478 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-30 20:31:10,484 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-30 20:31:10,484 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-30 20:31:10,485 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-30 20:31:10,486 - ui.admin_ui - DEBUG - Configurando barra inferior
+2025-04-30 20:31:10,496 - ui.admin_ui - DEBUG - Interface inicializada com sucesso
+2025-04-30 20:31:10,496 - ui.admin_ui - DEBUG - Aplicando tema
+2025-04-30 20:31:10,510 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-30 20:31:10,513 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-30 20:31:10,513 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-30 20:31:10,514 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-30 20:31:10,515 - ui.admin_ui - INFO - AdminWindow inicializada com sucesso
+2025-04-30 20:31:10,519 - ui.admin_ui - DEBUG - Obtendo ícone: user.png
+2025-04-30 20:31:10,519 - ui.admin_ui - DEBUG - Obtendo ícone: equipamentos.png
+2025-04-30 20:31:10,520 - ui.admin_ui - DEBUG - Obtendo ícone: inspecoes.png
+2025-04-30 20:31:10,521 - ui.admin_ui - DEBUG - Obtendo ícone: relatorios.png
+2025-04-30 20:31:10,575 - __main__ - INFO - Janela principal exibida para usuário: admin
+2025-04-30 20:31:12,578 - controllers.auth_controller - DEBUG - Buscando todos os usuários
+2025-04-30 20:31:12,579 - controllers.auth_controller - DEBUG - Encontrados 8 usuários
+2025-04-30 20:31:27,996 - __main__ - INFO - Aplicação encerrada com código 0

@@ -192,8 +192,8 @@ class AdminWindow(QMainWindow):
             
             # Logo
             logo_label = QLabel()
-            logo_pixmap = QPixmap("ui/CTREINA_LOGO.png")
-            logo_label.setPixmap(logo_pixmap.scaled(120, 60, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+            logo_pixmap = QPixmap("ui/CTREINA_LOGO_FIT.png")
+            logo_label.setPixmap(logo_pixmap.scaled(150, 120, Qt.KeepAspectRatio, Qt.SmoothTransformation))
             logo_label.setStyleSheet("""
                 QLabel {
                     background-color: white;
@@ -462,6 +462,8 @@ class AdminWindow(QMainWindow):
                 }
             """)
             self.toggle_equipment_button.clicked.connect(self.toggle_equipment)
+            # Ocultar o botão inicialmente
+            self.toggle_equipment_button.setVisible(False)
             equipment_buttons.addWidget(self.toggle_equipment_button)
             
             # Adiciona um espaçador expansível
@@ -497,7 +499,13 @@ class AdminWindow(QMainWindow):
                 "Tag", "Categoria", "Empresa ID", "Fabricante", "Ano Fabricação", "Pressão Projeto", "Pressão Trabalho", "Volume", "Fluido", "Status"
             ])
             self.equipment_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+            self.equipment_table.setSelectionBehavior(QTableWidget.SelectRows)
+            self.equipment_table.setSelectionMode(QTableWidget.SingleSelection)
+            self.equipment_table.setAlternatingRowColors(True)
+            self.equipment_table.setEditTriggers(QTableWidget.NoEditTriggers)  # Desabilita edição direta
             self.equipment_table.verticalHeader().setVisible(False)  # Oculta o cabeçalho vertical
+            # Adiciona o evento de seleção para atualizar o botão
+            self.equipment_table.itemSelectionChanged.connect(self.update_toggle_equipment_button)
             logger.debug("Carregando equipamentos")
             self.load_equipment()
             equipment_layout.addWidget(self.equipment_table)
@@ -999,25 +1007,51 @@ class AdminWindow(QMainWindow):
                 # Tag
                 tag_item = QTableWidgetItem(item.get('tag', ''))
                 tag_item.setData(Qt.UserRole, equip_id)  # Armazena o ID como dado do item
+                tag_item.setFlags(tag_item.flags() & ~Qt.ItemIsEditable)  # Remove a flag de editável
                 self.equipment_table.setItem(i, 0, tag_item)
                 
                 # Para debug - verifica se o ID foi armazenado corretamente
                 id_stored = tag_item.data(Qt.UserRole)
                 logger.debug(f"ID armazenado no item da tabela: {id_stored}")
                 
-                # Resto dos campos
-                self.equipment_table.setItem(i, 1, QTableWidgetItem(item.get('categoria', '')))
-                self.equipment_table.setItem(i, 2, QTableWidgetItem(str(item.get('empresa_id', ''))))
-                self.equipment_table.setItem(i, 3, QTableWidgetItem(item.get('fabricante', '')))
-                self.equipment_table.setItem(i, 4, QTableWidgetItem(str(item.get('ano_fabricacao', ''))))
-                self.equipment_table.setItem(i, 5, QTableWidgetItem(str(item.get('pressao_projeto', ''))))
-                self.equipment_table.setItem(i, 6, QTableWidgetItem(str(item.get('pressao_trabalho', ''))))
-                self.equipment_table.setItem(i, 7, QTableWidgetItem(str(item.get('volume', ''))))
-                self.equipment_table.setItem(i, 8, QTableWidgetItem(item.get('fluido', '')))
+                # Resto dos campos - todos configurados como não editáveis
+                categoria_item = QTableWidgetItem(item.get('categoria', ''))
+                categoria_item.setFlags(categoria_item.flags() & ~Qt.ItemIsEditable)
+                self.equipment_table.setItem(i, 1, categoria_item)
+                
+                empresa_item = QTableWidgetItem(str(item.get('empresa_id', '')))
+                empresa_item.setFlags(empresa_item.flags() & ~Qt.ItemIsEditable)
+                self.equipment_table.setItem(i, 2, empresa_item)
+                
+                fabricante_item = QTableWidgetItem(item.get('fabricante', ''))
+                fabricante_item.setFlags(fabricante_item.flags() & ~Qt.ItemIsEditable)
+                self.equipment_table.setItem(i, 3, fabricante_item)
+                
+                ano_item = QTableWidgetItem(str(item.get('ano_fabricacao', '')))
+                ano_item.setFlags(ano_item.flags() & ~Qt.ItemIsEditable)
+                self.equipment_table.setItem(i, 4, ano_item)
+                
+                pressao_projeto_item = QTableWidgetItem(str(item.get('pressao_projeto', '')))
+                pressao_projeto_item.setFlags(pressao_projeto_item.flags() & ~Qt.ItemIsEditable)
+                self.equipment_table.setItem(i, 5, pressao_projeto_item)
+                
+                pressao_trabalho_item = QTableWidgetItem(str(item.get('pressao_trabalho', '')))
+                pressao_trabalho_item.setFlags(pressao_trabalho_item.flags() & ~Qt.ItemIsEditable)
+                self.equipment_table.setItem(i, 6, pressao_trabalho_item)
+                
+                volume_item = QTableWidgetItem(str(item.get('volume', '')))
+                volume_item.setFlags(volume_item.flags() & ~Qt.ItemIsEditable)
+                self.equipment_table.setItem(i, 7, volume_item)
+                
+                fluido_item = QTableWidgetItem(item.get('fluido', ''))
+                fluido_item.setFlags(fluido_item.flags() & ~Qt.ItemIsEditable)
+                self.equipment_table.setItem(i, 8, fluido_item)
                 
                 # Status
                 status = "Ativo" if item.get('ativo', 1) else "Inativo"
-                self.equipment_table.setItem(i, 9, QTableWidgetItem(status))
+                status_item = QTableWidgetItem(status)
+                status_item.setFlags(status_item.flags() & ~Qt.ItemIsEditable)
+                self.equipment_table.setItem(i, 9, status_item)
                 
             logger.debug(f"Carregados {len(equipment)} equipamentos na tabela")
         except Exception as e:
@@ -1561,10 +1595,13 @@ class AdminWindow(QMainWindow):
         # Obtém a linha selecionada
         row = selected_rows[0].row()
         
-        # Obtém o ID da inspeção
-        inspection_id = int(self.inspection_table.item(row, 0).text())
-        
         try:
+            # Obtém o ID da inspeção usando UserRole em vez do texto
+            inspection_id = self.inspection_table.item(row, 0).data(Qt.UserRole)
+            if not inspection_id:
+                QMessageBox.warning(self, "Erro", "Não foi possível identificar o ID da inspeção.")
+                return
+            
             # Busca os detalhes da inspeção
             inspection = self.inspection_controller.get_inspection_by_id(inspection_id)
             
@@ -1611,6 +1648,7 @@ class AdminWindow(QMainWindow):
             
         except Exception as e:
             logger.error(f"Erro ao gerar relatório a partir da inspeção: {str(e)}")
+            logger.error(traceback.format_exc())
             QMessageBox.critical(self, "Erro", f"Falha ao gerar relatório: {str(e)}")
 
     def edit_selected_user(self, user_id=None, force_type=None):
@@ -2403,6 +2441,15 @@ class AdminWindow(QMainWindow):
             logger.debug(f"Filtrando equipamentos com texto: '{text}'")
             search_text = text.lower()
             
+            # Resetar visibilidade de todas as linhas se a pesquisa estiver vazia
+            if not search_text:
+                for row in range(self.equipment_table.rowCount()):
+                    self.equipment_table.setRowHidden(row, False)
+                logger.debug("Filtro de equipamentos limpo - mostrando todas as linhas")
+                return
+            
+            # Aplicar filtro apenas se houver texto de pesquisa
+            hidden_count = 0    
             # Itera por todas as linhas da tabela
             for row in range(self.equipment_table.rowCount()):
                 should_show = False
@@ -2416,8 +2463,10 @@ class AdminWindow(QMainWindow):
                 
                 # Mostra ou oculta a linha com base na correspondência
                 self.equipment_table.setRowHidden(row, not should_show)
+                if not should_show:
+                    hidden_count += 1
             
-            logger.debug(f"Filtro de equipamentos aplicado com sucesso")
+            logger.debug(f"Filtro de equipamentos aplicado com sucesso - {hidden_count} linhas ocultas")
         except Exception as e:
             logger.error(f"Erro ao filtrar equipamentos: {str(e)}")
             logger.error(traceback.format_exc())
@@ -2643,8 +2692,22 @@ class AdminWindow(QMainWindow):
                 
                 if success:
                     status_text = "desativado" if is_active else "ativado"
+                    
+                    # Certifique-se de que o botão de toggle esteja visível
+                    if not self.toggle_equipment_button.isVisible():
+                        self.toggle_equipment_button.setVisible(True)
+                        
+                    # Atualiza a tabela de forma completa
+                    self.load_equipment()
+                    
+                    # Certifique-se de que nenhuma linha está oculta após a atualização
+                    for r in range(self.equipment_table.rowCount()):
+                        self.equipment_table.setRowHidden(r, False)
+                    
+                    # Atualiza o botão após a operação
+                    self.update_toggle_equipment_button()
+                    
                     QMessageBox.information(self, "Sucesso", f"Equipamento {status_text} com sucesso!")
-                    self.load_equipment()  # Recarrega a tabela
                 else:
                     QMessageBox.warning(self, "Erro", f"Erro ao {action} equipamento: {message}")
         
@@ -2652,3 +2715,71 @@ class AdminWindow(QMainWindow):
             logger.error(f"Erro ao alterar status do equipamento: {str(e)}")
             logger.error(traceback.format_exc())
             QMessageBox.critical(self, "Erro", f"Erro ao alterar status do equipamento: {str(e)}")
+
+    def update_toggle_equipment_button(self):
+        """Atualiza o botão de ativar/desativar baseado no equipamento selecionado"""
+        try:
+            selected_rows = self.equipment_table.selectedItems()
+            if not selected_rows:
+                # Ocultar o botão em vez de apenas desabilitar
+                self.toggle_equipment_button.setVisible(False)
+                return
+            
+            # Mostrar o botão se estiver oculto
+            if not self.toggle_equipment_button.isVisible():
+                self.toggle_equipment_button.setVisible(True)
+                
+            # Obter a linha selecionada e verificar o status do equipamento
+            row = selected_rows[0].row()
+            status_item = self.equipment_table.item(row, 9)  # Coluna status (última coluna)
+            
+            if not status_item:
+                self.toggle_equipment_button.setVisible(False)
+                return
+                
+            is_active = status_item.text() == "Ativo"
+            
+            if is_active:
+                self.toggle_equipment_button.setText("Desativar")
+                self.toggle_equipment_button.setIcon(self.create_icon_from_svg(self.icons['disable']))
+                self.toggle_equipment_button.setStyleSheet("""
+                    QPushButton {
+                        background-color: #dc3545;
+                        color: white;
+                        border: none;
+                        border-radius: 4px;
+                        padding: 8px 16px;
+                        font-weight: bold;
+                        height: 36px;
+                    }
+                    QPushButton:hover {
+                        background-color: #c82333;
+                    }
+                    QPushButton:pressed {
+                        background-color: #bd2130;
+                    }
+                """)
+            else:
+                self.toggle_equipment_button.setText("Ativar")
+                self.toggle_equipment_button.setIcon(self.create_icon_from_svg(self.icons['enable']))
+                self.toggle_equipment_button.setStyleSheet("""
+                    QPushButton {
+                        background-color: #28a745;
+                        color: white;
+                        border: none;
+                        border-radius: 4px;
+                        padding: 8px 16px;
+                        font-weight: bold;
+                        height: 36px;
+                    }
+                    QPushButton:hover {
+                        background-color: #218838;
+                    }
+                    QPushButton:pressed {
+                        background-color: #1e7e34;
+                    }
+                """)
+            
+        except Exception as e:
+            logger.error(f"Erro ao atualizar botão de ativar/desativar equipamentos: {str(e)}")
+            logger.error(traceback.format_exc())
