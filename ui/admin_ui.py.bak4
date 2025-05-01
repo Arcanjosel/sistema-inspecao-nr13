@@ -124,26 +124,11 @@ class AdminWindow(QMainWindow):
         return QIcon(pixmap)
 
     def get_tab_icon(self, icon_name):
-        """Retorna o ícone apropriado para a aba usando o dicionário de SVGs"""
+        """Retorna o ícone apropriado para a aba usando arquivos PNG"""
         try:
             logger.debug(f"Obtendo ícone: {icon_name}")
             
-            # Mapear nome do ícone para chave no dicionário de ícones
-            icon_key = None
-            if icon_name == "user.png":
-                icon_key = 'user'
-            elif icon_name == "equipamentos.png":
-                icon_key = 'equipment'
-            elif icon_name == "inspecoes.png":
-                icon_key = 'inspection'
-            elif icon_name == "relatorios.png":
-                icon_key = 'report'
-            
-            # Se temos um ícone SVG, usar ele
-            if icon_key and icon_key in self.icons:
-                return self.create_icon_from_svg(self.icons[icon_key])
-                
-            # Caso contrário, tentar carregar do arquivo
+            # Carregar diretamente do arquivo PNG
             pixmap = QPixmap(f"ui/{icon_name}")
             if not pixmap.isNull():
                 if self.is_dark:
@@ -151,7 +136,8 @@ class AdminWindow(QMainWindow):
                     img = pixmap.toImage()
                     img.invertPixels()
                     pixmap = QPixmap.fromImage(img)
-                return QIcon(pixmap)
+                icon = QIcon(pixmap)
+                return icon
         except Exception as e:
             logger.warning(f"Erro ao carregar ícone {icon_name}: {str(e)}")
             
@@ -214,6 +200,15 @@ class AdminWindow(QMainWindow):
             # Abas
             logger.debug("Criando abas")
             self.tabs = QTabWidget()
+            
+            # Configurar tamanho dos ícones das abas
+            self.tabs.setIconSize(QSize(24, 24))
+            
+            # Adicionar abas com ícones PNG
+            self.tabs.addTab(users_tab, self.get_tab_icon("user.png"), "Usuários")
+            self.tabs.addTab(equipment_tab, self.get_tab_icon("equipamentos.png"), "Equipamentos")
+            self.tabs.addTab(inspection_tab, self.get_tab_icon("inspecoes.png"), "Inspeções")
+            self.tabs.addTab(report_tab, self.get_tab_icon("relatorios.png"), "Relatórios")
             
             # Aba de Usuários
             logger.debug("Configurando aba de usuários")
@@ -514,7 +509,7 @@ class AdminWindow(QMainWindow):
             logger.debug("Configurando aba de inspeções")
             inspection_tab = QWidget()
             inspection_layout = QVBoxLayout(inspection_tab)
-    
+            
             # Container para busca e botões
             top_container = QHBoxLayout()
             
@@ -1197,7 +1192,7 @@ class AdminWindow(QMainWindow):
                 QMessageBox.warning(self, "Erro", message)
                 
     def add_equipment(self):
-        """Abre o modal para adicionar um equipamento"""
+        """Adiciona um novo equipamento."""
         try:
             logger.debug("Abrindo modal para adicionar equipamento")
             modal = EquipmentModal(self, is_dark=self.is_dark)
@@ -1206,8 +1201,8 @@ class AdminWindow(QMainWindow):
                 data = modal.get_data()
                 logger.debug(f"Dados do equipamento: {data}")
                 
-                # Obter o ID da empresa - agora já temos diretamente em data['empresa_id']
-                empresa_id = data['empresa_id']
+                # Obter o ID da empresa pelo nome
+                empresa_id = self.get_empresa_id_by_name(data['empresa'])
                 
                 # Validar e converter campos numéricos
                 try:
@@ -1246,37 +1241,13 @@ class AdminWindow(QMainWindow):
     def get_empresa_id_by_name(self, empresa_nome: str) -> int:
         """Obtém o ID de uma empresa pelo nome"""
         try:
-            logger.debug(f"Buscando ID da empresa: '{empresa_nome}'")
-            if not empresa_nome:
-                logger.warning("Nome da empresa vazio, retornando ID padrão 1")
-                return 1
-                
             conn = self.db_models.db.get_connection()
             cursor = conn.cursor()
-            
-            # Busca usuário cujo campo 'empresa' é igual ao nome fornecido
-            cursor.execute("SELECT id FROM usuarios WHERE empresa = ?", (empresa_nome,))
+            cursor.execute("SELECT id FROM usuarios WHERE nome = ? AND tipo_acesso = 'cliente'", (empresa_nome,))
             row = cursor.fetchone()
             if row:
-                logger.debug(f"Empresa encontrada pelo campo 'empresa': ID {row[0]}")
                 return row[0]
-                
-            # Se não encontrou, tenta buscar pelo nome do usuário com tipo_acesso = 'emp'
-            cursor.execute("SELECT id FROM usuarios WHERE nome = ? AND tipo_acesso = 'emp'", (empresa_nome,))
-            row = cursor.fetchone()
-            if row:
-                logger.debug(f"Empresa encontrada pelo nome e tipo 'emp': ID {row[0]}")
-                return row[0]
-                
-            # Se ainda não encontrou, busca qualquer usuário com esse nome
-            cursor.execute("SELECT id FROM usuarios WHERE nome = ?", (empresa_nome,))
-            row = cursor.fetchone()
-            if row:
-                logger.debug(f"Usuário encontrado pelo nome: ID {row[0]}")
-                return row[0]
-                
-            # Se não encontrar nada, retorna o ID 1 (geralmente admin)
-            logger.warning(f"Empresa '{empresa_nome}' não encontrada, retornando ID padrão 1")
+            # Se não encontrar, retorna o ID do primeiro usuário (geralmente admin)
             return 1
         except Exception as e:
             logger.error(f"Erro ao buscar ID da empresa: {str(e)}")
@@ -1333,7 +1304,7 @@ class AdminWindow(QMainWindow):
         except Exception as e:
             self.show_error(f"Erro ao adicionar inspeção: {str(e)}")
             logging.error(f"Erro ao adicionar inspeção: {str(e)}")
-    
+            
     def add_report(self):
         """Abre a janela modal para adicionar relatório"""
         modal = ReportModal(self, self.is_dark)
@@ -1453,7 +1424,7 @@ class AdminWindow(QMainWindow):
                     QMessageBox.information(self, "Sucesso", "Inspeção atualizada com sucesso!")
                     self.clear_inspection_form()
                     self.load_inspections()
-                else:
+                    else:
                     QMessageBox.critical(self, "Erro", "Falha ao atualizar inspeção.")
             else:
                 # Cria uma nova inspeção
@@ -1473,7 +1444,7 @@ class AdminWindow(QMainWindow):
                     self.load_inspections()
                 else:
                     QMessageBox.critical(self, "Erro", message)
-                    
+                
         except Exception as e:
             logger.error(f"Erro ao salvar inspeção: {str(e)}")
             logger.error(traceback.format_exc())
@@ -2269,7 +2240,7 @@ class AdminWindow(QMainWindow):
             
             # Confirmação
             reply = QMessageBox.question(
-                self,
+                    self, 
                 "Confirmar Exclusão",
                 "Tem certeza que deseja excluir este relatório?\nEsta ação não pode ser desfeita.",
                 QMessageBox.Yes | QMessageBox.No,
@@ -2297,7 +2268,7 @@ class AdminWindow(QMainWindow):
             if not selected_items:
                 QMessageBox.warning(self, "Atenção", "Por favor, selecione um relatório para visualizar.")
                 return
-            
+                
             row = selected_items[0].row()
             arquivo = self.report_table.item(row, 3).text()
             
@@ -2449,9 +2420,9 @@ class AdminWindow(QMainWindow):
                 if success:
                     QMessageBox.information(self, "Sucesso", message)
                     self.load_reports()  # Recarrega a tabela
-                else:
+            else:
                     QMessageBox.warning(self, "Erro", message)
-                    
+            
         except Exception as e:
             logger.error(f"Erro ao abrir modal de relatório: {str(e)}")
             logger.error(traceback.format_exc())
@@ -2561,66 +2532,117 @@ class AdminWindow(QMainWindow):
             return None, ""
             
     def edit_equipment(self):
-        """Abre o modal para editar um equipamento"""
+        """Edita o equipamento selecionado"""
         try:
             logger.debug("Editando equipamento selecionado")
-            equipment_id = self.get_selected_equipment_id()
+            
+            # Verifica se há uma linha selecionada
+            selected_items = self.equipment_table.selectedItems()
+            if not selected_items:
+                QMessageBox.warning(self, "Atenção", "Selecione um equipamento para editar.")
+                return
+                
+            # Obtém o ID do equipamento selecionado
+            row = selected_items[0].row()
+            logger.debug(f"Linha selecionada: {row}")
+            
+            equipment_id, tag_text = self.get_equipment_id(row)
+            
             if not equipment_id:
-                QMessageBox.warning(self, "Seleção", "Selecione um equipamento para editar.")
+                QMessageBox.warning(self, "Erro", "Não foi possível identificar o ID do equipamento.")
                 return
-                
-            # Buscar os dados do equipamento
-            equipment_data = self.equipment_controller.get_equipment_by_id(equipment_id)
-            if not equipment_data:
-                QMessageBox.warning(self, "Erro", "Não foi possível carregar os dados do equipamento.")
+            
+            # Busca os dados do equipamento
+            equipment = self.equipment_controller.get_equipment_by_id(equipment_id)
+            
+            if not equipment:
+                QMessageBox.warning(self, "Erro", "Equipamento não encontrado.")
                 return
-                
-            logger.debug(f"Dados do equipamento obtidos: {equipment_data}")
             
-            # Abrir o modal com os dados preenchidos
-            modal = EquipmentModal(self, is_dark=self.is_dark, equipment_data=equipment_data)
+            logger.debug(f"Dados do equipamento obtidos: {equipment}")
             
+            # Abre o modal de edição
+            modal = EquipmentModal(self, self.is_dark)
+            
+            # Preenche os campos com os dados atuais
+            modal.tag_input.setText(equipment.get('tag', ''))
+            
+            # Seleciona a categoria correta no combobox
+            categoria_idx = modal.categoria_input.findText(equipment.get('categoria', ''))
+            if categoria_idx >= 0:
+                modal.categoria_input.setCurrentIndex(categoria_idx)
+            
+            # Empresa - primeiro precisamos obter o nome da empresa pelo ID
+            empresa_nome = ""
+            try:
+                empresa = self.auth_controller.get_user_by_id(equipment.get('empresa_id', 0))
+                if empresa:
+                    empresa_nome = empresa.get('nome', '')
+                    # Seleciona a empresa no combobox se encontrada
+                    empresa_idx = modal.empresa_input.findText(empresa_nome)
+                    if empresa_idx >= 0:
+                        modal.empresa_input.setCurrentIndex(empresa_idx)
+            except Exception as e:
+                logger.error(f"Erro ao buscar empresa: {str(e)}")
+            
+            modal.fabricante_input.setText(equipment.get('fabricante', ''))
+            modal.ano_fabricacao_input.setText(str(equipment.get('ano_fabricacao', '')))
+            modal.pressao_projeto_input.setText(str(equipment.get('pressao_projeto', '')))
+            modal.pressao_trabalho_input.setText(str(equipment.get('pressao_trabalho', '')))
+            modal.volume_input.setText(str(equipment.get('volume', '')))
+            modal.fluido_input.setText(equipment.get('fluido', ''))
+            
+            # Executa o modal
             if modal.exec_():
+                # Obtém os novos dados
                 data = modal.get_data()
                 
-                # Validar e converter campos numéricos
                 try:
-                    ano_fabricacao = int(data['ano_fabricacao']) if data['ano_fabricacao'] else 0
-                    pressao_projeto = float(data['pressao_projeto'].replace(',', '.')) if data['pressao_projeto'] else 0.0
-                    pressao_trabalho = float(data['pressao_trabalho'].replace(',', '.')) if data['pressao_trabalho'] else 0.0
-                    volume = float(data['volume'].replace(',', '.')) if data['volume'] else 0.0
-                except ValueError as e:
-                    QMessageBox.warning(self, "Dados Inválidos", 
+                    # Primeiro obtém o ID da empresa pelo nome
+                    empresa_id = self.get_empresa_id_by_name(data['empresa'])
+                    
+                    # Validar e converter campos numéricos
+                    try:
+                        ano_fabricacao = int(data['ano_fabricacao']) if data['ano_fabricacao'] else 0
+                        pressao_projeto = float(data['pressao_projeto'].replace(',', '.')) if data['pressao_projeto'] else 0.0
+                        pressao_trabalho = float(data['pressao_trabalho'].replace(',', '.')) if data['pressao_trabalho'] else 0.0
+                        volume = float(data['volume'].replace(',', '.')) if data['volume'] else 0.0
+                    except ValueError as e:
+                        QMessageBox.warning(self, "Dados Inválidos", 
                                         f"Valor numérico inválido: {str(e)}\n\nVerifique se os campos de pressão, volume e ano contêm apenas números.")
-                    return
+                        return
+                    
+                    # Atualiza o equipamento usando kwargs
+                    success, message = self.equipment_controller.update_equipment(
+                        equipment_id,
+                        tag=data['tag'],
+                        categoria=data['categoria'],
+                        empresa_id=empresa_id,
+                        fabricante=data['fabricante'],
+                        ano_fabricacao=ano_fabricacao,
+                        pressao_projeto=pressao_projeto,
+                        pressao_trabalho=pressao_trabalho,
+                        volume=volume,
+                        fluido=data['fluido'],
+                        ativo=1  # Mantém ativo por padrão
+                    )
+                    
+                    if success:
+                        QMessageBox.information(self, "Sucesso", "Equipamento atualizado com sucesso!")
+                        self.load_equipment()  # Recarrega a tabela
+                    else:
+                        QMessageBox.warning(self, "Erro", f"Erro ao atualizar equipamento: {message}")
                 
-                # Empresa_id já vem correto diretamente do modal
-                empresa_id = data['empresa_id']
-                
-                # Atualizar o equipamento
-                success, message = self.equipment_controller.update_equipment(
-                    equipment_id=equipment_id,
-                    tag=data['tag'],
-                    categoria=data['categoria'],
-                    empresa_id=empresa_id,
-                    fabricante=data['fabricante'],
-                    ano_fabricacao=ano_fabricacao,
-                    pressao_projeto=pressao_projeto,
-                    pressao_trabalho=pressao_trabalho,
-                    volume=volume,
-                    fluido=data['fluido']
-                )
-                
-                if success:
-                    QMessageBox.information(self, "Sucesso", message)
-                    self.load_equipment()
-                else:
-                    QMessageBox.critical(self, "Erro", message)
+                except Exception as e:
+                    logger.error(f"Erro ao atualizar equipamento: {str(e)}")
+                    logger.error(traceback.format_exc())
+                    QMessageBox.critical(self, "Erro", f"Erro ao atualizar equipamento: {str(e)}")
+        
         except Exception as e:
             logger.error(f"Erro ao editar equipamento: {str(e)}")
             logger.error(traceback.format_exc())
-            QMessageBox.critical(self, "Erro", f"Falha ao editar equipamento: {str(e)}")
-
+            QMessageBox.critical(self, "Erro", f"Erro ao editar equipamento: {str(e)}")
+            
     def toggle_equipment(self):
         """Ativa/desativa o equipamento selecionado"""
         try:
@@ -2671,7 +2693,7 @@ class AdminWindow(QMainWindow):
                         self.toggle_equipment_button.setVisible(True)
                         
                     # Atualiza a tabela de forma completa
-                    self.load_equipment()
+            self.load_equipment()
                     
                     # Certifique-se de que nenhuma linha está oculta após a atualização
                     for r in range(self.equipment_table.rowCount()):
@@ -2683,7 +2705,7 @@ class AdminWindow(QMainWindow):
                     QMessageBox.information(self, "Sucesso", f"Equipamento {status_text} com sucesso!")
                 else:
                     QMessageBox.warning(self, "Erro", f"Erro ao {action} equipamento: {message}")
-        
+                
         except Exception as e:
             logger.error(f"Erro ao alterar status do equipamento: {str(e)}")
             logger.error(traceback.format_exc())
@@ -2756,51 +2778,3 @@ class AdminWindow(QMainWindow):
         except Exception as e:
             logger.error(f"Erro ao atualizar botão de ativar/desativar equipamentos: {str(e)}")
             logger.error(traceback.format_exc())
-
-    def get_selected_equipment_id(self):
-        """Retorna o ID do equipamento selecionado na tabela"""
-        try:
-            # Verifica se há uma linha selecionada
-            selected_items = self.equipment_table.selectedItems()
-            if not selected_items:
-                return None
-            
-            # Obtém o ID do equipamento selecionado
-            row = selected_items[0].row()
-            logger.debug(f"Linha selecionada: {row}")
-            
-            # Tenta obter o ID por diferentes métodos
-            equipment_id = None
-            
-            # Método 1: tentar diretamente via UserRole no item 0 (tag)
-            item = self.equipment_table.item(row, 0)
-            if item and item.data(Qt.UserRole):
-                equipment_id = item.data(Qt.UserRole)
-                logger.debug(f"Tentativa 1 - ID do equipamento obtido via UserRole: {equipment_id}")
-                return equipment_id
-            
-            # Método 2: buscar o ID armazenado na tabela
-            tag_text = self.equipment_table.item(row, 0).text() if self.equipment_table.item(row, 0) else ""
-            for col in range(self.equipment_table.columnCount()):
-                item = self.equipment_table.item(row, col)
-                if item and item.data(Qt.UserRole):
-                    equipment_id = item.data(Qt.UserRole)
-                    logger.debug(f"Tentativa 2 - ID do equipamento obtido via UserRole na coluna {col}: {equipment_id}")
-                    return equipment_id
-            
-            # Método 3: se tudo falhar, buscar pelo tag
-            if tag_text:
-                logger.debug(f"Tag do equipamento: {tag_text}")
-                equipment = self.equipment_controller.get_equipment_by_tag(tag_text)
-                if equipment:
-                    equipment_id = equipment['id']
-                    logger.debug(f"Tentativa 3 - ID do equipamento obtido via tag: {equipment_id}")
-                    return equipment_id
-            
-            logger.warning(f"Não foi possível obter o ID do equipamento na linha {row}")
-            return None
-            
-        except Exception as e:
-            logger.error(f"Erro ao obter ID do equipamento: {str(e)}")
-            logger.error(traceback.format_exc())
-            return None

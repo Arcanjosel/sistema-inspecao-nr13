@@ -324,4 +324,55 @@ class AuthController:
             return []
             
         finally:
+            cursor.close()
+
+    def get_user_by_id(self, user_id: int) -> Optional[dict]:
+        """
+        Retorna os dados de um usuário específico pelo ID
+        
+        Args:
+            user_id: ID do usuário
+            
+        Returns:
+            Optional[dict]: Dados do usuário ou None se não encontrado
+        """
+        if not user_id:
+            logger.warning("ID do usuário não fornecido")
+            return None
+            
+        try:
+            logger.debug(f"Buscando usuário com ID {user_id}")
+            conn = self.db.get_connection()
+            cursor = conn.cursor()
+            
+            cursor.execute("""
+                SELECT id, nome, email, tipo_acesso, empresa, ativo
+                FROM usuarios
+                WHERE id = ?
+            """, (user_id,))
+            
+            row = cursor.fetchone()
+            if not row:
+                logger.warning(f"Nenhum usuário encontrado com ID {user_id}")
+                return None
+                
+            # Criar dicionário com os dados do usuário
+            user = {
+                'id': row[0],
+                'nome': row[1],
+                'email': row[2],
+                'tipo_acesso': row[3],
+                'empresa': row[4],
+                'ativo': bool(row[5])
+            }
+            
+            logger.debug(f"Usuário {user_id} encontrado: {user['nome']}")
+            return user
+            
+        except Exception as e:
+            logger.error(f"Erro ao buscar usuário {user_id}: {str(e)}")
+            logger.error(traceback.format_exc())
+            return None
+            
+        finally:
             cursor.close() 

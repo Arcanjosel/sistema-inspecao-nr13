@@ -28,7 +28,7 @@ class AdminWindow(QMainWindow):
     """
     Janela principal do administrador.
     """
-    
+
     def __init__(self, auth_controller: AuthController):
         try:
             logger.debug("Iniciando construtor do AdminWindow")
@@ -43,7 +43,7 @@ class AdminWindow(QMainWindow):
             logger.debug("Criando instância do ReportController")
             self.report_controller = ReportController(self.db_models)
             self.is_dark = True
-            
+
             # Definir ícones SVG
             self.icons = {
                 'add': '''<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -98,13 +98,14 @@ class AdminWindow(QMainWindow):
                     <polyline points="10 9 9 9 8 9"></polyline>
                 </svg>'''
             }
-            
+
             logger.debug("Iniciando setup da UI")
             self.initUI()
             logger.debug("Aplicando tema")
             self.apply_theme()
             logger.info("AdminWindow inicializada com sucesso")
-        except Exception as e:
+        except:
+
             logger.error(f"Erro ao inicializar AdminWindow: {str(e)}")
             logger.error(traceback.format_exc())
             QMessageBox.critical(self, "Erro", f"Erro ao inicializar janela: {str(e)}")
@@ -116,34 +117,20 @@ class AdminWindow(QMainWindow):
         if self.is_dark:
             svg_str = svg_str.replace("currentColor", "white")
         else:
+
             svg_str = svg_str.replace("currentColor", "#333333")
-            
+
         svg_bytes = svg_str.encode('utf-8')
         pixmap = QPixmap()
         pixmap.loadFromData(svg_bytes)
         return QIcon(pixmap)
 
     def get_tab_icon(self, icon_name):
-        """Retorna o ícone apropriado para a aba usando o dicionário de SVGs"""
+        """Retorna o ícone apropriado para a aba usando arquivos PNG"""
         try:
             logger.debug(f"Obtendo ícone: {icon_name}")
-            
-            # Mapear nome do ícone para chave no dicionário de ícones
-            icon_key = None
-            if icon_name == "user.png":
-                icon_key = 'user'
-            elif icon_name == "equipamentos.png":
-                icon_key = 'equipment'
-            elif icon_name == "inspecoes.png":
-                icon_key = 'inspection'
-            elif icon_name == "relatorios.png":
-                icon_key = 'report'
-            
-            # Se temos um ícone SVG, usar ele
-            if icon_key and icon_key in self.icons:
-                return self.create_icon_from_svg(self.icons[icon_key])
-                
-            # Caso contrário, tentar carregar do arquivo
+
+            # Carregar diretamente do arquivo PNG
             pixmap = QPixmap(f"ui/{icon_name}")
             if not pixmap.isNull():
                 if self.is_dark:
@@ -151,10 +138,12 @@ class AdminWindow(QMainWindow):
                     img = pixmap.toImage()
                     img.invertPixels()
                     pixmap = QPixmap.fromImage(img)
-                return QIcon(pixmap)
-        except Exception as e:
+                icon = QIcon(pixmap)
+                return icon
+        except:
+
             logger.warning(f"Erro ao carregar ícone {icon_name}: {str(e)}")
-            
+
         # Se não conseguir carregar o ícone, usa um ícone padrão do Qt
         if icon_name == "user.png":
             return QIcon.fromTheme("user", QIcon(":/icons/user.png"))
@@ -165,31 +154,32 @@ class AdminWindow(QMainWindow):
         elif icon_name == "relatorios.png":
             return QIcon.fromTheme("document-save", QIcon(":/icons/document-save.png"))
         else:
+
             return QIcon()
-        
+
     def initUI(self):
         """Inicializa a interface do usuário."""
         try:
             logger.debug("Iniciando setup da interface")
             self.setWindowTitle("Administração do Sistema")
             self.resize(1024, 768)
-            
+
             # Definir ícone da janela com o logo da empresa
             self.setWindowIcon(QIcon("ui/CTREINA_LOGO.png"))
-            
+
             # Widget central
             logger.debug("Criando widget central")
             central_widget = QWidget()
             self.setCentralWidget(central_widget)
-            
+
             # Layout principal
             layout = QVBoxLayout(central_widget)
             layout.setSpacing(16)
             layout.setContentsMargins(24, 24, 24, 24)
-            
+
             # Container do título com logo
             title_container = QHBoxLayout()
-            
+
             # Logo
             logo_label = QLabel()
             logo_pixmap = QPixmap("ui/CTREINA_LOGO_FIT.png")
@@ -202,30 +192,39 @@ class AdminWindow(QMainWindow):
                 }
             """)
             title_container.addWidget(logo_label)
-            
+
             # Título
             title = QLabel("Painel do Administrador")
             title.setStyleSheet("font-size: 24px; font-weight: bold;")
             title_container.addWidget(title)
             title_container.addStretch()
-            
+
             layout.addLayout(title_container)
-            
+
             # Abas
             logger.debug("Criando abas")
             self.tabs = QTabWidget()
-            
+
+            # Configurar tamanho dos ícones das abas
+            self.tabs.setIconSize(QSize(24, 24))
+
+            # Adicionar abas com ícones PNG
+            self.tabs.addTab(users_tab, self.get_tab_icon("user.png"), "Usuários")
+            self.tabs.addTab(equipment_tab, self.get_tab_icon("equipamentos.png"), "Equipamentos")
+            self.tabs.addTab(inspection_tab, self.get_tab_icon("inspecoes.png"), "Inspeções")
+            self.tabs.addTab(report_tab, self.get_tab_icon("relatorios.png"), "Relatórios")
+
             # Aba de Usuários
             logger.debug("Configurando aba de usuários")
             users_tab = QWidget()
             user_layout = QVBoxLayout(users_tab)
-            
+
             # Container para botões e barra de pesquisa
             top_container = QHBoxLayout()
-            
+
             # Container para botões (lado esquerdo)
             buttons_container = QHBoxLayout()
-            
+
             # Botão Adicionar
             self.add_user_button = QPushButton("Adicionar")
             self.add_user_button.setIcon(self.create_icon_from_svg(self.icons['add']))
@@ -251,7 +250,7 @@ class AdminWindow(QMainWindow):
                 }
             """)
             buttons_container.addWidget(self.add_user_button)
-            
+
             # Botão Editar
             self.edit_user_button = QPushButton("Editar")
             self.edit_user_button.setIcon(self.create_icon_from_svg(self.icons['edit']))
@@ -277,7 +276,7 @@ class AdminWindow(QMainWindow):
                 }
             """)
             buttons_container.addWidget(self.edit_user_button)
-            
+
             # Botão Ativar/Desativar
             self.toggle_user_button = QPushButton("Selecione um usuário")
             self.toggle_user_button.setIcon(self.create_icon_from_svg(self.icons['disable']))
@@ -299,7 +298,7 @@ class AdminWindow(QMainWindow):
             # Ocultar o botão inicialmente
             self.toggle_user_button.setVisible(False)
             buttons_container.addWidget(self.toggle_user_button)
-            
+
             # Botão Excluir Permanentemente
             self.remove_user_button = QPushButton("Excluir")
             self.remove_user_button.setIcon(self.create_icon_from_svg(self.icons['delete']))
@@ -325,16 +324,16 @@ class AdminWindow(QMainWindow):
                 }
             """)
             buttons_container.addWidget(self.remove_user_button)
-            
+
             # Adiciona o container de botões ao container principal
             top_container.addLayout(buttons_container)
-            
+
             # Adiciona um espaçador expansível
             top_container.addStretch()
-            
+
             # Container para barra de pesquisa (lado direito)
             search_container = QHBoxLayout()
-            
+
             # Barra de pesquisa com autocompletar
             self.search_input = QLineEdit()
             self.search_input.setPlaceholderText("Pesquisar usuários...")
@@ -342,7 +341,7 @@ class AdminWindow(QMainWindow):
             self.search_input.setMaximumWidth(300)
             self.search_input.setMinimumHeight(32)
             self.search_input.textChanged.connect(self.filter_users)
-            
+
             # Estilo da barra de pesquisa
             self.search_input.setStyleSheet("""
                 QLineEdit {
@@ -356,13 +355,13 @@ class AdminWindow(QMainWindow):
                     border: 1px solid #2196F3;
                 }
             """)
-            
+
             search_container.addWidget(self.search_input)
             top_container.addLayout(search_container)
-            
+
             # Adiciona o container principal ao layout da aba
             user_layout.addLayout(top_container)
-            
+
             # Tabela de usuários
             self.user_table = QTableWidget()
             self.user_table.setColumnCount(4)  # Reduzido para 4 colunas (removido ID)
@@ -380,15 +379,15 @@ class AdminWindow(QMainWindow):
             logger.debug("Carregando usuários")
             self.load_users()
             user_layout.addWidget(self.user_table)
-            
+
             # Aba de Equipamentos
             logger.debug("Configurando aba de equipamentos")
             equipment_tab = QWidget()
             equipment_layout = QVBoxLayout(equipment_tab)
-            
+
             # Botões de ação para equipamentos
             equipment_buttons = QHBoxLayout()
-            
+
             # Botão Adicionar Equipamento
             self.add_equipment_button = QPushButton("Adicionar")
             self.add_equipment_button.setIcon(self.create_icon_from_svg(self.icons['add']))
@@ -413,7 +412,7 @@ class AdminWindow(QMainWindow):
             """)
             self.add_equipment_button.clicked.connect(self.add_equipment)
             equipment_buttons.addWidget(self.add_equipment_button)
-            
+
             # Botão Editar Equipamento
             self.edit_equipment_button = QPushButton("Editar")
             self.edit_equipment_button.setIcon(self.create_icon_from_svg(self.icons['edit']))
@@ -438,7 +437,7 @@ class AdminWindow(QMainWindow):
             """)
             self.edit_equipment_button.clicked.connect(self.edit_equipment)
             equipment_buttons.addWidget(self.edit_equipment_button)
-            
+
             # Botão Ativar/Desativar Equipamento
             self.toggle_equipment_button = QPushButton("Ativar/Desativar")
             self.toggle_equipment_button.setIcon(self.create_icon_from_svg(self.icons['disable']))
@@ -465,10 +464,10 @@ class AdminWindow(QMainWindow):
             # Ocultar o botão inicialmente
             self.toggle_equipment_button.setVisible(False)
             equipment_buttons.addWidget(self.toggle_equipment_button)
-            
+
             # Adiciona um espaçador expansível
             equipment_buttons.addStretch()
-            
+
             # Campo de busca para equipamentos
             self.equipment_search_box = QLineEdit()
             self.equipment_search_box.setPlaceholderText("Buscar equipamentos...")
@@ -489,9 +488,9 @@ class AdminWindow(QMainWindow):
                 }
             """)
             equipment_buttons.addWidget(self.equipment_search_box)
-            
+
             equipment_layout.addLayout(equipment_buttons)
-            
+
             # Tabela de equipamentos
             self.equipment_table = QTableWidget()
             self.equipment_table.setColumnCount(10)  # Reduzido para 10 colunas (removido ID)
@@ -509,19 +508,19 @@ class AdminWindow(QMainWindow):
             logger.debug("Carregando equipamentos")
             self.load_equipment()
             equipment_layout.addWidget(self.equipment_table)
-            
+
             # Aba de Inspeções
             logger.debug("Configurando aba de inspeções")
             inspection_tab = QWidget()
             inspection_layout = QVBoxLayout(inspection_tab)
-    
+
             # Container para busca e botões
             top_container = QHBoxLayout()
-            
+
             # Botões de ação
             buttons_container = QHBoxLayout()
             buttons_container.setSpacing(10)
-            
+
             # Botão Adicionar Inspeção
             self.add_inspection_btn = QPushButton("Adicionar Inspeção")
             self.add_inspection_btn.setIcon(self.create_icon_from_svg(self.icons['add']))
@@ -542,13 +541,13 @@ class AdminWindow(QMainWindow):
             """)
             self.add_inspection_btn.clicked.connect(self.add_inspection)
             buttons_container.addWidget(self.add_inspection_btn)
-            
+
             # Adiciona os botões ao container principal
             top_container.addLayout(buttons_container)
-            
+
             # Adiciona um espaçador expansível
             top_container.addStretch()
-            
+
             # Barra de pesquisa para inspeções
             search_container = QHBoxLayout()
             self.insp_search_input = QLineEdit()
@@ -557,7 +556,7 @@ class AdminWindow(QMainWindow):
             self.insp_search_input.setMaximumWidth(300)
             self.insp_search_input.setMinimumHeight(32)
             self.insp_search_input.textChanged.connect(self.filter_inspections)
-            
+
             # Estilo da barra de pesquisa
             self.insp_search_input.setStyleSheet("""
                 QLineEdit {
@@ -571,13 +570,13 @@ class AdminWindow(QMainWindow):
                     border: 1px solid #2196F3;
                 }
             """)
-            
+
             search_container.addWidget(self.insp_search_input)
             top_container.addLayout(search_container)
-            
+
             # Adiciona o container principal ao layout da aba
             inspection_layout.addLayout(top_container)
-            
+
             # Lista de inspeções
             self.inspection_table = QTableWidget()
             self.inspection_table.setColumnCount(5)  # Reduzido para 5 colunas (removido ID)
@@ -590,15 +589,15 @@ class AdminWindow(QMainWindow):
             self.inspection_table.setAlternatingRowColors(True)
             self.inspection_table.setEditTriggers(QTableWidget.NoEditTriggers)
             self.inspection_table.verticalHeader().setVisible(False)  # Já está oculto
-            
+
             # Carrega as inspeções
             self.load_inspections()
             inspection_layout.addWidget(self.inspection_table)
-            
-            
+
+
             # Botões de ação para inspeções
             bottom_buttons = QHBoxLayout()
-            
+
             # Botão Editar
             self.edit_inspection_btn = QPushButton("Editar")
             self.edit_inspection_btn.setIcon(self.create_icon_from_svg(self.icons['edit']))
@@ -619,7 +618,7 @@ class AdminWindow(QMainWindow):
             """)
             self.edit_inspection_btn.clicked.connect(self.edit_selected_inspection)
             bottom_buttons.addWidget(self.edit_inspection_btn)
-            
+
             # Botão Excluir
             self.delete_inspection_btn = QPushButton("Excluir")
             self.delete_inspection_btn.setIcon(self.create_icon_from_svg(self.icons['delete']))
@@ -640,7 +639,7 @@ class AdminWindow(QMainWindow):
             """)
             self.delete_inspection_btn.clicked.connect(self.delete_selected_inspection)
             bottom_buttons.addWidget(self.delete_inspection_btn)
-            
+
             # Botão Gerar Relatório
             self.generate_report_btn = QPushButton("Gerar Relatório")
             self.generate_report_btn.setIcon(self.create_icon_from_svg(self.icons['report']))
@@ -661,21 +660,21 @@ class AdminWindow(QMainWindow):
             """)
             self.generate_report_btn.clicked.connect(self.generate_report_from_inspection)
             bottom_buttons.addWidget(self.generate_report_btn)
-            
+
             inspection_layout.addLayout(bottom_buttons)
-            
+
             # Aba de Relatórios
             logger.debug("Configurando aba de relatórios")
             report_tab = QWidget()
             report_layout = QVBoxLayout(report_tab)
-            
+
             # Container para busca e filtros
             search_container = QHBoxLayout()
             search_container.setContentsMargins(0, 0, 0, 0)
-            
+
             # Container para botão (lado esquerdo)
             button_container = QHBoxLayout()
-            
+
             # Botão Adicionar Relatório
             self.add_report_btn = QPushButton("Adicionar Relatório")
             self.add_report_btn.setIcon(self.create_icon_from_svg(self.icons['add']))
@@ -701,13 +700,13 @@ class AdminWindow(QMainWindow):
             self.add_report_btn.clicked.connect(self.show_add_report_modal)
             button_container.addWidget(self.add_report_btn)
             button_container.addStretch()
-            
+
             search_container.addLayout(button_container, stretch=1)
-            
+
             # Container para barra de pesquisa (lado direito)
             search_box = QHBoxLayout()
             search_box.setContentsMargins(0, 0, 0, 0)
-            
+
             # Barra de pesquisa
             self.report_search_input = QLineEdit()
             self.report_search_input.setPlaceholderText("Pesquisar relatórios...")
@@ -727,11 +726,11 @@ class AdminWindow(QMainWindow):
                 }
             """)
             search_box.addWidget(self.report_search_input)
-            
+
             search_container.addLayout(search_box)
-            
+
             report_layout.addLayout(search_container)
-            
+
             # Tabela de relatórios
             self.report_table = QTableWidget()
             self.report_table.setColumnCount(5)  # Reduzido para 5 colunas (removido ID)
@@ -744,15 +743,15 @@ class AdminWindow(QMainWindow):
             self.report_table.setAlternatingRowColors(True)
             self.report_table.setEditTriggers(QTableWidget.NoEditTriggers)
             self.report_table.verticalHeader().setVisible(False)  # Oculta o cabeçalho vertical
-            
+
             logger.debug("Carregando relatórios do banco de dados")
             self.load_reports()
             report_layout.addWidget(self.report_table)
-            
+
             # Container para botões de ação
             action_buttons = QHBoxLayout()
             action_buttons.setSpacing(10)
-            
+
             # Botão Editar
             self.edit_report_btn = QPushButton("Editar")
             self.edit_report_btn.setIcon(self.create_icon_from_svg(self.icons['edit']))
@@ -777,7 +776,7 @@ class AdminWindow(QMainWindow):
             """)
             self.edit_report_btn.clicked.connect(self.edit_selected_report)
             action_buttons.addWidget(self.edit_report_btn)
-            
+
             # Botão Excluir
             self.delete_report_btn = QPushButton("Excluir")
             self.delete_report_btn.setIcon(self.create_icon_from_svg(self.icons['delete']))
@@ -802,7 +801,7 @@ class AdminWindow(QMainWindow):
             """)
             self.delete_report_btn.clicked.connect(self.delete_selected_report)
             action_buttons.addWidget(self.delete_report_btn)
-            
+
             # Botão Visualizar
             self.view_report_btn = QPushButton("Visualizar")
             self.view_report_btn.setIcon(self.create_icon_from_svg(self.icons['browse']))
@@ -827,13 +826,13 @@ class AdminWindow(QMainWindow):
             """)
             self.view_report_btn.clicked.connect(self.view_selected_report)
             action_buttons.addWidget(self.view_report_btn)
-            
+
             # Adiciona um espaçador expansível
             action_buttons.addStretch()
-            
+
             # Adiciona os botões ao layout
             report_layout.addLayout(action_buttons)
-            
+
             # Adiciona as abas com ícones
             logger.debug("Adicionando abas ao TabWidget")
             self.tabs.addTab(users_tab, self.get_tab_icon("user.png"), "Usuários")
@@ -842,12 +841,12 @@ class AdminWindow(QMainWindow):
             self.tabs.addTab(report_tab, self.get_tab_icon("relatorios.png"), "Relatórios")
             self.tabs.setIconSize(QSize(35, 35))
             layout.addWidget(self.tabs)
-            
+
             # Barra inferior com botão de configurações
             logger.debug("Configurando barra inferior")
             bottom_bar = QHBoxLayout()
             bottom_bar.setAlignment(Qt.AlignRight)
-            
+
             # Botão de tema
             self.theme_button = QPushButton()
             self.theme_button.setIcon(QIcon(os.path.join("assets", "icons", "theme.png")))
@@ -855,11 +854,12 @@ class AdminWindow(QMainWindow):
             self.theme_button.setFixedSize(36, 36)
             self.theme_button.clicked.connect(self.toggle_theme)
             bottom_bar.addWidget(self.theme_button)
-            
+
             layout.addLayout(bottom_bar)
-            
+
             logger.debug("Interface inicializada com sucesso")
-        except Exception as e:
+        except:
+
             logger.error(f"Erro ao inicializar UI: {str(e)}")
             logger.error(traceback.format_exc())
             QMessageBox.critical(self, "Erro", f"Erro ao inicializar interface: {str(e)}")
@@ -870,7 +870,7 @@ class AdminWindow(QMainWindow):
         try:
             if self.is_dark:
                 self.setStyleSheet(Styles.get_dark_theme())
-                
+
                 # Estilos específicos para tabelas no modo escuro
                 table_style = """
                     QTableWidget {
@@ -890,21 +890,22 @@ class AdminWindow(QMainWindow):
                         color: #ffffff;
                     }
                 """
-                
+
                 # Aplica estilos às tabelas
                 self.user_table.setStyleSheet(table_style)
                 self.equipment_table.setStyleSheet(table_style)
                 self.inspection_table.setStyleSheet(table_style)
                 self.report_table.setStyleSheet(table_style)
-                
+
                 # Ativa cores alternadas
                 self.user_table.setAlternatingRowColors(True)
                 self.equipment_table.setAlternatingRowColors(True)
                 self.inspection_table.setAlternatingRowColors(True)
                 self.report_table.setAlternatingRowColors(True)
             else:
+
                 self.setStyleSheet(Styles.get_light_theme())
-                
+
                 # Estilos específicos para tabelas no modo claro
                 table_style = """
                     QTableWidget {
@@ -924,29 +925,31 @@ class AdminWindow(QMainWindow):
                         color: #000000;
                     }
                 """
-                
+
                 # Aplica estilos às tabelas
                 self.user_table.setStyleSheet(table_style)
                 self.equipment_table.setStyleSheet(table_style)
                 self.inspection_table.setStyleSheet(table_style)
                 self.report_table.setStyleSheet(table_style)
-                
+
                 # Ativa cores alternadas
                 self.user_table.setAlternatingRowColors(True)
                 self.equipment_table.setAlternatingRowColors(True)
                 self.inspection_table.setAlternatingRowColors(True)
                 self.report_table.setAlternatingRowColors(True)
-                
+
             # Atualiza os ícones das abas ao trocar o tema
             self.tabs.setTabIcon(0, self.get_tab_icon("user.png"))
             self.tabs.setTabIcon(1, self.get_tab_icon("equipamentos.png"))
             self.tabs.setTabIcon(2, self.get_tab_icon("inspecoes.png"))
             self.tabs.setTabIcon(3, self.get_tab_icon("relatorios.png"))
-            
+
             # Atualiza o botão de ativar/desativar
             self.update_toggle_button()
-            
-        except Exception as e:
+
+        except:
+
+
             logger.error(f"Erro ao aplicar tema: {str(e)}")
             QMessageBox.critical(self, "Erro", f"Erro ao aplicar tema: {str(e)}")
 
@@ -954,142 +957,145 @@ class AdminWindow(QMainWindow):
         """Alterna entre tema escuro e claro"""
         self.is_dark = not self.is_dark
         self.apply_theme()
-        
+
     def load_users(self):
         """Carrega os usuários na tabela"""
         try:
             logger.debug("Carregando usuários")
             users = self.auth_controller.get_all_users()
             self.user_table.setRowCount(len(users))
-            
+
             for i, user in enumerate(users):
                 # Armazena o ID como dados do item (invisível para o usuário)
                 user_id = user['id']
-                
+
                 # Nome
                 nome_item = QTableWidgetItem(user['nome'])
                 nome_item.setFlags(nome_item.flags() & ~Qt.ItemIsEditable)
                 nome_item.setData(Qt.UserRole, user_id)  # Armazena o ID como dado do item
                 self.user_table.setItem(i, 0, nome_item)
-                
+
                 # Email
                 email_item = QTableWidgetItem(user['email'])
                 email_item.setFlags(email_item.flags() & ~Qt.ItemIsEditable)
                 self.user_table.setItem(i, 1, email_item)
-                
+
                 # Tipo Acesso
                 tipo_item = QTableWidgetItem(user['tipo_acesso'])
                 tipo_item.setFlags(tipo_item.flags() & ~Qt.ItemIsEditable)
                 self.user_table.setItem(i, 2, tipo_item)
-                
+
                 # Status
                 status_item = QTableWidgetItem("Ativo" if user.get('ativo', 1) else "Inativo")
                 status_item.setFlags(status_item.flags() & ~Qt.ItemIsEditable)
                 self.user_table.setItem(i, 3, status_item)
-                
-        except Exception as e:
+
+        except:
+
+
             logger.error(f"Erro ao carregar usuários: {str(e)}")
             logger.error(traceback.format_exc())
             QMessageBox.critical(self, "Erro", f"Erro ao carregar usuários: {str(e)}")
-            
+
     def load_equipment(self):
         """Carrega os equipamentos na tabela"""
         try:
             logger.debug("Carregando equipamentos")
             equipment = self.equipment_controller.get_all_equipment()
             self.equipment_table.setRowCount(len(equipment))
-            
+
             for i, item in enumerate(equipment):
                 # Armazena o ID como dados do item (invisível para o usuário)
                 equip_id = item.get('id', '')
                 logger.debug(f"Carregando equipamento ID={equip_id}, Tag={item.get('tag', '')}")
-                
+
                 # Tag
                 tag_item = QTableWidgetItem(item.get('tag', ''))
                 tag_item.setData(Qt.UserRole, equip_id)  # Armazena o ID como dado do item
                 tag_item.setFlags(tag_item.flags() & ~Qt.ItemIsEditable)  # Remove a flag de editável
                 self.equipment_table.setItem(i, 0, tag_item)
-                
+
                 # Para debug - verifica se o ID foi armazenado corretamente
                 id_stored = tag_item.data(Qt.UserRole)
                 logger.debug(f"ID armazenado no item da tabela: {id_stored}")
-                
+
                 # Resto dos campos - todos configurados como não editáveis
                 categoria_item = QTableWidgetItem(item.get('categoria', ''))
                 categoria_item.setFlags(categoria_item.flags() & ~Qt.ItemIsEditable)
                 self.equipment_table.setItem(i, 1, categoria_item)
-                
+
                 empresa_item = QTableWidgetItem(str(item.get('empresa_id', '')))
                 empresa_item.setFlags(empresa_item.flags() & ~Qt.ItemIsEditable)
                 self.equipment_table.setItem(i, 2, empresa_item)
-                
+
                 fabricante_item = QTableWidgetItem(item.get('fabricante', ''))
                 fabricante_item.setFlags(fabricante_item.flags() & ~Qt.ItemIsEditable)
                 self.equipment_table.setItem(i, 3, fabricante_item)
-                
+
                 ano_item = QTableWidgetItem(str(item.get('ano_fabricacao', '')))
                 ano_item.setFlags(ano_item.flags() & ~Qt.ItemIsEditable)
                 self.equipment_table.setItem(i, 4, ano_item)
-                
+
                 pressao_projeto_item = QTableWidgetItem(str(item.get('pressao_projeto', '')))
                 pressao_projeto_item.setFlags(pressao_projeto_item.flags() & ~Qt.ItemIsEditable)
                 self.equipment_table.setItem(i, 5, pressao_projeto_item)
-                
+
                 pressao_trabalho_item = QTableWidgetItem(str(item.get('pressao_trabalho', '')))
                 pressao_trabalho_item.setFlags(pressao_trabalho_item.flags() & ~Qt.ItemIsEditable)
                 self.equipment_table.setItem(i, 6, pressao_trabalho_item)
-                
+
                 volume_item = QTableWidgetItem(str(item.get('volume', '')))
                 volume_item.setFlags(volume_item.flags() & ~Qt.ItemIsEditable)
                 self.equipment_table.setItem(i, 7, volume_item)
-                
+
                 fluido_item = QTableWidgetItem(item.get('fluido', ''))
                 fluido_item.setFlags(fluido_item.flags() & ~Qt.ItemIsEditable)
                 self.equipment_table.setItem(i, 8, fluido_item)
-                
+
                 # Status
                 status = "Ativo" if item.get('ativo', 1) else "Inativo"
                 status_item = QTableWidgetItem(status)
                 status_item.setFlags(status_item.flags() & ~Qt.ItemIsEditable)
                 self.equipment_table.setItem(i, 9, status_item)
-                
+
             logger.debug(f"Carregados {len(equipment)} equipamentos na tabela")
-        except Exception as e:
+        except:
+
             logger.error(f"Erro ao carregar equipamentos: {str(e)}")
             logger.error(traceback.format_exc())
             QMessageBox.critical(self, "Erro", f"Erro ao carregar equipamentos: {str(e)}")
-            
+
     def load_inspections(self):
         """Carrega as inspeções do banco de dados"""
         try:
             logger.debug("Carregando inspeções do banco de dados")
-            
+
             # Limpa a tabela
             self.inspection_table.setRowCount(0)
-            
+
             # Carrega os equipamentos para ter o mapeamento de IDs para nomes
             equipamentos = self.equipment_controller.get_all_equipment()
             equipamentos_map = {equip['id']: equip['tag'] for equip in equipamentos}
             logger.debug(f"Carregados {len(equipamentos)} equipamentos")
-            
+
             # Busca todas as inspeções
             inspecoes = self.inspection_controller.get_all_inspections()
-            
+
             # Preenche a tabela
             for i, inspecao in enumerate(inspecoes):
                 # Adiciona uma nova linha
                 self.inspection_table.insertRow(i)
-                
+
                 # Armazena o ID como dados do item (invisível para o usuário)
                 insp_id = inspecao.get('id', '')
-                
+
                 # Equipamento (tag)
                 equip_id = inspecao.get('equipamento_id', 0)
                 equip_tag = equipamentos_map.get(equip_id, f"ID: {equip_id}")
                 equip_item = QTableWidgetItem(equip_tag)
                 equip_item.setData(Qt.UserRole, insp_id)  # Armazena o ID da inspeção
                 self.inspection_table.setItem(i, 0, equip_item)
-                
+
                 # Data
                 data_str = inspecao.get('data_inspecao', '')
                 if data_str:
@@ -1100,84 +1106,91 @@ class AdminWindow(QMainWindow):
                         try:
                             data_obj = datetime.strptime(data_str[:10], '%Y-%m-%d')
                             data_str = data_obj.strftime('%d/%m/%Y')
-                        except ValueError:
+                        except:
+
                             pass
                 data_item = QTableWidgetItem(data_str)
                 self.inspection_table.setItem(i, 1, data_item)
-                
+
                 # Tipo
                 tipo_item = QTableWidgetItem(inspecao.get('tipo_inspecao', ''))
                 self.inspection_table.setItem(i, 2, tipo_item)
-                
+
                 # Engenheiro (nome)
                 eng_nome = inspecao.get('engenheiro_nome', f"ID: {inspecao.get('engenheiro_id', 0)}")
                 eng_item = QTableWidgetItem(eng_nome)
                 self.inspection_table.setItem(i, 3, eng_item)
-                
+
                 # Resultado
                 resultado_item = QTableWidgetItem(inspecao.get('resultado', ''))
                 self.inspection_table.setItem(i, 4, resultado_item)
-            
+
             logger.debug(f"Carregadas {len(inspecoes)} inspeções")
-        except Exception as e:
+        except:
+
             logger.error(f"Erro ao carregar inspeções: {str(e)}")
             logger.error(traceback.format_exc())
             QMessageBox.critical(self, "Erro", f"Erro ao carregar inspeções: {str(e)}")
-            
+
     def load_reports(self):
         """Carrega os relatórios na tabela"""
         try:
             logger.debug("Carregando relatórios")
             reports = self.report_controller.get_all_reports()
             self.report_table.setRowCount(len(reports))
-            
+
             for i, report in enumerate(reports):
                 try:
                     # Armazena o ID como dados do item (invisível para o usuário)
                     report_id = report.get('id', '')
-                    
+
                     # Inspeção (combina tipo e equipamento)
                     inspecao_info = f"{report.get('tipo_inspecao', 'N/A')} - {report.get('equipamento_tag', 'N/A')}"
                     insp_item = QTableWidgetItem(inspecao_info)
                     insp_item.setData(Qt.UserRole, report_id)  # Armazena o ID do relatório
                     self.report_table.setItem(i, 0, insp_item)
-                    
+
                     # Data
                     data_str = report.get('data_emissao', '')
                     if isinstance(data_str, str) and len(data_str) >= 10:
                         try:
                             data_obj = datetime.strptime(data_str[:10], '%Y-%m-%d')
                             data_str = data_obj.strftime('%d/%m/%Y')
-                        except ValueError:
+                        except:
+
                             pass
                     data_item = QTableWidgetItem(data_str)
                     self.report_table.setItem(i, 1, data_item)
-                    
+
                     # Arquivo
                     arquivo_item = QTableWidgetItem(report.get('link_arquivo', ''))
                     self.report_table.setItem(i, 2, arquivo_item)
-                    
+
                     # Observações
                     obs_item = QTableWidgetItem(report.get('observacoes', ''))
                     self.report_table.setItem(i, 3, obs_item)
-                    
+
                     # Status (baseado na existência do arquivo)
                     tem_arquivo = bool(report.get('link_arquivo'))
                     status_item = QTableWidgetItem("Concluído" if tem_arquivo else "Pendente")
                     status_item.setForeground(QColor('#28a745' if tem_arquivo else '#dc3545'))
                     self.report_table.setItem(i, 4, status_item)
-                    
-                except Exception as e:
+
+                except:
+
+
                     logger.error(f"Erro ao processar relatório {i}: {str(e)}")
                     continue
-            
+
             logger.debug(f"Carregados {len(reports)} relatórios")
-            
-        except Exception as e:
+
+        except:
+
+
             logger.error(f"Erro ao carregar relatórios: {str(e)}")
             logger.error(traceback.format_exc())
             QMessageBox.critical(self, "Erro", f"Erro ao carregar relatórios: {str(e)}")
-            
+
     def add_user(self):
         """Abre a janela modal para adicionar usuário"""
         modal = UserModal(self, self.is_dark)
@@ -1194,32 +1207,34 @@ class AdminWindow(QMainWindow):
                 QMessageBox.information(self, "Sucesso", message)
                 self.load_users()
             else:
+
                 QMessageBox.warning(self, "Erro", message)
-                
+
     def add_equipment(self):
-        """Abre o modal para adicionar um equipamento"""
+        """Adiciona um novo equipamento."""
         try:
             logger.debug("Abrindo modal para adicionar equipamento")
             modal = EquipmentModal(self, is_dark=self.is_dark)
-            
+
             if modal.exec_():
                 data = modal.get_data()
                 logger.debug(f"Dados do equipamento: {data}")
-                
-                # Obter o ID da empresa - agora já temos diretamente em data['empresa_id']
-                empresa_id = data['empresa_id']
-                
+
+                # Obter o ID da empresa pelo nome
+                empresa_id = self.get_empresa_id_by_name(data['empresa'])
+
                 # Validar e converter campos numéricos
                 try:
                     ano_fabricacao = int(data['ano_fabricacao']) if data['ano_fabricacao'] else 0
                     pressao_projeto = float(data['pressao_projeto'].replace(',', '.')) if data['pressao_projeto'] else 0.0
                     pressao_trabalho = float(data['pressao_trabalho'].replace(',', '.')) if data['pressao_trabalho'] else 0.0
                     volume = float(data['volume'].replace(',', '.')) if data['volume'] else 0.0
-                except ValueError as e:
+                except:
+
                     QMessageBox.warning(self, "Dados Inválidos", 
-                                        f"Valor numérico inválido: {str(e)}\n\nVerifique se os campos de pressão, volume e ano contêm apenas números.")
+                        f"Valor numérico inválido: {str(e)}\n\nVerifique se os campos de pressão, volume e ano contêm apenas números.")
                     return
-                
+
                 # Criar o equipamento
                 success, message = self.equipment_controller.criar_equipamento(
                     tag=data['tag'],
@@ -1232,86 +1247,66 @@ class AdminWindow(QMainWindow):
                     volume=volume,
                     fluido=data['fluido']
                 )
-                
+
                 if success:
                     QMessageBox.information(self, "Sucesso", message)
                     self.load_equipment()
                 else:
+
                     QMessageBox.critical(self, "Erro", message)
-        except Exception as e:
+        except:
+
             logger.error(f"Erro ao adicionar equipamento: {str(e)}")
             logger.error(traceback.format_exc())
             QMessageBox.critical(self, "Erro", f"Falha ao adicionar equipamento: {str(e)}")
-                
+
     def get_empresa_id_by_name(self, empresa_nome: str) -> int:
         """Obtém o ID de uma empresa pelo nome"""
         try:
-            logger.debug(f"Buscando ID da empresa: '{empresa_nome}'")
-            if not empresa_nome:
-                logger.warning("Nome da empresa vazio, retornando ID padrão 1")
-                return 1
-                
             conn = self.db_models.db.get_connection()
             cursor = conn.cursor()
-            
-            # Busca usuário cujo campo 'empresa' é igual ao nome fornecido
-            cursor.execute("SELECT id FROM usuarios WHERE empresa = ?", (empresa_nome,))
+            cursor.execute("SELECT id FROM usuarios WHERE nome = ? AND tipo_acesso = 'cliente'", (empresa_nome,))
             row = cursor.fetchone()
             if row:
-                logger.debug(f"Empresa encontrada pelo campo 'empresa': ID {row[0]}")
                 return row[0]
-                
-            # Se não encontrou, tenta buscar pelo nome do usuário com tipo_acesso = 'emp'
-            cursor.execute("SELECT id FROM usuarios WHERE nome = ? AND tipo_acesso = 'emp'", (empresa_nome,))
-            row = cursor.fetchone()
-            if row:
-                logger.debug(f"Empresa encontrada pelo nome e tipo 'emp': ID {row[0]}")
-                return row[0]
-                
-            # Se ainda não encontrou, busca qualquer usuário com esse nome
-            cursor.execute("SELECT id FROM usuarios WHERE nome = ?", (empresa_nome,))
-            row = cursor.fetchone()
-            if row:
-                logger.debug(f"Usuário encontrado pelo nome: ID {row[0]}")
-                return row[0]
-                
-            # Se não encontrar nada, retorna o ID 1 (geralmente admin)
-            logger.warning(f"Empresa '{empresa_nome}' não encontrada, retornando ID padrão 1")
+            # Se não encontrar, retorna o ID do primeiro usuário (geralmente admin)
             return 1
-        except Exception as e:
+        except:
+
             logger.error(f"Erro ao buscar ID da empresa: {str(e)}")
             return 1  # Retorna ID 1 como fallback
         finally:
+
             cursor.close()
-            
+
     def add_inspection(self):
         """Abre o modal para adicionar nova inspeção"""
         try:
             logging.info("Abrindo modal para adicionar nova inspeção")
-            
+
             # Cria o modal de inspeção
             modal = InspectionModal(self, self.is_dark_mode)
-            
+
             # Carrega equipamentos no combobox
             equipments = self.admin_controller.get_equipments()
             modal.equipamento_input.clear()
-            
+
             for equip in equipments:
                 equip_id = equip.get('id', 0)
                 tag = equip.get('tag', 'Desconhecido')
                 descricao = equip.get('descricao', '')
                 display_text = f"{tag} - {descricao} (ID: {equip_id})"
                 modal.equipamento_input.addItem(display_text, equip_id)
-            
+
             # Carrega engenheiros no combobox do modal
             self.load_engineers_to_combo(modal.engenheiro_input)
-            
+
             # Executa o modal
             if modal.exec_() == QDialog.Accepted:
                 # Obtém os dados do formulário
                 data = modal.get_data()
                 logging.info(f"Dados do formulário: {data}")
-                
+
                 # Adiciona a inspeção
                 result = self.inspection_controller.add_inspection(
                     equipamento_id=data['equipamento_id'],
@@ -1321,23 +1316,25 @@ class AdminWindow(QMainWindow):
                     resultado=data['resultado'],
                     recomendacoes=data['recomendacoes']
                 )
-                
+
                 if result:
                     # Atualiza a tabela
                     self.load_inspections()
                     QMessageBox.information(self, "Sucesso", "Inspeção adicionada com sucesso.")
                     logging.info("Inspeção adicionada com sucesso")
                 else:
+
                     QMessageBox.warning(self, "Erro", "Não foi possível adicionar a inspeção.")
                     logging.error("Falha ao adicionar inspeção")
-        except Exception as e:
+        except:
+
             self.show_error(f"Erro ao adicionar inspeção: {str(e)}")
             logging.error(f"Erro ao adicionar inspeção: {str(e)}")
-    
+
     def add_report(self):
         """Abre a janela modal para adicionar relatório"""
         modal = ReportModal(self, self.is_dark)
-        
+
         # Carrega as inspeções no combobox
         inspections = self.inspection_controller.get_all_inspections()
         for insp in inspections:
@@ -1346,7 +1343,7 @@ class AdminWindow(QMainWindow):
                 f"{insp['id']} - {insp.get('equipamento_tag', 'N/A')} ({data_str})",
                 insp['id']
             )
-            
+
         if modal.exec_() == QDialog.Accepted:
             data = modal.get_data()
             success, message = self.report_controller.criar_relatorio(
@@ -1359,19 +1356,20 @@ class AdminWindow(QMainWindow):
                 QMessageBox.information(self, "Sucesso", message)
                 self.load_reports()
             else:
+
                 QMessageBox.warning(self, "Erro", message)
-                
+
     def load_engineers_to_combo(self, combo=None):
         """Carrega os engenheiros no combobox"""
         if combo is None:
             combo = self.engineer_combo
-            
+
         try:
             combo.clear()
-            
+
             # Carrega os engenheiros
             engineers = self.admin_controller.get_engineers()
-            
+
             # Adiciona os engenheiros ao combobox
             for engineer in engineers:
                 engineer_id = engineer.get('id', 0)
@@ -1379,67 +1377,70 @@ class AdminWindow(QMainWindow):
                 registration = engineer.get('registro', 'N/A')
                 display_text = f"{name} (Registro: {registration})"
                 combo.addItem(display_text, engineer_id)
-                
+
             # Verifica se há engineers e seleciona o primeiro
             if combo.count() > 0:
                 combo.setCurrentIndex(0)
             else:
+
                 # Adiciona um item padrão se não houver engenheiros
                 combo.addItem("Nenhum engenheiro disponível", 0)
-                
+
             return True
-        except Exception as e:
+        except:
+
             self.show_error(f"Erro ao carregar engenheiros: {str(e)}")
             logging.error(f"Erro ao carregar engenheiros: {str(e)}")
             return False
-    
+
     def load_equipment_to_combo(self, combo_box):
         """Carrega equipamentos para o combo box especificado"""
         try:
             combo_box.clear()
             equipamentos = self.equipment_controller.get_all_equipment()
-            
+
             for equip in equipamentos:
                 # Adiciona a tag e armazena o ID como dados do item
                 combo_box.addItem(equip['tag'], equip['id'])
-                
+
             logger.debug(f"Carregados {len(equipamentos)} equipamentos")
-        except Exception as e:
+        except:
+
             logger.error(f"Erro ao carregar equipamentos: {str(e)}")
-    
+
     def filter_inspections(self):
         """Filtra a lista de inspeções com base no texto de pesquisa"""
         search_text = self.insp_search_input.text().lower()
-        
+
         # Mostra todas as linhas se o texto estiver vazio
         if not search_text:
             for row in range(self.inspection_table.rowCount()):
                 self.inspection_table.setRowHidden(row, False)
             return
-        
+
         # Procura em cada linha
         for row in range(self.inspection_table.rowCount()):
             match_found = False
-            
+
             # Procura em cada coluna da linha
             for col in range(self.inspection_table.columnCount()):
                 item = self.inspection_table.item(row, col)
                 if item and search_text in item.text().lower():
                     match_found = True
                     break
-            
+
             # Mostra ou esconde a linha com base no resultado da pesquisa
             self.inspection_table.setRowHidden(row, not match_found)
-    
+
     def save_inspection(self):
         """Salva a inspeção atual"""
         try:
             # Obter os dados do formulário
             inspection_data = self.get_inspection_form_data()
-            
+
             if inspection_data is None:
                 return
-                
+
             # Verificar se é uma edição ou criação
             if self.current_inspection_id:
                 # Atualizar inspeção existente
@@ -1448,14 +1449,17 @@ class AdminWindow(QMainWindow):
                     self.current_inspection_id,
                     inspection_data
                 )
-                
+
                 if success:
                     QMessageBox.information(self, "Sucesso", "Inspeção atualizada com sucesso!")
                     self.clear_inspection_form()
                     self.load_inspections()
                 else:
                     QMessageBox.critical(self, "Erro", "Falha ao atualizar inspeção.")
-            else:
+
+                    QMessageBox.critical(self, "Erro", "Falha ao atualizar inspeção.")
+                else:
+
                 # Cria uma nova inspeção
                 logger.debug("Criando nova inspeção")
                 success, message = self.inspection_controller.criar_inspecao(
@@ -1466,19 +1470,22 @@ class AdminWindow(QMainWindow):
                     resultado=inspection_data.get('resultado', 'pendente'),
                     recomendacoes=inspection_data.get('recomendacoes', '')
                 )
-                
+
                 if success:
                     QMessageBox.information(self, "Sucesso", message)
                     self.clear_inspection_form()
                     self.load_inspections()
                 else:
+
                     QMessageBox.critical(self, "Erro", message)
-                    
-        except Exception as e:
+
+        except:
+
+
             logger.error(f"Erro ao salvar inspeção: {str(e)}")
             logger.error(traceback.format_exc())
             QMessageBox.critical(self, "Erro", f"Falha ao salvar inspeção: {str(e)}")
-    
+
     def clear_inspection_form(self):
         """Limpa o formulário de inspeção"""
         self.insp_equipamento_combo.setCurrentIndex(0)
@@ -1487,105 +1494,107 @@ class AdminWindow(QMainWindow):
         self.insp_tipo_combo.setCurrentIndex(0)
         self.insp_resultado_combo.setCurrentIndex(0)
         self.insp_recomendacoes_input.clear()
-        
+
         # Remove o ID da inspeção atual
         if hasattr(self, "current_inspection_id"):
             delattr(self, "current_inspection_id")
-        
+
         # Atualiza o título do formulário
         self.insp_form_title.setText("Nova Inspeção")
-        
+
         # Atualiza o texto do botão
         self.insp_save_btn.setText("Salvar")
-    
+
     def load_inspection_details(self):
         """Carrega os detalhes da inspeção selecionada no formulário"""
         selected_rows = self.inspection_table.selectedItems()
         if not selected_rows:
             return
-        
+
         # Obtém a linha selecionada
         row = selected_rows[0].row()
-        
+
         # Obtém o ID da inspeção
         inspection_id = int(self.inspection_table.item(row, 0).text())
-        
+
         try:
             # Busca os detalhes completos da inspeção
             inspection = self.inspection_controller.get_inspection_by_id(inspection_id)
-            
+
             if not inspection:
                 logger.warning(f"Inspeção {inspection_id} não encontrada")
                 return
-            
+
             # Armazena o ID da inspeção atual
             self.current_inspection_id = inspection_id
-            
+
             # Atualiza o título do formulário
             self.insp_form_title.setText(f"Editar Inspeção #{inspection_id}")
-            
+
             # Atualiza o texto do botão
             self.insp_save_btn.setText("Atualizar")
-            
+
             # Preenche o formulário com os dados
-            
+
             # Seleciona o equipamento correto
             index = self.insp_equipamento_combo.findData(inspection['id_equipamento'])
             if index >= 0:
                 self.insp_equipamento_combo.setCurrentIndex(index)
-            
+
             # Seleciona o engenheiro correto
             index = self.insp_engenheiro_combo.findData(inspection['id_engenheiro'])
             if index >= 0:
                 self.insp_engenheiro_combo.setCurrentIndex(index)
-            
+
             # Define a data
             date_obj = QDate.fromString(inspection['data_inspecao'], "yyyy-MM-dd")
             self.insp_data_input.setDate(date_obj)
-            
+
             # Seleciona o tipo
             index = self.insp_tipo_combo.findText(inspection['tipo_inspecao'])
             if index >= 0:
                 self.insp_tipo_combo.setCurrentIndex(index)
-            
+
             # Seleciona o resultado
             index = self.insp_resultado_combo.findText(inspection['resultado'])
             if index >= 0:
                 self.insp_resultado_combo.setCurrentIndex(index)
-            
+
             # Define as recomendações
             self.insp_recomendacoes_input.setPlainText(inspection['recomendacoes'])
-            
-        except Exception as e:
+
+        except:
+
+
             logger.error(f"Erro ao carregar detalhes da inspeção: {str(e)}")
             QMessageBox.critical(self, "Erro", f"Falha ao carregar detalhes da inspeção: {str(e)}")
-    
+
     def edit_selected_inspection(self):
         """Carrega os detalhes da inspeção selecionada para edição"""
         selected_rows = self.inspection_table.selectedItems()
         if not selected_rows:
             QMessageBox.warning(self, "Atenção", "Selecione uma inspeção para editar.")
             return
-        
+
         # A função load_inspection_details já deve ter sido chamada pelo sinal itemSelectionChanged
         # Apenas verifica se temos um ID de inspeção definido
         if not hasattr(self, "current_inspection_id"):
             QMessageBox.warning(self, "Atenção", "Erro ao carregar inspeção para edição.")
             return
-    
+
     def delete_selected_inspection(self):
         """Exclui a inspeção selecionada"""
         selected_rows = self.inspection_table.selectedItems()
         if not selected_rows:
             QMessageBox.warning(self, "Atenção", "Selecione uma inspeção para excluir.")
             return
-        
+
         # Obtém a linha selecionada
         row = selected_rows[0].row()
-        
+
         # Obtém o ID da inspeção
         inspection_id = int(self.inspection_table.item(row, 0).text())
-        
+
         # Confirmação
         reply = QMessageBox.question(
             self, 
@@ -1594,74 +1603,76 @@ class AdminWindow(QMainWindow):
             QMessageBox.Yes | QMessageBox.No, 
             QMessageBox.No
         )
-        
+
         if reply == QMessageBox.Yes:
             try:
                 success = self.inspection_controller.delete_inspection(inspection_id)
-                
+
                 if success:
                     QMessageBox.information(self, "Sucesso", "Inspeção excluída com sucesso!")
                     self.load_inspections()
                     self.clear_inspection_form()
                 else:
+
                     QMessageBox.critical(self, "Erro", "Falha ao excluir inspeção.")
-            except Exception as e:
+            except:
+
                 logger.error(f"Erro ao excluir inspeção: {str(e)}")
                 QMessageBox.critical(self, "Erro", f"Falha ao excluir inspeção: {str(e)}")
-    
+
     def generate_report_from_inspection(self):
         """Gera um relatório a partir da inspeção selecionada"""
         selected_rows = self.inspection_table.selectedItems()
         if not selected_rows:
             QMessageBox.warning(self, "Atenção", "Selecione uma inspeção para gerar o relatório.")
             return
-        
+
         # Obtém a linha selecionada
         row = selected_rows[0].row()
-        
+
         try:
             # Obtém o ID da inspeção usando UserRole em vez do texto
             inspection_id = self.inspection_table.item(row, 0).data(Qt.UserRole)
             if not inspection_id:
                 QMessageBox.warning(self, "Erro", "Não foi possível identificar o ID da inspeção.")
                 return
-            
+
             # Busca os detalhes da inspeção
             inspection = self.inspection_controller.get_inspection_by_id(inspection_id)
-            
+
             if not inspection:
                 logger.warning(f"Inspeção {inspection_id} não encontrada")
                 return
-            
+
             # Muda para a aba de relatórios
             self.tabs.setCurrentIndex(3)  # Ajuste o índice conforme necessário
-            
+
             # Preenche o formulário de relatório com dados da inspeção
-            
+
             # Seleciona a inspeção no combo
             index = self.report_inspecao_combo.findData(inspection_id)
             if index >= 0:
                 self.report_inspecao_combo.setCurrentIndex(index)
-            
+
             # Define o título automático
             equip_name = inspection.get('equipment_tag', 'Equipamento')
             data = QDate.fromString(inspection['data_inspecao'], "yyyy-MM-dd").toString("dd/MM/yyyy")
             self.report_titulo_input.setText(f"Relatório de Inspeção - {equip_name} - {data}")
-            
+
             # Define o tipo com base na inspeção
             index = self.report_tipo_combo.findText(inspection['tipo_inspecao'])
             if index >= 0:
                 self.report_tipo_combo.setCurrentIndex(index)
-            
+
             # Define a data do relatório como hoje
             self.report_data_input.setDate(QDate.currentDate())
-            
+
             # Define o status como "Pendente" por padrão
             self.report_status_combo.setCurrentIndex(0)
-            
+
             # Define as recomendações com base na inspeção
             self.report_recomendacoes_input.setPlainText(inspection['recomendacoes'])
-            
+
             # Feedback para o usuário
             QMessageBox.information(
                 self, 
@@ -1669,8 +1680,10 @@ class AdminWindow(QMainWindow):
                 "Um novo relatório foi iniciado com base na inspeção selecionada.\n"
                 "Complete as informações restantes e clique em Salvar."
             )
-            
-        except Exception as e:
+
+        except:
+
+
             logger.error(f"Erro ao gerar relatório a partir da inspeção: {str(e)}")
             logger.error(traceback.format_exc())
             QMessageBox.critical(self, "Erro", f"Falha ao gerar relatório: {str(e)}")
@@ -1683,66 +1696,70 @@ class AdminWindow(QMainWindow):
                 if not selected_rows:
                     QMessageBox.warning(self, "Atenção", "Selecione um usuário para editar.")
                     return
-                    
+
                 row = selected_rows[0].row()
                 # Obter o ID que está armazenado no primeiro item da linha (coluna nome) como UserRole
                 nome_item = self.user_table.item(row, 0)  # Coluna nome
                 if not nome_item:
                     QMessageBox.warning(self, "Erro", "Não foi possível identificar o usuário.")
                     return
-                    
+
                 user_id = nome_item.data(Qt.UserRole)
-            
+
             # Obter dados do usuário
             users = self.auth_controller.get_all_users()
             user = next((u for u in users if u.get('id') == user_id), None)
-            
+
             if not user:
                 QMessageBox.warning(self, "Erro", f"Usuário ID {user_id} não encontrado.")
                 return
-                
+
             modal = UserModal(self, self.is_dark)
             modal.setWindowTitle("Editar Usuário")
-            
+
             # Preencher o formulário com os dados do usuário
             modal.nome_input.setText(user.get('nome', ''))
             modal.email_input.setText(user.get('email', ''))
-            
+
             # Adicionar "eng" ao combobox de tipo se não existir
             if force_type == "eng" and modal.tipo_input.findText("eng") < 0:
                 modal.tipo_input.addItem("eng")
-            
+
             # Selecionar o tipo correto
             tipo = force_type or user.get('tipo_acesso', '')
             tipo_idx = modal.tipo_input.findText(tipo)
             if tipo_idx >= 0:
                 modal.tipo_input.setCurrentIndex(tipo_idx)
-                
+
             modal.empresa_input.setText(user.get('empresa', ''))
-            
+
             if modal.exec_():
                 data = modal.get_data()
-                
+
                 # Se force_type está definido, garantir que o tipo seja respeitado
                 if force_type:
                     tipo_acesso = force_type
                 else:
+
                     tipo_acesso = data['tipo']
-                    
+
                 # Atualizar apenas o que foi alterado
                 if data['nome'] != user.get('nome', '') or data['email'] != user.get('email', '') or \
                 tipo_acesso != user.get('tipo_acesso', '') or data['empresa'] != user.get('empresa', ''):
                     # Implementar a atualização do usuário
                     QMessageBox.information(self, "Sucesso", "Usuário atualizado com sucesso!")
                     self.load_users()
-                    
+
                     # Se estamos editando um engenheiro, atualizar a lista de engenheiros também
                     if tipo_acesso == "eng" or user.get('tipo_acesso') == "eng":
                         self.load_engineers()
-                        
-                else:
+
+                    else:
+
+
                     QMessageBox.information(self, "Informação", "Nenhuma alteração foi feita.")
-        except Exception as e:
+        except:
+
             logger.error(f"Erro ao editar usuário: {str(e)}")
             logger.error(traceback.format_exc())
             QMessageBox.critical(self, "Erro", f"Falha ao editar usuário: {str(e)}")
@@ -1754,23 +1771,23 @@ class AdminWindow(QMainWindow):
             if not selected_rows:
                 QMessageBox.warning(self, "Atenção", "Por favor, selecione um usuário na tabela.")
                 return
-                
+
             row = selected_rows[0].row()
             # Obter o ID que está armazenado no primeiro item da linha (coluna nome) como UserRole
             nome_item = self.user_table.item(row, 0)  # Coluna nome
             if not nome_item:
                 QMessageBox.warning(self, "Erro", "Não foi possível identificar o usuário.")
                 return
-                
+
             user_id = nome_item.data(Qt.UserRole)
             user_name = nome_item.text()
             status_item = self.user_table.item(row, 3)  # Coluna status (ajustado após remoção da coluna ID)
             if not status_item:
                 QMessageBox.warning(self, "Erro", "Não foi possível obter o status do usuário.")
                 return
-                
+
             is_active = status_item.text() == "Ativo"
-            
+
             if is_active:
                 # Desativa o usuário
                 success = self.auth_controller.desativar_usuario(user_id)
@@ -1778,40 +1795,45 @@ class AdminWindow(QMainWindow):
                     # Certifique-se de que o botão de excluir esteja visível
                     if not self.remove_user_button.isVisible():
                         self.remove_user_button.setVisible(True)
-                        
+
                     # Atualiza a tabela inteira para manter todas as configurações corretas
                     self.load_users()
-                    
+
                     # Certifique-se de que nenhuma linha está escondida
                     for r in range(self.user_table.rowCount()):
                         self.user_table.setRowHidden(r, False)
-                        
+
                     QMessageBox.information(self, "Sucesso", f"Usuário {user_name} foi desativado com sucesso.")
                 else:
+
                     QMessageBox.warning(self, "Erro", f"Erro ao desativar usuário {user_name}.")
-            else:
+                else:
+
                 # Ativa o usuário
                 success = self.auth_controller.reativar_usuario(user_id)
                 if success:
                     # Certifique-se de que o botão de excluir esteja visível
                     if not self.remove_user_button.isVisible():
                         self.remove_user_button.setVisible(True)
-                        
+
                     # Atualiza a tabela inteira para manter todas as configurações corretas
                     self.load_users()
-                    
+
                     # Certifique-se de que nenhuma linha está escondida
                     for r in range(self.user_table.rowCount()):
                         self.user_table.setRowHidden(r, False)
-                        
+
                     QMessageBox.information(self, "Sucesso", f"Usuário {user_name} foi reativado com sucesso.")
                 else:
+
                     QMessageBox.warning(self, "Erro", f"Erro ao reativar usuário {user_name}.")
-                
+
             # Atualiza o botão após a operação
             self.update_toggle_button()
-                
-        except Exception as e:
+
+        except:
+
+
             logger.error(f"Erro ao alterar status do usuário: {str(e)}")
             logger.error(traceback.format_exc())
             QMessageBox.critical(self, "Erro", f"Erro ao alterar status do usuário: {str(e)}")
@@ -1823,25 +1845,25 @@ class AdminWindow(QMainWindow):
             if not selected_rows:
                 QMessageBox.warning(self, "Atenção", "Por favor, selecione um usuário na tabela.")
                 return
-                
+
             row = selected_rows[0].row()
             # Obter o ID que está armazenado no primeiro item da linha (coluna nome) como UserRole
             nome_item = self.user_table.item(row, 0)  # Coluna nome
             if not nome_item:
                 QMessageBox.warning(self, "Erro", "Não foi possível identificar o usuário.")
                 return
-                
+
             user_id = nome_item.data(Qt.UserRole)
             user_name = nome_item.text()
-            
+
             # Verificar o tipo de acesso
             tipo_item = self.user_table.item(row, 2)  # Coluna tipo acesso (ajustado após remoção da coluna ID)
             if not tipo_item:
                 QMessageBox.warning(self, "Erro", "Não foi possível obter o tipo de acesso do usuário.")
                 return
-                
+
             user_type = tipo_item.text()
-            
+
             # Confirmação com ícone de alerta e texto em vermelho
             msg_box = QMessageBox(self)
             msg_box.setIcon(QMessageBox.Warning)
@@ -1850,11 +1872,11 @@ class AdminWindow(QMainWindow):
             msg_box.setInformativeText(f'Tem certeza que deseja excluir permanentemente o usuário {user_name}?')
             msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
             msg_box.setDefaultButton(QMessageBox.No)
-            
+
             if msg_box.exec_() == QMessageBox.Yes:
                 conn = self.db_models.db.get_connection()
                 cursor = conn.cursor()
-                
+
                 # Verifica se é o último admin
                 cursor.execute(
                     """
@@ -1866,7 +1888,7 @@ class AdminWindow(QMainWindow):
                     (user_id,)
                 )
                 admin_count = cursor.fetchone()[0]
-                
+
                 if user_type == 'admin' and admin_count == 0:
                     QMessageBox.warning(
                         self,
@@ -1874,19 +1896,21 @@ class AdminWindow(QMainWindow):
                         "Não é possível excluir o último administrador do sistema!"
                     )
                     return
-                
+
                 # Exclui o usuário
                 cursor.execute("DELETE FROM usuarios WHERE id = ?", (user_id,))
                 conn.commit()
-                
+
                 self.load_users()
                 QMessageBox.information(
                     self,
                     "Sucesso",
                     f"Usuário {user_name} foi excluído permanentemente do sistema."
                 )
-                
-        except Exception as e:
+
+        except:
+
+
             logger.error(f"Erro ao excluir usuário permanentemente: {str(e)}")
             logger.error(traceback.format_exc())
             QMessageBox.critical(
@@ -1903,21 +1927,21 @@ class AdminWindow(QMainWindow):
                 # Ocultar o botão em vez de apenas desabilitar
                 self.toggle_user_button.setVisible(False)
                 return
-            
+
             # Mostrar o botão se estiver oculto
             if not self.toggle_user_button.isVisible():
                 self.toggle_user_button.setVisible(True)
-                
+
             # Obter a linha selecionada e verificar o status do usuário
             row = selected_rows[0].row()
             status_item = self.user_table.item(row, 3)  # Coluna status (ajustado após remoção da coluna ID)
-            
+
             if not status_item:
                 self.toggle_user_button.setVisible(False)
                 return
-                
+
             is_active = status_item.text() == "Ativo"
-            
+
             if is_active:
                 self.toggle_user_button.setText("Desativar")
                 self.toggle_user_button.setIcon(self.create_icon_from_svg(self.icons['disable']))
@@ -1939,6 +1963,7 @@ class AdminWindow(QMainWindow):
                     }
                 """)
             else:
+
                 self.toggle_user_button.setText("Ativar")
                 self.toggle_user_button.setIcon(self.create_icon_from_svg(self.icons['enable']))
                 self.toggle_user_button.setStyleSheet("""
@@ -1958,8 +1983,10 @@ class AdminWindow(QMainWindow):
                         background-color: #1e7e34;
                     }
                 """)
-            
-        except Exception as e:
+
+        except:
+
+
             logger.error(f"Erro ao atualizar botão de ativar/desativar: {str(e)}")
             logger.error(traceback.format_exc())
 
@@ -1967,19 +1994,19 @@ class AdminWindow(QMainWindow):
         """Filtra os usuários na tabela baseado no texto de pesquisa"""
         try:
             search_text = text.lower()
-            
+
             # Certifique-se de que o botão de excluir esteja visível
             if not self.remove_user_button.isVisible():
                 logger.debug("Restaurando visibilidade do botão de excluir")
                 self.remove_user_button.setVisible(True)
-            
+
             # Resetar visibilidade de todas as linhas se a pesquisa estiver vazia
             if not search_text:
                 for row in range(self.user_table.rowCount()):
                     self.user_table.setRowHidden(row, False)
                 logger.debug("Filtro de usuários limpo - mostrando todas as linhas")
                 return
-                
+
             # Aplicar filtro apenas se houver texto de pesquisa
             hidden_count = 0
             for row in range(self.user_table.rowCount()):
@@ -1989,14 +2016,16 @@ class AdminWindow(QMainWindow):
                     if item and search_text in item.text().lower():
                         should_show = True
                         break
-                
+
                 self.user_table.setRowHidden(row, not should_show)
                 if not should_show:
                     hidden_count += 1
-                
+
             logger.debug(f"Filtro aplicado: '{search_text}' - {hidden_count} linhas ocultas")
-                
-        except Exception as e:
+
+        except:
+
+
             logger.error(f"Erro ao filtrar usuários: {str(e)}")
             logger.error(traceback.format_exc())
 
@@ -2004,7 +2033,7 @@ class AdminWindow(QMainWindow):
         """Abre um diálogo para selecionar um arquivo para o relatório"""
         options = QFileDialog.Options()
         filename, _ = QFileDialog.getOpenFileName(
-                    self, 
+            self, 
             "Selecionar Arquivo de Relatório",
             "",
             "Arquivos PDF (*.pdf);;Documentos (*.doc *.docx);;Imagens (*.png *.jpg *.jpeg);;Todos os Arquivos (*)",
@@ -2012,7 +2041,7 @@ class AdminWindow(QMainWindow):
         )
         if filename:
             self.report_arquivo_input.setText(filename)
-            
+
     def save_report(self):
         """Salva um novo relatório ou atualiza um existente"""
         try:
@@ -2020,11 +2049,11 @@ class AdminWindow(QMainWindow):
             if not self.report_titulo_input.text().strip():
                 QMessageBox.warning(self, "Atenção", "O título do relatório é obrigatório.")
                 return
-                
+
             if self.report_inspecao_combo.count() == 0:
                 QMessageBox.warning(self, "Atenção", "Não há inspeções disponíveis para criar um relatório.")
                 return
-                
+
             # Coleta os dados do formulário
             report_data = {
                 'titulo': self.report_titulo_input.text().strip(),
@@ -2041,10 +2070,10 @@ class AdminWindow(QMainWindow):
                 'recomendacoes': self.report_recomendacoes_input.toPlainText(),
                 'responsavel_id': 1,  # ID do usuário logado
             }
-            
+
             # Verifica se é uma edição ou nova inserção
             editing_id = getattr(self, 'editing_report_id', None)
-            
+
             if editing_id:
                 # Atualiza um relatório existente
                 success = self.report_controller.atualizar_relatorio(
@@ -2053,41 +2082,46 @@ class AdminWindow(QMainWindow):
                 )
                 message = "Relatório atualizado com sucesso!" if success else "Erro ao atualizar relatório."
             else:
+
                 # Cria um novo relatório
                 success, message = self.report_controller.criar_relatorio(**report_data)
-                
+
             if success:
                 QMessageBox.information(self, "Sucesso", message if isinstance(message, str) else "Operação realizada com sucesso!")
                 self.clear_report_form()
                 self.load_reports()
             else:
+
                 QMessageBox.warning(self, "Erro", message if isinstance(message, str) else "Erro ao processar operação.")
-            
-        except Exception as e:
+
+        except:
+
+
             logger.error(f"Erro ao salvar relatório: {str(e)}")
             logger.error(traceback.format_exc())
             QMessageBox.critical(self, "Erro", f"Erro ao salvar relatório: {str(e)}")
-            
+
     def clear_report_form(self):
         """Limpa o formulário de relatório"""
         try:
             # Reseta o ID do relatório atual
             self.current_report_id = None
-            
+
             # Limpa os campos do formulário
             self.report_inspecao_combo.setCurrentIndex(0)
             self.report_data_input.setDate(QDate.currentDate())
             self.report_arquivo_input.clear()
             self.report_observacoes_input.clear()
-            
+
             # Atualiza o título do formulário
             self.report_form_title.setText("Novo Relatório")
-            
+
             # Atualiza o texto do botão
             self.report_save_btn.setText("Salvar")
-            
+
             logger.debug("Formulário de relatório limpo")
-        except Exception as e:
+        except:
+
             logger.error(f"Erro ao limpar formulário de relatório: {str(e)}")
 
     def toggle_report_form_mode(self, is_editing=False):
@@ -2095,39 +2129,39 @@ class AdminWindow(QMainWindow):
         form_title = self.findChild(QLabel, "form_title")
         if form_title:
             form_title.setText("Editar Relatório" if is_editing else "Novo Relatório")
-            
+
         # Atualiza o texto do botão de salvar
         self.report_save_btn.setText("Atualizar" if is_editing else "Salvar")
-        
+
     def load_report_details(self):
         """Carrega os detalhes de um relatório selecionado na tabela"""
         selected_items = self.reports_list.selectedItems()
         if not selected_items:
-                return
-                
+            return
+
         row = selected_items[0].row()
         report_id = int(self.reports_list.item(row, 0).text())
-        
+
         # Busca os detalhes do relatório no banco de dados
         report = self.report_controller.get_report_by_id(report_id)
-        
+
         if not report:
             return
-                
+
         # Preenche o formulário com os dados do relatório
         self.editing_report_id = report_id
         self.toggle_report_form_mode(is_editing=True)
-        
+
         # Preenche os campos
         self.report_titulo_input.setText(report.get('titulo', ''))
-        
+
         # Seleciona a inspeção correta no combobox
         inspecao_id = report.get('inspecao_id')
         if inspecao_id:
             index = self.report_inspecao_combo.findData(inspecao_id)
             if index >= 0:
                 self.report_inspecao_combo.setCurrentIndex(index)
-        
+
         # Data de emissão
         if 'data_emissao' in report:
             data_str = report['data_emissao']
@@ -2136,8 +2170,9 @@ class AdminWindow(QMainWindow):
                     data_obj = QDate.fromString(data_str, "yyyy-MM-dd")
                     self.report_data_input.setDate(data_obj)
                 except:
+
                     pass
-                        
+
         # Data de validade
         if 'data_validade' in report:
             data_str = report['data_validade']
@@ -2146,39 +2181,40 @@ class AdminWindow(QMainWindow):
                     data_obj = QDate.fromString(data_str, "yyyy-MM-dd")
                     self.report_validade_input.setDate(data_obj)
                 except:
+
                     pass
-        
+
         # Tipo de relatório
         tipo = report.get('tipo_relatorio', '')
         index = self.report_tipo_combo.findText(tipo)
         if index >= 0:
             self.report_tipo_combo.setCurrentIndex(index)
-            
+
         # Status
         status = report.get('status', '')
         index = self.report_status_combo.findText(status)
         if index >= 0:
             self.report_status_combo.setCurrentIndex(index)
-            
+
         # Conformidade
         conformidade = "Conforme" if report.get('conformidade', 0) == 1 else "Não Conforme"
         index = self.report_conformidade_combo.findText(conformidade)
         if index >= 0:
             self.report_conformidade_combo.setCurrentIndex(index)
-            
+
         # Nível de risco
         risco = report.get('nivel_risco', '')
         index = self.report_risco_combo.findText(risco)
         if index >= 0:
             self.report_risco_combo.setCurrentIndex(index)
-            
+
         # Arquivo
         self.report_arquivo_input.setText(report.get('link_arquivo', ''))
-        
+
         # Observações e recomendações
         self.report_obs_input.setPlainText(report.get('observacoes', ''))
         self.report_recomendacoes_input.setPlainText(report.get('recomendacoes', ''))
-        
+
     def edit_selected_report(self):
         """Edita o relatório selecionado"""
         try:
@@ -2186,56 +2222,58 @@ class AdminWindow(QMainWindow):
             if not selected_items:
                 QMessageBox.warning(self, "Atenção", "Por favor, selecione um relatório para editar.")
                 return
-            
+
             row = selected_items[0].row()
             report_id = int(self.report_table.item(row, 0).text())
-            
+
             # Busca os dados do relatório
             report = self.report_controller.get_report_by_id(report_id)
             if not report:
                 QMessageBox.warning(self, "Erro", "Relatório não encontrado.")
                 return
-            
+
             # Cria e configura o modal
             modal = ReportModal(self, self.is_dark)
             modal.setWindowTitle("Editar Relatório")
-            
+
             # Carrega as inspeções no combo
             inspecoes = self.inspection_controller.get_all_inspections()
             modal.inspecao_combo.clear()
-            
+
             for insp in inspecoes:
                 data_str = insp.get('data_inspecao', '')
                 if isinstance(data_str, str) and len(data_str) >= 10:
                     try:
                         data_obj = datetime.strptime(data_str[:10], '%Y-%m-%d')
                         data_str = data_obj.strftime('%d/%m/%Y')
-                    except ValueError:
+                    except:
+
                         data_str = 'Data inválida'
-                
+
                 display_text = f"#{insp['id']} - {insp.get('tipo_inspecao', '')} ({data_str})"
                 modal.inspecao_combo.addItem(display_text, insp['id'])
-            
+
             # Seleciona a inspeção atual
             index = modal.inspecao_combo.findData(report['inspecao_id'])
             if index >= 0:
                 modal.inspecao_combo.setCurrentIndex(index)
-            
+
             # Preenche os outros campos
             if report.get('data_emissao'):
                 try:
                     data = QDate.fromString(report['data_emissao'][:10], 'yyyy-MM-dd')
                     modal.data_input.setDate(data)
                 except:
+
                     pass
-            
+
             modal.arquivo_input.setText(report.get('link_arquivo', ''))
             modal.observacoes_input.setPlainText(report.get('observacoes', ''))
-            
+
             if modal.exec_() == QDialog.Accepted:
                 # Obtém os dados atualizados
                 data = modal.get_data()
-                
+
                 # Atualiza o relatório
                 success = self.report_controller.atualizar_relatorio(
                     report_id,
@@ -2244,14 +2282,17 @@ class AdminWindow(QMainWindow):
                     data['link_arquivo'],
                     data['observacoes']
                 )
-                
+
                 if success:
                     QMessageBox.information(self, "Sucesso", "Relatório atualizado com sucesso!")
                     self.load_reports()
                 else:
+
                     QMessageBox.warning(self, "Erro", "Não foi possível atualizar o relatório.")
-                    
-        except Exception as e:
+
+        except:
+
+
             logger.error(f"Erro ao editar relatório: {str(e)}")
             logger.error(traceback.format_exc())
             QMessageBox.critical(self, "Erro", f"Erro ao editar relatório: {str(e)}")
@@ -2263,29 +2304,32 @@ class AdminWindow(QMainWindow):
             if not selected_items:
                 QMessageBox.warning(self, "Atenção", "Por favor, selecione um relatório para excluir.")
                 return
-            
+
             row = selected_items[0].row()
             report_id = int(self.report_table.item(row, 0).text())
-            
+
             # Confirmação
             reply = QMessageBox.question(
-                self,
+                self, 
                 "Confirmar Exclusão",
                 "Tem certeza que deseja excluir este relatório?\nEsta ação não pode ser desfeita.",
                 QMessageBox.Yes | QMessageBox.No,
                 QMessageBox.No
             )
-            
+
             if reply == QMessageBox.Yes:
                 success = self.report_controller.excluir_relatorio(report_id)
-                
+
                 if success:
                     QMessageBox.information(self, "Sucesso", "Relatório excluído com sucesso!")
                     self.load_reports()
                 else:
+
                     QMessageBox.warning(self, "Erro", "Não foi possível excluir o relatório.")
-                    
-        except Exception as e:
+
+        except:
+
+
             logger.error(f"Erro ao excluir relatório: {str(e)}")
             logger.error(traceback.format_exc())
             QMessageBox.critical(self, "Erro", f"Erro ao excluir relatório: {str(e)}")
@@ -2297,22 +2341,22 @@ class AdminWindow(QMainWindow):
             if not selected_items:
                 QMessageBox.warning(self, "Atenção", "Por favor, selecione um relatório para visualizar.")
                 return
-            
+
             row = selected_items[0].row()
             arquivo = self.report_table.item(row, 3).text()
-            
+
             if not arquivo:
                 QMessageBox.warning(self, "Atenção", "Este relatório não possui arquivo anexado.")
                 return
-            
+
             if not os.path.exists(arquivo):
                 QMessageBox.warning(self, "Erro", "O arquivo não foi encontrado no caminho especificado.")
                 return
-            
+
             # Abre o arquivo com o programa padrão do sistema
             import subprocess
             import platform
-            
+
             try:
                 if platform.system() == 'Windows':
                     os.startfile(arquivo)
@@ -2320,10 +2364,13 @@ class AdminWindow(QMainWindow):
                     subprocess.run(['open', arquivo])
                 else:  # Linux e outros
                     subprocess.run(['xdg-open', arquivo])
-            except Exception as e:
+            except:
+
                 QMessageBox.critical(self, "Erro", f"Não foi possível abrir o arquivo: {str(e)}")
-                
-        except Exception as e:
+
+        except:
+
+
             logger.error(f"Erro ao visualizar relatório: {str(e)}")
             logger.error(traceback.format_exc())
             QMessageBox.critical(self, "Erro", f"Erro ao visualizar relatório: {str(e)}")
@@ -2332,21 +2379,23 @@ class AdminWindow(QMainWindow):
         """Filtra os relatórios na tabela com base nos critérios de filtro"""
         try:
             search_text = self.report_search_input.text().lower()
-            
+
             for row in range(self.report_table.rowCount()):
                 should_show = False
-                
+
                 # Verifica cada coluna da linha
                 for col in range(self.report_table.columnCount()):
                     item = self.report_table.item(row, col)
                     if item and search_text in item.text().lower():
                         should_show = True
                         break
-                
+
                 # Mostra ou esconde a linha
                 self.report_table.setRowHidden(row, not should_show)
-                
-        except Exception as e:
+
+        except:
+
+
             logger.error(f"Erro ao filtrar relatórios: {str(e)}")
             logger.error(traceback.format_exc())
 
@@ -2355,45 +2404,47 @@ class AdminWindow(QMainWindow):
         try:
             logger.debug("Carregando engenheiros")
             self.engineers_table.setRowCount(0)
-            
+
             # Busca todos os usuários
             users = self.auth_controller.get_all_users()
-            
+
             # Filtra apenas os engenheiros
             engineers = [user for user in users if user.get('tipo_acesso') == 'eng']
-            
+
             # Preenche a tabela
             for i, engineer in enumerate(engineers):
                 self.engineers_table.insertRow(i)
-                
+
                 # ID
                 id_item = QTableWidgetItem(str(engineer.get('id', '')))
                 self.engineers_table.setItem(i, 0, id_item)
-                
+
                 # Nome
                 name_item = QTableWidgetItem(engineer.get('nome', ''))
                 self.engineers_table.setItem(i, 1, name_item)
-                
+
                 # Email
                 email_item = QTableWidgetItem(engineer.get('email', ''))
                 self.engineers_table.setItem(i, 2, email_item)
-                
+
                 # Empresa
                 company_item = QTableWidgetItem(engineer.get('empresa', ''))
                 self.engineers_table.setItem(i, 3, company_item)
-                
+
                 # Ativo
                 is_active = engineer.get('ativo', False)
                 active_item = QTableWidgetItem("Sim" if is_active else "Não")
                 active_item.setForeground(QColor('#28a745' if is_active else '#dc3545'))
                 self.engineers_table.setItem(i, 4, active_item)
-                
+
             logger.debug(f"Carregados {len(engineers)} engenheiros")
-            
-        except Exception as e:
+
+        except:
+
+
             logger.error(f"Erro ao carregar engenheiros: {str(e)}")
             logger.error(traceback.format_exc())
-            
+
     def filter_engineers(self, text):
         """Filtra a lista de engenheiros com base no texto digitado"""
         try:
@@ -2406,7 +2457,8 @@ class AdminWindow(QMainWindow):
                         visible = True
                         break
                 self.engineers_table.setRowHidden(row, not visible)
-        except Exception as e:
+        except:
+
             logger.error(f"Erro ao filtrar engenheiros: {str(e)}")
             logger.error(traceback.format_exc())
 
@@ -2415,11 +2467,11 @@ class AdminWindow(QMainWindow):
         try:
             logger.debug("Abrindo modal para adicionar relatório")
             modal = ReportModal(self, self.is_dark)
-            
+
             # Carrega as inspeções no combobox do modal
             inspecoes = self.inspection_controller.get_all_inspections()
             modal.inspecao_combo.clear()
-            
+
             for insp in inspecoes:
                 # Formata a data
                 data_str = insp.get('data_inspecao', '')
@@ -2427,17 +2479,18 @@ class AdminWindow(QMainWindow):
                     try:
                         data_obj = datetime.strptime(data_str[:10], '%Y-%m-%d')
                         data_str = data_obj.strftime('%d/%m/%Y')
-                    except ValueError:
+                    except:
+
                         data_str = 'Data inválida'
-                
+
                 # Cria o texto de exibição
                 display_text = f"#{insp['id']} - {insp.get('tipo_inspecao', '')} ({data_str})"
                 modal.inspecao_combo.addItem(display_text, insp['id'])
-            
+
             if modal.exec_() == QDialog.Accepted:
                 # Obtém os dados do formulário
                 data = modal.get_data()
-                
+
                 # Cria o relatório
                 success, message = self.report_controller.criar_relatorio(
                     inspecao_id=data['inspecao_id'],
@@ -2445,14 +2498,17 @@ class AdminWindow(QMainWindow):
                     link_arquivo=data['link_arquivo'],
                     observacoes=data['observacoes']
                 )
-                
+
                 if success:
                     QMessageBox.information(self, "Sucesso", message)
                     self.load_reports()  # Recarrega a tabela
                 else:
-                    QMessageBox.warning(self, "Erro", message)
-                    
-        except Exception as e:
+
+                QMessageBox.warning(self, "Erro", message)
+
+        except:
+
+
             logger.error(f"Erro ao abrir modal de relatório: {str(e)}")
             logger.error(traceback.format_exc())
             QMessageBox.critical(self, "Erro", f"Erro ao abrir modal: {str(e)}")
@@ -2464,34 +2520,35 @@ class AdminWindow(QMainWindow):
         try:
             logger.debug(f"Filtrando equipamentos com texto: '{text}'")
             search_text = text.lower()
-            
+
             # Resetar visibilidade de todas as linhas se a pesquisa estiver vazia
             if not search_text:
                 for row in range(self.equipment_table.rowCount()):
                     self.equipment_table.setRowHidden(row, False)
                 logger.debug("Filtro de equipamentos limpo - mostrando todas as linhas")
                 return
-            
+
             # Aplicar filtro apenas se houver texto de pesquisa
             hidden_count = 0    
             # Itera por todas as linhas da tabela
             for row in range(self.equipment_table.rowCount()):
                 should_show = False
-                
+
                 # Checa todas as colunas
                 for col in range(self.equipment_table.columnCount()):
                     item = self.equipment_table.item(row, col)
                     if item and search_text in item.text().lower():
                         should_show = True
                         break
-                
+
                 # Mostra ou oculta a linha com base na correspondência
                 self.equipment_table.setRowHidden(row, not should_show)
                 if not should_show:
                     hidden_count += 1
-            
+
             logger.debug(f"Filtro de equipamentos aplicado com sucesso - {hidden_count} linhas ocultas")
-        except Exception as e:
+        except:
+
             logger.error(f"Erro ao filtrar equipamentos: {str(e)}")
             logger.error(traceback.format_exc())
 
@@ -2499,10 +2556,10 @@ class AdminWindow(QMainWindow):
         """
         Obtém o ID do equipamento a partir de uma linha selecionada na tabela.
         Tenta várias abordagens para garantir que o ID seja encontrado.
-        
+
         Args:
             row: Número da linha na tabela
-            
+
         Returns:
             tuple: (equipment_id, tag_text) ou (None, tag_text) se não encontrado
         """
@@ -2512,14 +2569,14 @@ class AdminWindow(QMainWindow):
             if tag_item is None:
                 logger.error(f"Item da coluna Tag é None para a linha {row}")
                 return None, ""
-                
+
             tag_text = tag_item.text()
             logger.debug(f"Tag do equipamento: {tag_text}")
-            
+
             # Tentativa 1: buscar ID pelo UserRole
             equipment_id = tag_item.data(Qt.UserRole)
             logger.debug(f"Tentativa 1 - ID do equipamento obtido via UserRole: {equipment_id}")
-            
+
             # Tentativa 2: buscar pelo tag se UserRole falhar
             if not equipment_id:
                 logger.debug("Tentativa 1 falhou. Tentando buscar pelo tag...")
@@ -2527,14 +2584,14 @@ class AdminWindow(QMainWindow):
                 if equipment:
                     equipment_id = equipment.get('id')
                     logger.debug(f"Tentativa 2 - ID encontrado pelo tag: {equipment_id}")
-            
+
             # Tentativa 3: Solicitar ID manualmente
             if not equipment_id:
                 logger.debug("Tentativas 1 e 2 falharam. Solicitando ID manualmente...")
                 # Listar todos os equipamentos para ajudar o usuário a identificar
                 all_equipments = self.equipment_controller.get_all_equipment()
                 equipment_info = "\n".join([f"ID: {eq['id']} - Tag: {eq['tag']}" for eq in all_equipments if eq['tag'] == tag_text])
-                
+
                 # Se encontramos equipamentos com este tag, mostrar a lista
                 if equipment_info:
                     logger.debug(f"Equipamentos encontrados com tag '{tag_text}': {equipment_info}")
@@ -2547,105 +2604,167 @@ class AdminWindow(QMainWindow):
                         try:
                             equipment_id = int(text.strip())
                             logger.debug(f"Tentativa 3 - ID informado manualmente: {equipment_id}")
-                        except ValueError:
+                        except:
+
                             return None, tag_text
-                else:
+                        else:
+
                     logger.warning(f"Não foi possível encontrar equipamentos com tag '{tag_text}'")
                     return None, tag_text
-            
+
             return equipment_id, tag_text
-            
-        except Exception as e:
+
+        except:
+
+
             logger.error(f"Erro ao obter ID do equipamento: {str(e)}")
             logger.error(traceback.format_exc())
             return None, ""
-            
+
     def edit_equipment(self):
-        """Abre o modal para editar um equipamento"""
+        """Edita o equipamento selecionado"""
         try:
             logger.debug("Editando equipamento selecionado")
-            equipment_id = self.get_selected_equipment_id()
+
+            # Verifica se há uma linha selecionada
+            selected_items = self.equipment_table.selectedItems()
+            if not selected_items:
+                QMessageBox.warning(self, "Atenção", "Selecione um equipamento para editar.")
+                return
+
+            # Obtém o ID do equipamento selecionado
+            row = selected_items[0].row()
+            logger.debug(f"Linha selecionada: {row}")
+
+            equipment_id, tag_text = self.get_equipment_id(row)
+
             if not equipment_id:
-                QMessageBox.warning(self, "Seleção", "Selecione um equipamento para editar.")
+                QMessageBox.warning(self, "Erro", "Não foi possível identificar o ID do equipamento.")
                 return
-                
-            # Buscar os dados do equipamento
-            equipment_data = self.equipment_controller.get_equipment_by_id(equipment_id)
-            if not equipment_data:
-                QMessageBox.warning(self, "Erro", "Não foi possível carregar os dados do equipamento.")
+
+            # Busca os dados do equipamento
+            equipment = self.equipment_controller.get_equipment_by_id(equipment_id)
+
+            if not equipment:
+                QMessageBox.warning(self, "Erro", "Equipamento não encontrado.")
                 return
-                
-            logger.debug(f"Dados do equipamento obtidos: {equipment_data}")
-            
-            # Abrir o modal com os dados preenchidos
-            modal = EquipmentModal(self, is_dark=self.is_dark, equipment_data=equipment_data)
-            
+
+            logger.debug(f"Dados do equipamento obtidos: {equipment}")
+
+            # Abre o modal de edição
+            modal = EquipmentModal(self, self.is_dark)
+
+            # Preenche os campos com os dados atuais
+            modal.tag_input.setText(equipment.get('tag', ''))
+
+            # Seleciona a categoria correta no combobox
+            categoria_idx = modal.categoria_input.findText(equipment.get('categoria', ''))
+            if categoria_idx >= 0:
+                modal.categoria_input.setCurrentIndex(categoria_idx)
+
+            # Empresa - primeiro precisamos obter o nome da empresa pelo ID
+            empresa_nome = ""
+            try:
+                empresa = self.auth_controller.get_user_by_id(equipment.get('empresa_id', 0))
+                if empresa:
+                    empresa_nome = empresa.get('nome', '')
+                    # Seleciona a empresa no combobox se encontrada
+                    empresa_idx = modal.empresa_input.findText(empresa_nome)
+                    if empresa_idx >= 0:
+                        modal.empresa_input.setCurrentIndex(empresa_idx)
+            except:
+
+                logger.error(f"Erro ao buscar empresa: {str(e)}")
+
+            modal.fabricante_input.setText(equipment.get('fabricante', ''))
+            modal.ano_fabricacao_input.setText(str(equipment.get('ano_fabricacao', '')))
+            modal.pressao_projeto_input.setText(str(equipment.get('pressao_projeto', '')))
+            modal.pressao_trabalho_input.setText(str(equipment.get('pressao_trabalho', '')))
+            modal.volume_input.setText(str(equipment.get('volume', '')))
+            modal.fluido_input.setText(equipment.get('fluido', ''))
+
+            # Executa o modal
             if modal.exec_():
+                # Obtém os novos dados
                 data = modal.get_data()
-                
-                # Validar e converter campos numéricos
+
                 try:
-                    ano_fabricacao = int(data['ano_fabricacao']) if data['ano_fabricacao'] else 0
-                    pressao_projeto = float(data['pressao_projeto'].replace(',', '.')) if data['pressao_projeto'] else 0.0
-                    pressao_trabalho = float(data['pressao_trabalho'].replace(',', '.')) if data['pressao_trabalho'] else 0.0
-                    volume = float(data['volume'].replace(',', '.')) if data['volume'] else 0.0
-                except ValueError as e:
-                    QMessageBox.warning(self, "Dados Inválidos", 
-                                        f"Valor numérico inválido: {str(e)}\n\nVerifique se os campos de pressão, volume e ano contêm apenas números.")
-                    return
-                
-                # Empresa_id já vem correto diretamente do modal
-                empresa_id = data['empresa_id']
-                
-                # Atualizar o equipamento
-                success, message = self.equipment_controller.update_equipment(
-                    equipment_id=equipment_id,
-                    tag=data['tag'],
-                    categoria=data['categoria'],
-                    empresa_id=empresa_id,
-                    fabricante=data['fabricante'],
-                    ano_fabricacao=ano_fabricacao,
-                    pressao_projeto=pressao_projeto,
-                    pressao_trabalho=pressao_trabalho,
-                    volume=volume,
-                    fluido=data['fluido']
-                )
-                
-                if success:
-                    QMessageBox.information(self, "Sucesso", message)
-                    self.load_equipment()
-                else:
-                    QMessageBox.critical(self, "Erro", message)
-        except Exception as e:
+                    # Primeiro obtém o ID da empresa pelo nome
+                    empresa_id = self.get_empresa_id_by_name(data['empresa'])
+
+                    # Validar e converter campos numéricos
+                    try:
+                        ano_fabricacao = int(data['ano_fabricacao']) if data['ano_fabricacao'] else 0
+                        pressao_projeto = float(data['pressao_projeto'].replace(',', '.')) if data['pressao_projeto'] else 0.0
+                        pressao_trabalho = float(data['pressao_trabalho'].replace(',', '.')) if data['pressao_trabalho'] else 0.0
+                        volume = float(data['volume'].replace(',', '.')) if data['volume'] else 0.0
+                    except:
+
+                        QMessageBox.warning(self, "Dados Inválidos", 
+                            f"Valor numérico inválido: {str(e)}\n\nVerifique se os campos de pressão, volume e ano contêm apenas números.")
+                        return
+
+                    # Atualiza o equipamento usando kwargs
+                    success, message = self.equipment_controller.update_equipment(
+                        equipment_id,
+                        tag=data['tag'],
+                        categoria=data['categoria'],
+                        empresa_id=empresa_id,
+                        fabricante=data['fabricante'],
+                        ano_fabricacao=ano_fabricacao,
+                        pressao_projeto=pressao_projeto,
+                        pressao_trabalho=pressao_trabalho,
+                        volume=volume,
+                        fluido=data['fluido'],
+                        ativo=1  # Mantém ativo por padrão
+                    )
+
+                    if success:
+                        QMessageBox.information(self, "Sucesso", "Equipamento atualizado com sucesso!")
+                        self.load_equipment()  # Recarrega a tabela
+                    else:
+
+                        QMessageBox.warning(self, "Erro", f"Erro ao atualizar equipamento: {message}")
+
+                except:
+
+
+                    logger.error(f"Erro ao atualizar equipamento: {str(e)}")
+                    logger.error(traceback.format_exc())
+                    QMessageBox.critical(self, "Erro", f"Erro ao atualizar equipamento: {str(e)}")
+
+        except:
+
+
             logger.error(f"Erro ao editar equipamento: {str(e)}")
             logger.error(traceback.format_exc())
-            QMessageBox.critical(self, "Erro", f"Falha ao editar equipamento: {str(e)}")
+            QMessageBox.critical(self, "Erro", f"Erro ao editar equipamento: {str(e)}")
 
     def toggle_equipment(self):
         """Ativa/desativa o equipamento selecionado"""
         try:
             logger.debug("Ativando/desativando equipamento selecionado")
-            
+
             # Verifica se há uma linha selecionada
             selected_items = self.equipment_table.selectedItems()
             if not selected_items:
                 QMessageBox.warning(self, "Atenção", "Selecione um equipamento para ativar/desativar.")
                 return
-            
+
             # Obtém o ID do equipamento selecionado
             row = selected_items[0].row()
             logger.debug(f"Linha selecionada: {row}")
-            
+
             equipment_id, tag_text = self.get_equipment_id(row)
-            
+
             if not equipment_id:
                 QMessageBox.warning(self, "Erro", "Não foi possível identificar o ID do equipamento.")
                 return
-            
+
             # Obtém o status atual do equipamento
             status_item = self.equipment_table.item(row, 9)  # A última coluna é o status
             is_active = status_item.text() == "Ativo"
-            
+
             # Confirmação
             action = "desativar" if is_active else "ativar"
             question = f"Deseja {action} o equipamento '{tag_text}'?"
@@ -2656,35 +2775,38 @@ class AdminWindow(QMainWindow):
                 QMessageBox.Yes | QMessageBox.No, 
                 QMessageBox.No
             )
-            
+
             if reply == QMessageBox.Yes:
                 # Atualiza o status
                 new_status = 0 if is_active else 1
-                
+
                 success, message = self.equipment_controller.toggle_equipment_status(equipment_id, new_status)
-                
+
                 if success:
                     status_text = "desativado" if is_active else "ativado"
-                    
+
                     # Certifique-se de que o botão de toggle esteja visível
                     if not self.toggle_equipment_button.isVisible():
                         self.toggle_equipment_button.setVisible(True)
-                        
+
                     # Atualiza a tabela de forma completa
-                    self.load_equipment()
-                    
-                    # Certifique-se de que nenhuma linha está oculta após a atualização
+            self.load_equipment()
+
+                # Certifique-se de que nenhuma linha está oculta após a atualização
                     for r in range(self.equipment_table.rowCount()):
                         self.equipment_table.setRowHidden(r, False)
-                    
+
                     # Atualiza o botão após a operação
                     self.update_toggle_equipment_button()
-                    
+
                     QMessageBox.information(self, "Sucesso", f"Equipamento {status_text} com sucesso!")
                 else:
+
                     QMessageBox.warning(self, "Erro", f"Erro ao {action} equipamento: {message}")
-        
-        except Exception as e:
+
+        except:
+
+
             logger.error(f"Erro ao alterar status do equipamento: {str(e)}")
             logger.error(traceback.format_exc())
             QMessageBox.critical(self, "Erro", f"Erro ao alterar status do equipamento: {str(e)}")
@@ -2697,21 +2819,21 @@ class AdminWindow(QMainWindow):
                 # Ocultar o botão em vez de apenas desabilitar
                 self.toggle_equipment_button.setVisible(False)
                 return
-            
+
             # Mostrar o botão se estiver oculto
             if not self.toggle_equipment_button.isVisible():
                 self.toggle_equipment_button.setVisible(True)
-                
+
             # Obter a linha selecionada e verificar o status do equipamento
             row = selected_rows[0].row()
             status_item = self.equipment_table.item(row, 9)  # Coluna status (última coluna)
-            
+
             if not status_item:
                 self.toggle_equipment_button.setVisible(False)
                 return
-                
+
             is_active = status_item.text() == "Ativo"
-            
+
             if is_active:
                 self.toggle_equipment_button.setText("Desativar")
                 self.toggle_equipment_button.setIcon(self.create_icon_from_svg(self.icons['disable']))
@@ -2733,6 +2855,7 @@ class AdminWindow(QMainWindow):
                     }
                 """)
             else:
+
                 self.toggle_equipment_button.setText("Ativar")
                 self.toggle_equipment_button.setIcon(self.create_icon_from_svg(self.icons['enable']))
                 self.toggle_equipment_button.setStyleSheet("""
@@ -2752,55 +2875,9 @@ class AdminWindow(QMainWindow):
                         background-color: #1e7e34;
                     }
                 """)
-            
-        except Exception as e:
+
+        except:
+
+
             logger.error(f"Erro ao atualizar botão de ativar/desativar equipamentos: {str(e)}")
             logger.error(traceback.format_exc())
-
-    def get_selected_equipment_id(self):
-        """Retorna o ID do equipamento selecionado na tabela"""
-        try:
-            # Verifica se há uma linha selecionada
-            selected_items = self.equipment_table.selectedItems()
-            if not selected_items:
-                return None
-            
-            # Obtém o ID do equipamento selecionado
-            row = selected_items[0].row()
-            logger.debug(f"Linha selecionada: {row}")
-            
-            # Tenta obter o ID por diferentes métodos
-            equipment_id = None
-            
-            # Método 1: tentar diretamente via UserRole no item 0 (tag)
-            item = self.equipment_table.item(row, 0)
-            if item and item.data(Qt.UserRole):
-                equipment_id = item.data(Qt.UserRole)
-                logger.debug(f"Tentativa 1 - ID do equipamento obtido via UserRole: {equipment_id}")
-                return equipment_id
-            
-            # Método 2: buscar o ID armazenado na tabela
-            tag_text = self.equipment_table.item(row, 0).text() if self.equipment_table.item(row, 0) else ""
-            for col in range(self.equipment_table.columnCount()):
-                item = self.equipment_table.item(row, col)
-                if item and item.data(Qt.UserRole):
-                    equipment_id = item.data(Qt.UserRole)
-                    logger.debug(f"Tentativa 2 - ID do equipamento obtido via UserRole na coluna {col}: {equipment_id}")
-                    return equipment_id
-            
-            # Método 3: se tudo falhar, buscar pelo tag
-            if tag_text:
-                logger.debug(f"Tag do equipamento: {tag_text}")
-                equipment = self.equipment_controller.get_equipment_by_tag(tag_text)
-                if equipment:
-                    equipment_id = equipment['id']
-                    logger.debug(f"Tentativa 3 - ID do equipamento obtido via tag: {equipment_id}")
-                    return equipment_id
-            
-            logger.warning(f"Não foi possível obter o ID do equipamento na linha {row}")
-            return None
-            
-        except Exception as e:
-            logger.error(f"Erro ao obter ID do equipamento: {str(e)}")
-            logger.error(traceback.format_exc())
-            return None
