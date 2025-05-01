@@ -16,9 +16,10 @@ Sistema desktop em Python para gestão de inspeções de vasos de pressão, cald
 - [Janela de Debug](#janela-de-debug)
 - [Estrutura do Projeto](#estrutura-do-projeto)
 - [Estrutura do Banco de Dados](#estrutura-do-banco-de-dados)
+- [Sistema de Atualização em Tempo Real](#sistema-de-atualização-em-tempo-real)
+- [Interface Gráfica](#interface-gráfica)
 - [Dicas de Manutenção](#dicas-de-manutenção)
 - [Licença](#licença)
-- [Interface Gráfica Moderna](#interface-gráfica-moderna)
 
 ---
 
@@ -31,6 +32,10 @@ Sistema desktop em Python para gestão de inspeções de vasos de pressão, cald
 - Emissão e consulta de relatórios
 - Notificações e logs
 - Interface gráfica moderna (PyQt5)
+- Tema claro/escuro
+- Botões CRUD padronizados com ícones SVG
+- Atualização automática das tabelas a cada 5 segundos
+- Suporte multi-usuário com sincronização em tempo real
 - Janela de debug para visualização e cadastro rápido de usuários
 
 ---
@@ -207,7 +212,10 @@ seu-repo/
 ├── logs/
 │   └── sistema.log
 ├── controllers/
-│   └── auth_controller.py
+│   ├── auth_controller.py
+│   ├── equipment_controller.py
+│   ├── inspection_controller.py
+│   └── report_controller.py
 ├── database/
 │   ├── connection.py
 │   └── models.py
@@ -216,6 +224,12 @@ seu-repo/
 │   ├── client_ui.py
 │   ├── login_window.py
 │   └── debug_window.py
+│   ├── CTREINA_LOGO.png
+│   ├── CTREINA_LOGO_FIT.png
+│   ├── user.png
+│   ├── equipamentos.png
+│   ├── inspecoes.png
+│   └── relatorios.png
 └── ...
 ```
 
@@ -230,6 +244,63 @@ seu-repo/
 
 ---
 
+## Sistema de Atualização em Tempo Real
+
+O sistema implementa um mecanismo robusto de atualização em tempo real, permitindo que múltiplos usuários trabalhem simultaneamente sem conflitos de dados.
+
+### Características principais:
+
+- **Timer de Atualização:** Todas as tabelas são atualizadas automaticamente a cada 5 segundos através de um QTimer configurado na inicialização da aplicação.
+
+- **Sincronização Forçada:** Cada controlador (AuthController, EquipmentController, InspectionController, ReportController) possui um método `force_sync()` que garante a sincronização com o banco de dados.
+
+- **Atualização Após Operações CRUD:** Todas as operações de criação, edição e exclusão de registros forçam uma sincronização com o banco de dados e atualizam todas as tabelas relacionadas.
+
+- **Manutenção do Estado da Interface:** Durante a atualização das tabelas, o sistema preserva a aba atual e, quando possível, a linha selecionada.
+
+- **Conexão Persistente:** O sistema utiliza um padrão Singleton para gerenciar a conexão com o banco de dados, garantindo a reutilização da conexão e evitando vazamentos de recursos.
+
+### Como funciona:
+
+1. Quando um usuário realiza alterações (adicionar, editar ou excluir registros), o método `force_sync()` é chamado automaticamente.
+
+2. A cada 5 segundos, o método `refresh_all_tables()` é executado, realizando:
+   - Sincronização forçada com todos os controladores
+   - Recarregamento de todas as tabelas com dados atualizados
+   - Preservação da aba atual para não interromper o trabalho do usuário
+
+3. Se ocorrerem erros de conexão, o sistema tentará reconectar automaticamente ao banco de dados.
+
+Este sistema garante que todos os usuários sempre vejam dados atualizados e que as alterações de um usuário sejam rapidamente refletidas para os demais.
+
+---
+
+## Interface Gráfica
+
+### Recursos da Interface
+
+- **Temas Claro/Escuro:** O sistema suporta alternância entre tema claro e escuro através do botão de tema na barra inferior.
+- **Botões CRUD Padronizados:** Todos os botões de ação (Adicionar, Editar, Excluir, Ativar/Desativar, Visualizar) seguem um padrão visual consistente com ícones SVG.
+- **Ícones SVG:** Utilizados na interface para melhor escalabilidade e adaptação ao tema.
+- **Tabelas Responsivas:** Todas as tabelas se adaptam ao tamanho da janela e possuem cores alternadas para melhor visualização.
+- **Abas com Ícones:** A navegação entre as diferentes seções (Usuários, Equipamentos, Inspeções, Relatórios) é feita através de abas com ícones intuitivos.
+
+### Cores dos Botões CRUD
+
+- **Adicionar:** Verde (#28a745)
+- **Editar:** Azul (#007bff)
+- **Excluir:** Vermelho (#dc3545)
+- **Ativar/Desativar:** Cinza (#6c757d)
+- **Visualizar:** Ciano (#17a2b8)
+- **Tema:** Preto/Cinza Claro (dependendo do tema atual)
+
+### Espaçamento e Layout
+
+- Os botões possuem espaçamento uniforme de 5 pixels entre si para melhor usabilidade.
+- Layout com margens adequadas e espaçamento entre os elementos para melhor organização visual.
+
+---
+
 ## Dicas de Manutenção
 
 - Sempre execute o sistema pelo `main.py`.
@@ -237,19 +308,14 @@ seu-repo/
 - Se mudar o nome de alguma coluna no banco, atualize todos os SELECTs e dicionários no código.
 - Use a janela de debug para verificar rapidamente os usuários cadastrados.
 - Consulte os logs em `logs/sistema.log` para depuração de erros.
+- Ao adicionar novos botões CRUD, use o método `create_crud_button` para manter a consistência visual.
+- Para adicionar novos ícones SVG, inclua-os no dicionário `self.icons` na classe `AdminWindow`.
+- Para implementar novas operações de banco de dados, siga o padrão dos controladores existentes, sempre usando o método `force_sync()` após operações de escrita.
+- Evite realizar operações de banco de dados diretamente na UI; sempre utilize os controladores apropriados.
+- Se precisar aumentar ou diminuir a frequência de atualização das tabelas, ajuste o valor do timer em `self.refresh_timer.start(5000)` na inicialização da classe `AdminWindow`.
 
 ---
 
 ## Licença
 
-Este projeto é open-source e pode ser adaptado conforme a necessidade da sua empresa ou cliente.
-
-## Interface Gráfica Moderna
-
-- As principais janelas do sistema (Admin e Cliente) utilizam abas com ícones personalizados para facilitar a navegação.
-- Os ícones das abas estão localizados na pasta `ui/` e representam: Usuários, Equipamentos, Inspeções e Relatórios.
-- O tamanho dos ícones é ajustado para melhor visualização e ficam centralizados nas abas.
-- O sistema possui suporte a modo claro e escuro. Ao alternar o tema, as cores dos ícones das abas são invertidas automaticamente para garantir contraste e acessibilidade visual.
-- O botão de configurações (engrenagem) permite alternar rapidamente entre os temas.
-
---- 
+Este projeto é open-source e pode ser adaptado conforme a necessidade da sua empresa ou cliente. 

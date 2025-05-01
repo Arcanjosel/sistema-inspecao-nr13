@@ -12,14 +12,58 @@ class InspectionController:
         logger.debug("Iniciando InspectionController")
         self.db_models = db_models
         self.model = InspecaoModel(db_models)
+        self.connection = None
+        self._ensure_connection()
+        
+    def _ensure_connection(self):
+        """Garante que a conexão com o banco de dados está ativa"""
+        try:
+            if self.connection is None or self.connection.closed:
+                self.connection = self.db_models.db.get_connection()
+                logger.debug("Nova conexão com o banco de dados estabelecida")
+            # Teste simples para verificar se a conexão está ativa
+            cursor = self.connection.cursor()
+            cursor.execute("SELECT 1")
+            cursor.fetchone()
+            cursor.close()
+            logger.debug("Conexão com o banco de dados está ativa")
+            return True
+        except Exception as e:
+            logger.error(f"Erro ao verificar conexão: {str(e)}")
+            # Tenta reconectar
+            try:
+                self.connection = self.db_models.db.get_connection()
+                logger.debug("Reconexão com o banco de dados estabelecida")
+                return True
+            except Exception as e2:
+                logger.error(f"Falha ao reconectar: {str(e2)}")
+                return False
+                
+    def force_sync(self):
+        """Força a sincronização com o banco de dados"""
+        try:
+            if self._ensure_connection():
+                # Forçar commit de quaisquer transações pendentes
+                self.connection.commit()
+                logger.debug("Sincronização forçada com o banco de dados realizada com sucesso")
+                return True
+            return False
+        except Exception as e:
+            logger.error(f"Erro ao forçar sincronização: {str(e)}")
+            return False
         
     def criar_inspecao(self, equipamento_id: int, engenheiro_id: int, 
                       data_inspecao: str, tipo_inspecao: str,
                       resultado: str = None, recomendacoes: str = None) -> tuple[bool, str]:
         """Cria uma nova inspeção no sistema"""
         try:
+            # Garante que a conexão está ativa
+            self._ensure_connection()
+            
             logger.debug(f"Criando inspeção para equipamento {equipamento_id}")
-            conn = self.db_models.db.get_connection()
+            logger.debug(f"Parâmetros - engenheiro: {engenheiro_id}, data: {data_inspecao}, tipo: {tipo_inspecao}")
+            
+            conn = self.connection
             cursor = conn.cursor()
             
             # Converte a data para o formato correto do SQL Server
@@ -45,35 +89,63 @@ class InspectionController:
             # Calcula a próxima inspeção (6 meses após a data atual)
             proxima_inspecao = data_obj + timedelta(days=180)
             
-            cursor.execute("""
+            insert_query = """
                 INSERT INTO dbo.inspecoes (
                     equipamento_id, engenheiro_id, data_inspecao, 
                     tipo_inspecao, resultado, recomendacoes,
                     proxima_inspecao, status, prazo_proxima_inspecao
                 )
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (
+            """
+            
+            values = (
                 equipamento_id, engenheiro_id, data_formatada, 
                 tipo_inspecao, resultado, recomendacoes,
                 proxima_inspecao.isoformat(timespec='seconds'),
                 'Ativo',
                 proxima_inspecao.isoformat(timespec='seconds')
-            ))
+            )
             
-            conn.commit()
-            logger.info(f"Inspeção criada com sucesso para equipamento {equipamento_id}")
-            return True, "Inspeção criada com sucesso!"
+            logger.debug(f"Query: {insert_query}")
+            logger.debug(f"Valores: {values}")
+            
+            cursor.execute(insert_query, values)
+            
+            # Verifica se a operação teve sucesso
+            rows_affected = cursor.rowcount
+            logger.debug(f"Linhas afetadas: {rows_affected}")
+            
+            if rows_affected == 0:
+                logger.warning("Nenhuma linha inserida")
+                return False, "Falha ao inserir a inspeção"
+                
+            # Obtém o ID da inspeção inserida
+            cursor.execute("SELECT @@IDENTITY")
+            inspection_id = cursor.fetchone()[0]
+            logger.debug(f"ID da inspeção inserida: {inspection_id}")
+            
+            # Força a sincronização
+            self.force_sync()
+            
+            logger.info(f"Inspeção #{inspection_id} criada com sucesso para equipamento {equipamento_id}")
+            return True, f"Inspeção #{inspection_id} criada com sucesso!"
             
         except Exception as e:
             logger.error(f"Erro ao criar inspeção: {str(e)}")
             logger.error(traceback.format_exc())
+            if 'conn' in locals():
+                conn.rollback()
             return False, f"Erro ao criar inspeção: {str(e)}"
             
         finally:
-            cursor.close()
+            if 'cursor' in locals():
+                cursor.close()
             
     def get_all_inspections(self):
         """Retorna todas as inspeções"""
+        # Garante que a conexão está ativa
+        self._ensure_connection()
+        
         query = """
             SELECT 
                 i.id,
@@ -94,7 +166,7 @@ class InspectionController:
             JOIN dbo.usuarios u ON i.engenheiro_id = u.id
             ORDER BY i.data_inspecao DESC
         """
-        conn = self.db_models.db.get_connection()
+        conn = self.connection
         cursor = conn.cursor()
         
         try:
@@ -176,7 +248,7 @@ class InspectionController:
         query = " ".join(query_parts)
         
         # Executa a consulta
-        conn = self.db_models.db.get_connection()
+        conn = self.connection
         cursor = conn.cursor()
         
         try:
@@ -209,7 +281,7 @@ class InspectionController:
         """Retorna as inspeções de um engenheiro específico"""
         try:
             logger.debug(f"Buscando inspeções do engenheiro {engineer_id}")
-            conn = self.db_models.db.get_connection()
+            conn = self.connection
             cursor = conn.cursor()
             
             cursor.execute("""
@@ -251,7 +323,7 @@ class InspectionController:
         """Retorna as inspeções de uma empresa específica"""
         try:
             logger.debug(f"Buscando inspeções da empresa {company}")
-            conn = self.db_models.db.get_connection()
+            conn = self.connection
             cursor = conn.cursor()
             
             cursor.execute("""
@@ -292,9 +364,18 @@ class InspectionController:
     def update_inspection(self, inspection_id: int, **kwargs) -> tuple[bool, str]:
         """Atualiza os dados de uma inspeção"""
         try:
-            logger.debug(f"Atualizando inspeção {inspection_id}")
-            conn = self.db_models.db.get_connection()
+            # Garante que a conexão está ativa
+            self._ensure_connection()
+            
+            logger.debug(f"Atualizando inspeção {inspection_id} com parâmetros: {kwargs}")
+            conn = self.connection
             cursor = conn.cursor()
+            
+            # Verifica se a inspeção existe
+            cursor.execute("SELECT id FROM inspecoes WHERE id = ?", (inspection_id,))
+            if not cursor.fetchone():
+                logger.warning(f"Inspeção {inspection_id} não encontrada")
+                return False, f"Inspeção {inspection_id} não encontrada"
             
             update_fields = []
             values = []
@@ -303,6 +384,7 @@ class InspectionController:
                 if value is not None:
                     update_fields.append(f"{field} = ?")
                     values.append(value)
+                    logger.debug(f"Campo a atualizar: {field} = {value}")
                     
             if not update_fields:
                 logger.warning("Nenhum campo para atualizar")
@@ -310,29 +392,46 @@ class InspectionController:
                 
             values.append(inspection_id)
             
-            cursor.execute(f"""
+            update_query = f"""
                 UPDATE inspecoes
                 SET {', '.join(update_fields)}
                 WHERE id = ?
-            """, values)
+            """
+            logger.debug(f"Query de atualização: {update_query}")
+            logger.debug(f"Valores: {values}")
             
-            conn.commit()
-            logger.info(f"Inspeção {inspection_id} atualizada com sucesso")
+            cursor.execute(update_query, values)
+            
+            # Verifica se alguma linha foi afetada
+            rows_affected = cursor.rowcount
+            logger.debug(f"Linhas afetadas: {rows_affected}")
+            
+            if rows_affected == 0:
+                logger.warning(f"Nenhuma linha afetada na atualização da inspeção {inspection_id}")
+                return False, "Nenhuma alteração realizada"
+            
+            # Força a sincronização
+            self.force_sync()
+            
+            logger.info(f"Inspeção {inspection_id} atualizada com sucesso. Linhas afetadas: {rows_affected}")
             return True, "Inspeção atualizada com sucesso!"
             
         except Exception as e:
             logger.error(f"Erro ao atualizar inspeção {inspection_id}: {str(e)}")
             logger.error(traceback.format_exc())
+            if 'conn' in locals():
+                conn.rollback()
             return False, f"Erro ao atualizar inspeção: {str(e)}"
             
         finally:
-            cursor.close()
+            if 'cursor' in locals():
+                cursor.close()
             
     def cancel_inspection(self, inspection_id: int) -> tuple[bool, str]:
         """Cancela uma inspeção"""
         try:
             logger.debug(f"Cancelando inspeção {inspection_id}")
-            conn = self.db_models.db.get_connection()
+            conn = self.connection
             cursor = conn.cursor()
             
             cursor.execute("""
@@ -356,7 +455,7 @@ class InspectionController:
     def get_available_equipment(self) -> list[dict]:
         """Retorna os equipamentos disponíveis para inspeção"""
         try:
-            conn = self.db_models.db.get_connection()
+            conn = self.connection
             cursor = conn.cursor()
             
             cursor.execute("""
@@ -393,7 +492,7 @@ class InspectionController:
     def get_equipment_by_company(self, company: str) -> list[dict]:
         """Retorna os equipamentos de uma empresa específica"""
         try:
-            conn = self.db_models.db.get_connection()
+            conn = self.connection
             cursor = conn.cursor()
             
             cursor.execute("""
@@ -458,73 +557,61 @@ class InspectionController:
             logger.error(f"Erro ao criar inspeção: {str(e)}")
             return False, f"Erro ao criar inspeção: {str(e)}"
             
-    def update_inspection(self, inspection_id, inspection_data):
-        """Atualiza uma inspeção existente"""
-        if not inspection_id:
-            logger.warning("ID da inspeção não fornecido")
-            return False, "ID da inspeção não fornecido"
-            
-        try:
-            # Verificar se a inspeção existe
-            existing_inspection = self.model.get_by_id(inspection_id)
-            if not existing_inspection:
-                logger.warning(f"Inspeção {inspection_id} não encontrada")
-                return False, f"Inspeção {inspection_id} não encontrada"
-                
-            # Verificar campos obrigatórios
-            required_fields = ['equipamento_id', 'engenheiro_id', 'data_inspecao', 
-                              'tipo_inspecao', 'resultado']
-            for field in required_fields:
-                if field not in inspection_data or not inspection_data[field]:
-                    logger.warning(f"Campo obrigatório ausente: {field}")
-                    return False, f"Campo obrigatório ausente: {field}"
-                    
-            # Valores padrão
-            recomendacoes = inspection_data.get('recomendacoes', existing_inspection.get('recomendacoes', ''))
-            
-            logger.debug(f"Atualizando inspeção {inspection_id}")
-            success = self.model.update(
-                id=inspection_id,
-                equipamento_id=inspection_data['equipamento_id'],
-                engenheiro_id=inspection_data['engenheiro_id'],
-                data_inspecao=inspection_data['data_inspecao'],
-                tipo_inspecao=inspection_data['tipo_inspecao'],
-                resultado=inspection_data['resultado'],
-                recomendacoes=recomendacoes
-            )
-            
-            if success:
-                return True, f"Inspeção {inspection_id} atualizada com sucesso"
-            else:
-                return False, f"Erro ao atualizar inspeção {inspection_id}"
-                
-        except Exception as e:
-            logger.error(f"Erro ao atualizar inspeção {inspection_id}: {str(e)}")
-            return False, f"Erro ao atualizar inspeção: {str(e)}"
-            
     def delete_inspection(self, inspection_id):
-        """Exclui uma inspeção"""
+        """Exclui uma inspeção e seus relatórios associados"""
         if not inspection_id:
             logger.warning("ID da inspeção não fornecido")
             return False, "ID da inspeção não fornecido"
             
         try:
+            # Garante que a conexão está ativa
+            self._ensure_connection()
+            
+            logger.debug(f"Excluindo inspeção {inspection_id}")
+            conn = self.connection
+            cursor = conn.cursor()
+            
             # Verificar se a inspeção existe
             existing_inspection = self.model.get_by_id(inspection_id)
             if not existing_inspection:
                 logger.warning(f"Inspeção {inspection_id} não encontrada")
                 return False, f"Inspeção {inspection_id} não encontrada"
-                
-            logger.debug(f"Excluindo inspeção {inspection_id}")
-            success = self.model.delete(inspection_id)
             
-            if success:
-                return True, f"Inspeção {inspection_id} excluída com sucesso"
-            else:
-                return False, f"Erro ao excluir inspeção {inspection_id}"
+            # Iniciar uma transação para garantir atomicidade
+            conn.execute("BEGIN TRANSACTION")
+            
+            try:
+                # 1. Primeiro, excluir os relatórios associados à inspeção
+                logger.debug(f"Excluindo relatórios associados à inspeção {inspection_id}")
+                cursor.execute("DELETE FROM relatorios WHERE inspecao_id = ?", (inspection_id,))
+                deleted_reports_count = cursor.rowcount
+                logger.debug(f"Excluídos {deleted_reports_count} relatórios associados à inspeção {inspection_id}")
+                
+                # 2. Agora, excluir a inspeção
+                logger.debug(f"Excluindo inspeção {inspection_id}")
+                success = self.model.delete(inspection_id)
+                
+                if success:
+                    # Confirmar a transação
+                    conn.commit()
+                    
+                    # Força a sincronização
+                    self.force_sync()
+                    
+                    return True, f"Inspeção {inspection_id} e {deleted_reports_count} relatórios associados excluídos com sucesso"
+                else:
+                    # Reverter alterações em caso de falha
+                    conn.rollback()
+                    return False, f"Erro ao excluir inspeção {inspection_id}"
+                    
+            except Exception as e:
+                # Reverter alterações em caso de exceção
+                conn.rollback()
+                raise e
                 
         except Exception as e:
             logger.error(f"Erro ao excluir inspeção {inspection_id}: {str(e)}")
+            logger.error(traceback.format_exc())
             return False, f"Erro ao excluir inspeção: {str(e)}"
             
     def get_inspections_by_equipment(self, equipment_id):
@@ -643,4 +730,87 @@ class InspectionController:
             # Reverte a transação em caso de erro
             self.conn.rollback()
             logging.error(f"Erro inesperado ao adicionar inspeção: {str(e)}")
-            return False 
+            return False
+
+    def atualizar_inspecao(self, inspection_id, inspection_data):
+        """
+        Atualiza uma inspeção existente com os dados fornecidos.
+        
+        Args:
+            inspection_id (int): ID da inspeção a ser atualizada
+            inspection_data (dict): Dicionário com os dados da inspeção
+            
+        Returns:
+            tuple: (bool, str) - Sucesso e mensagem
+        """
+        try:
+            # Garante que a conexão está ativa
+            self._ensure_connection()
+            
+            logger.debug(f"Atualizando inspeção {inspection_id} com dados: {inspection_data}")
+            
+            # Verificar se a inspeção existe
+            cursor = self.connection.cursor()
+            cursor.execute("SELECT id FROM dbo.inspecoes WHERE id = ?", (inspection_id,))
+            if not cursor.fetchone():
+                logger.warning(f"Inspeção {inspection_id} não encontrada")
+                return False, f"Inspeção {inspection_id} não encontrada"
+            
+            # Verificar campos obrigatórios
+            required_fields = ['equipamento_id', 'engenheiro_id', 'data_inspecao', 
+                              'tipo_inspecao', 'resultado']
+            for field in required_fields:
+                if field not in inspection_data or not inspection_data[field]:
+                    logger.warning(f"Campo obrigatório ausente: {field}")
+                    return False, f"Campo obrigatório ausente: {field}"
+            
+            # Construir a query de atualização
+            update_fields = []
+            update_values = []
+            
+            for field, value in inspection_data.items():
+                if field != 'id':  # Não atualiza o ID
+                    update_fields.append(f"{field} = ?")
+                    update_values.append(value)
+                    logger.debug(f"Campo a atualizar: {field} = {value}")
+            
+            if not update_fields:
+                logger.warning("Nenhum campo para atualizar")
+                return False, "Nenhum campo para atualizar"
+            
+            # Adiciona o ID para a cláusula WHERE
+            update_values.append(inspection_id)
+            
+            # Executa a atualização
+            update_query = f"UPDATE dbo.inspecoes SET {', '.join(update_fields)} WHERE id = ?"
+            logger.debug(f"Query de atualização: {update_query}")
+            logger.debug(f"Valores: {update_values}")
+            
+            cursor.execute(update_query, update_values)
+            
+            # Verifica se alguma linha foi afetada
+            rows_affected = cursor.rowcount
+            logger.debug(f"Linhas afetadas: {rows_affected}")
+            
+            if rows_affected == 0:
+                logger.warning(f"Nenhuma linha afetada na atualização da inspeção {inspection_id}")
+                return False, "Nenhuma alteração realizada"
+            
+            # Força a sincronização
+            self.force_sync()
+            
+            logger.info(f"Inspeção {inspection_id} atualizada com sucesso. Campos: {', '.join(update_fields)}")
+            return True, f"Inspeção {inspection_id} atualizada com sucesso"
+            
+        except Exception as e:
+            logger.error(f"Erro ao atualizar inspeção {inspection_id}: {str(e)}")
+            logger.error(traceback.format_exc())
+            if 'cursor' in locals():
+                cursor.close()
+            if hasattr(self, 'connection') and self.connection:
+                self.connection.rollback()
+            return False, f"Erro ao atualizar inspeção: {str(e)}"
+        
+        finally:
+            if 'cursor' in locals():
+                cursor.close() 

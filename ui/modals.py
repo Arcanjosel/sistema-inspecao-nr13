@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import (
     QPushButton, QComboBox, QMessageBox, QDateEdit, QTextEdit, QFormLayout, QFileDialog, QScrollArea, QFrame,
     QWidget, QSpinBox, QDoubleSpinBox
 )
-from PyQt5.QtCore import Qt, QDate
+from PyQt5.QtCore import Qt, QDate, pyqtSignal
 from datetime import datetime
 import os
 import sys
@@ -720,6 +720,39 @@ class InspectionModal(BaseModal):
         buttons_layout.addWidget(self.save_button)
         
         layout.addLayout(buttons_layout)
+    
+    def load_equipment_options(self, equipamentos):
+        """Carrega as opções de equipamentos no combobox"""
+        try:
+            logger.debug(f"Carregando {len(equipamentos)} equipamentos no modal")
+            self.equipamento_input.clear()
+            
+            for equip in equipamentos:
+                equip_id = equip.get('id', 0)
+                tag = equip.get('tag', 'Desconhecido')
+                categoria = equip.get('categoria', '')
+                display_text = f"{tag} - {categoria} (ID: {equip_id})"
+                self.equipamento_input.addItem(display_text, equip_id)
+                
+            logger.debug(f"Equipamentos carregados: {self.equipamento_input.count()}")
+        except Exception as e:
+            logger.error(f"Erro ao carregar equipamentos no modal: {str(e)}")
+    
+    def load_engineer_options(self, engenheiros):
+        """Carrega as opções de engenheiros no combobox"""
+        try:
+            logger.debug(f"Carregando {len(engenheiros)} engenheiros no modal")
+            self.engenheiro_input.clear()
+            
+            for eng in engenheiros:
+                eng_id = eng.get('id', 0)
+                nome = eng.get('nome', 'Desconhecido')
+                display_text = f"{nome} (ID: {eng_id})"
+                self.engenheiro_input.addItem(display_text, eng_id)
+                
+            logger.debug(f"Engenheiros carregados: {self.engenheiro_input.count()}")
+        except Exception as e:
+            logger.error(f"Erro ao carregar engenheiros no modal: {str(e)}")
         
     def get_data(self):
         """Retorna os dados do formulário"""
@@ -759,14 +792,17 @@ class InspectionModal(BaseModal):
         return {
             "equipamento_id": equipamento_id,
             "engenheiro_id": engenheiro_id,
-            "data": data_str,
-            "tipo": self.tipo_input.currentText(),
+            "data_inspecao": data_str,
+            "tipo_inspecao": self.tipo_input.currentText(),
             "resultado": self.resultado_input.currentText(),
             "recomendacoes": self.recomendacoes_input.toPlainText().strip()
         }
 
 class ReportModal(QDialog):
     """Modal para adicionar/editar relatórios"""
+    
+    # Adicionar sinal para indicar quando um relatório é salvo
+    reportSaved = pyqtSignal()
     
     def __init__(self, parent=None, is_dark=True):
         super().__init__(parent)
@@ -907,3 +943,20 @@ class ReportModal(QDialog):
             'link_arquivo': self.arquivo_input.text(),
             'observacoes': self.observacoes_input.toPlainText()
         } 
+
+    def accept(self):
+        """Sobrescreve o método accept para validar o formulário antes de fechar"""
+        # Valida campos obrigatórios
+        if self.inspecao_combo.currentIndex() == -1:
+            QMessageBox.warning(self, "Atenção", "Selecione uma inspeção.")
+            return
+            
+        if not self.arquivo_input.text().strip():
+            QMessageBox.warning(self, "Atenção", "Selecione um arquivo para o relatório.")
+            return
+            
+        # Emite o sinal indicando que o relatório foi salvo
+        self.reportSaved.emit()
+        
+        # Aceita o diálogo e fecha
+        super().accept() 

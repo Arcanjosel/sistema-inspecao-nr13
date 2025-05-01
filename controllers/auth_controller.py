@@ -17,6 +17,45 @@ class AuthController:
     
     def __init__(self):
         self.db = DatabaseConnection()
+        self.connection = None
+        self._ensure_connection()
+        
+    def _ensure_connection(self):
+        """Garante que a conexão com o banco de dados está ativa"""
+        try:
+            if self.connection is None or self.connection.closed:
+                self.connection = self.db.get_connection()
+                logger.debug("Nova conexão com o banco de dados estabelecida")
+            # Teste simples para verificar se a conexão está ativa
+            cursor = self.connection.cursor()
+            cursor.execute("SELECT 1")
+            cursor.fetchone()
+            cursor.close()
+            logger.debug("Conexão com o banco de dados está ativa")
+            return True
+        except Exception as e:
+            logger.error(f"Erro ao verificar conexão: {str(e)}")
+            # Tenta reconectar
+            try:
+                self.connection = self.db.get_connection()
+                logger.debug("Reconexão com o banco de dados estabelecida")
+                return True
+            except Exception as e2:
+                logger.error(f"Falha ao reconectar: {str(e2)}")
+                return False
+                
+    def force_sync(self):
+        """Força a sincronização com o banco de dados"""
+        try:
+            if self._ensure_connection():
+                # Forçar commit de quaisquer transações pendentes
+                self.connection.commit()
+                logger.debug("Sincronização forçada com o banco de dados realizada com sucesso")
+                return True
+            return False
+        except Exception as e:
+            logger.error(f"Erro ao forçar sincronização: {str(e)}")
+            return False
         
     def _hash_password(self, password: str) -> str:
         """Gera o hash da senha usando bcrypt."""
@@ -39,7 +78,10 @@ class AuthController:
             Tuple[bool, str, Optional[int]]: (sucesso, mensagem, usuario_id)
         """
         try:
-            conn = self.db.get_connection()
+            # Garante que a conexão está ativa
+            self._ensure_connection()
+            
+            conn = self.connection
             cursor = conn.cursor()
             
             cursor.execute(
@@ -75,7 +117,8 @@ class AuthController:
             return False, f"Erro ao realizar login: {str(e)}", None
             
         finally:
-            cursor.close()
+            if 'cursor' in locals():
+                cursor.close()
             
     def criar_usuario(self, nome: str, email: str, senha: str, tipo_acesso: str, empresa: Optional[str] = None) -> Tuple[bool, str]:
         """
@@ -92,7 +135,10 @@ class AuthController:
             Tuple[bool, str]: (sucesso, mensagem)
         """
         try:
-            conn = self.db.get_connection()
+            # Garante que a conexão está ativa
+            self._ensure_connection()
+            
+            conn = self.connection
             cursor = conn.cursor()
             
             # Verifica se o email já existe
@@ -110,15 +156,20 @@ class AuthController:
                 (nome, email, senha_hash, tipo_acesso, empresa)
             )
             
-            conn.commit()
+            # Força a sincronização
+            self.force_sync()
+            
             return True, "Usuário criado com sucesso"
             
         except Exception as e:
             logger.error(f"Erro ao criar usuário: {str(e)}")
+            if 'conn' in locals():
+                conn.rollback()
             return False, f"Erro ao criar usuário: {str(e)}"
             
         finally:
-            cursor.close()
+            if 'cursor' in locals():
+                cursor.close()
             
     def get_usuario_atual(self) -> Optional[dict]:
         """
@@ -141,7 +192,10 @@ class AuthController:
             bool: True se senha alterada com sucesso
         """
         try:
-            conn = self.db.get_connection()
+            # Garante que a conexão está ativa
+            self._ensure_connection()
+            
+            conn = self.connection
             cursor = conn.cursor()
             
             nova_senha_hash = self._hash_password(nova_senha)
@@ -151,16 +205,20 @@ class AuthController:
                 (nova_senha_hash, email)
             )
             
-            conn.commit()
+            # Força a sincronização
+            self.force_sync()
+            
             return True
             
         except Exception as e:
             logger.error(f"Erro ao alterar senha: {str(e)}")
-            conn.rollback()
+            if 'conn' in locals():
+                conn.rollback()
             return False
             
         finally:
-            cursor.close()
+            if 'cursor' in locals():
+                cursor.close()
             
     def desativar_usuario(self, user_id: int) -> bool:
         """
@@ -173,7 +231,10 @@ class AuthController:
             bool: True se usuário desativado com sucesso
         """
         try:
-            conn = self.db.get_connection()
+            # Garante que a conexão está ativa
+            self._ensure_connection()
+            
+            conn = self.connection
             cursor = conn.cursor()
             
             cursor.execute(
@@ -181,16 +242,20 @@ class AuthController:
                 (user_id,)
             )
             
-            conn.commit()
+            # Força a sincronização
+            self.force_sync()
+            
             return True
             
         except Exception as e:
             logger.error(f"Erro ao desativar usuário: {str(e)}")
-            conn.rollback()
+            if 'conn' in locals():
+                conn.rollback()
             return False
             
         finally:
-            cursor.close()
+            if 'cursor' in locals():
+                cursor.close()
             
     def reativar_usuario(self, user_id: int) -> bool:
         """
@@ -203,7 +268,10 @@ class AuthController:
             bool: True se usuário reativado com sucesso
         """
         try:
-            conn = self.db.get_connection()
+            # Garante que a conexão está ativa
+            self._ensure_connection()
+            
+            conn = self.connection
             cursor = conn.cursor()
             
             cursor.execute(
@@ -211,22 +279,29 @@ class AuthController:
                 (user_id,)
             )
             
-            conn.commit()
+            # Força a sincronização
+            self.force_sync()
+            
             return True
             
         except Exception as e:
             logger.error(f"Erro ao reativar usuário: {str(e)}")
-            conn.rollback()
+            if 'conn' in locals():
+                conn.rollback()
             return False
             
         finally:
-            cursor.close()
-
+            if 'cursor' in locals():
+                cursor.close()
+            
     def get_all_users(self) -> list[dict]:
         """Retorna todos os usuários do sistema"""
         try:
+            # Garante que a conexão está ativa
+            self._ensure_connection()
+            
             logger.debug("Buscando todos os usuários")
-            conn = self.db.get_connection()
+            conn = self.connection
             cursor = conn.cursor()
             
             cursor.execute("""
@@ -243,7 +318,7 @@ class AuthController:
                     'email': row[2],
                     'tipo_acesso': row[3],
                     'empresa': row[4],
-                    'ativo': bool(row[5])  # Converte para booleano
+                    'ativo': bool(row[5])
                 })
                 
             logger.debug(f"Encontrados {len(users)} usuários")
@@ -255,13 +330,17 @@ class AuthController:
             return []
             
         finally:
-            cursor.close()
+            if 'cursor' in locals():
+                cursor.close()
 
     def get_all_engineers(self) -> list[dict]:
         """Retorna todos os engenheiros cadastrados no sistema"""
         try:
+            # Garante que a conexão está ativa
+            self._ensure_connection()
+            
             logger.debug("Buscando todos os engenheiros")
-            conn = self.db.get_connection()
+            conn = self.connection
             cursor = conn.cursor()
             
             cursor.execute("""
@@ -289,13 +368,17 @@ class AuthController:
             return []
             
         finally:
-            cursor.close()
+            if 'cursor' in locals():
+                cursor.close()
 
     def get_engineers(self):
         """Retorna todos os usuários com perfil de engenheiro"""
         try:
+            # Garante que a conexão está ativa
+            self._ensure_connection()
+            
             logger.debug("Buscando todos os engenheiros")
-            conn = self.db.get_connection()
+            conn = self.connection
             cursor = conn.cursor()
             
             cursor.execute("""
@@ -324,7 +407,8 @@ class AuthController:
             return []
             
         finally:
-            cursor.close()
+            if 'cursor' in locals():
+                cursor.close()
 
     def get_user_by_id(self, user_id: int) -> Optional[dict]:
         """
@@ -341,8 +425,11 @@ class AuthController:
             return None
             
         try:
+            # Garante que a conexão está ativa
+            self._ensure_connection()
+            
             logger.debug(f"Buscando usuário com ID {user_id}")
-            conn = self.db.get_connection()
+            conn = self.connection
             cursor = conn.cursor()
             
             cursor.execute("""
@@ -375,4 +462,5 @@ class AuthController:
             return None
             
         finally:
-            cursor.close() 
+            if 'cursor' in locals():
+                cursor.close() 

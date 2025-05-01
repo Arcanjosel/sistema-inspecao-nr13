@@ -62,6 +62,10 @@ class DatabaseModels:
     def __init__(self):
         self.db = DatabaseConnection()
         
+    def force_sync(self):
+        """Força a sincronização com o banco de dados"""
+        return self.db.force_commit()
+        
     def criar_tabelas(self):
         """Cria as tabelas necessárias no banco de dados."""
         conn = self.db.get_connection()

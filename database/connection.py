@@ -49,6 +49,8 @@ class DatabaseConnection:
             
             logger.info(f"Tentando conectar ao banco de dados: {server}/{database}")
             self.conn = pyodbc.connect(self.connection_string)
+            # Configurar para não fechar a conexão automaticamente
+            self.conn.autocommit = False
             logger.info("Conexão com o banco de dados estabelecida com sucesso")
             
         except Exception as e:
@@ -57,7 +59,38 @@ class DatabaseConnection:
 
     def get_connection(self):
         """Retorna a conexão com o banco de dados."""
-        return self.conn
+        try:
+            # Verifica se a conexão está ativa
+            if self.conn is None or not self.is_connection_alive():
+                logger.warning("Conexão com o banco de dados perdida, reconectando...")
+                self._initialize()
+            return self.conn
+        except Exception as e:
+            logger.error(f"Erro ao obter conexão: {str(e)}")
+            # Tenta reconectar
+            self._initialize()
+            return self.conn
+
+    def is_connection_alive(self):
+        """Verifica se a conexão com o banco de dados está ativa."""
+        try:
+            cursor = self.conn.cursor()
+            cursor.execute("SELECT 1")
+            cursor.fetchone()
+            cursor.close()
+            return True
+        except Exception:
+            return False
+
+    def force_commit(self):
+        """Força um commit nas transações pendentes."""
+        try:
+            self.conn.commit()
+            logger.info("Commit forçado realizado com sucesso")
+            return True
+        except Exception as e:
+            logger.error(f"Erro ao forçar commit: {str(e)}")
+            return False
 
     def close_connection(self):
         """Fecha a conexão com o banco de dados."""
