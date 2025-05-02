@@ -6,23 +6,23 @@ from PyQt5.QtWidgets import (
     QPushButton, QLabel, QTableWidget, QTableWidgetItem,
     QMessageBox, QTabWidget, QLineEdit, QComboBox,
     QDateEdit, QTextEdit, QFileDialog, QToolButton, QMenu,
-    QHeaderView, QDialog, QGridLayout, QFormLayout, QInputDialog
+    QHeaderView, QDialog, QGridLayout, QFormLayout, QInputDialog,
+    QAction
 )
-from PyQt5.QtCore import Qt, QDate, QSize, QTimer
-from datetime import datetime
+from PyQt5.QtCore import Qt, QDate, QSize, QTimer, pyqtSignal
+from datetime import datetime, timedelta
 import logging
 from controllers.auth_controller import AuthController
 from database.models import DatabaseModels
 from ui.styles import Styles
 from PyQt5.QtGui import QIcon, QPixmap, QFont, QColor
-from ui.modals import UserModal, EquipmentModal, InspectionModal, ReportModal
+from ui.modals import UserModal, EquipmentModal, InspectionModal, ReportModal, MaintenanceModal
 from controllers.equipment_controller import EquipmentController
 from controllers.inspection_controller import InspectionController
 from controllers.report_controller import ReportController
 import traceback
 import os
 import threading
-import time
 
 logger = logging.getLogger(__name__)
 
@@ -30,6 +30,8 @@ class AdminWindow(QMainWindow):
     """
     Janela principal do administrador.
     """
+    
+    logout_requested = pyqtSignal()
     
     def __init__(self, auth_controller: AuthController):
         try:
@@ -45,11 +47,6 @@ class AdminWindow(QMainWindow):
             logger.debug("Criando instância do ReportController")
             self.report_controller = ReportController(self.db_models)
             self.is_dark = True
-            
-            # Configurar o timer para atualização das tabelas a cada 5 segundos
-            self.refresh_timer = QTimer(self)
-            self.refresh_timer.timeout.connect(self.refresh_all_tables)
-            self.refresh_timer.start(5000)  # 5000ms = 5 segundos
             
             # Definir ícones SVG
             self.icons = {
@@ -113,6 +110,16 @@ class AdminWindow(QMainWindow):
                     <line x1="21" y1="12" x2="23" y2="12"></line>
                     <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
                     <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>''',
+                'logout': '''<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>''',
+                'maintenance': '''<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 10h-4v4h4v-4z"></path>
+                    <path d="M14 14h-4v4h4v-4z"></path>
+                    <path d="M14 18h-4v4h4v-4z"></path>
                 </svg>'''
             }
             
@@ -120,6 +127,19 @@ class AdminWindow(QMainWindow):
             self.initUI()
             logger.debug("Aplicando tema")
             self.apply_theme()
+            
+            logger.debug("Carregando dados iniciais")
+            # Carrega os dados iniciais antes de iniciar o timer
+            self.load_users()
+            self.load_equipment()
+            self.load_inspections()
+            self.load_reports()
+            
+            # Configurar o timer para atualização das tabelas a cada 5 segundos
+            self.refresh_timer = QTimer(self)
+            self.refresh_timer.timeout.connect(self.refresh_all_tables)
+            self.refresh_timer.start(5000)  # 5000ms = 5 segundos
+            
             logger.info("AdminWindow inicializada com sucesso")
         except Exception as e:
             logger.error(f"Erro ao inicializar AdminWindow: {str(e)}")
@@ -228,7 +248,7 @@ class AdminWindow(QMainWindow):
             self.setWindowTitle("Administração do Sistema")
             self.resize(1024, 768)
             
-            # Estilos padrão para botões CRUD
+            # Estilos padrão para botões CRUD (adiciona estilo para logout)
             self.button_style = {
                 'add': """
                     QPushButton {
@@ -319,6 +339,36 @@ class AdminWindow(QMainWindow):
                     QPushButton:pressed {
                         background-color: #222222;
                     }
+                """,
+                'logout': """
+                    QPushButton {
+                        background-color: #6c757d;
+                        color: white;
+                        border: none;
+                        border-radius: 4px;
+                        padding: 8px;
+                    }
+                    QPushButton:hover {
+                        background-color: #5a6268;
+                    }
+                    QPushButton:pressed {
+                        background-color: #545b62;
+                    }
+                """,
+                'maintenance': """
+                    QPushButton {
+                        background-color: #fd7e14;
+                        color: white;
+                        border: none;
+                        border-radius: 4px;
+                        padding: 8px;
+                    }
+                    QPushButton:hover {
+                        background-color: #e86d0a;
+                    }
+                    QPushButton:pressed {
+                        background-color: #d96308;
+                    }
                 """
             }
             
@@ -335,7 +385,7 @@ class AdminWindow(QMainWindow):
             layout.setSpacing(16)
             layout.setContentsMargins(24, 24, 24, 24)
             
-            # Container do título com logo
+            # Container do título com logo e botões de controle
             title_container = QHBoxLayout()
             
             # Logo
@@ -355,7 +405,25 @@ class AdminWindow(QMainWindow):
             title = QLabel("Painel do Administrador")
             title.setStyleSheet("font-size: 24px; font-weight: bold;")
             title_container.addWidget(title)
-            title_container.addStretch()
+            title_container.addStretch() # Empurra os botões para a direita
+            
+            # Botão de Tema
+            self.theme_button = QToolButton()
+            self.theme_button.setIcon(self.create_icon_from_svg(self.icons['theme']))
+            self.theme_button.setIconSize(QSize(24, 24))
+            self.theme_button.setToolTip("Alternar tema claro/escuro")
+            self.theme_button.clicked.connect(self.toggle_theme)
+            self.theme_button.setStyleSheet("QToolButton { border: none; padding: 5px; }")
+            title_container.addWidget(self.theme_button)
+            
+            # Botão de Logout
+            self.logout_button = QToolButton()
+            self.logout_button.setIcon(self.create_icon_from_svg(self.icons['logout']))
+            self.logout_button.setIconSize(QSize(24, 24))
+            self.logout_button.setToolTip("Sair do Sistema")
+            self.logout_button.clicked.connect(self.logout)
+            self.logout_button.setStyleSheet("QToolButton { border: none; padding: 5px; }")
+            title_container.addWidget(self.logout_button)
             
             layout.addLayout(title_container)
             
@@ -436,9 +504,9 @@ class AdminWindow(QMainWindow):
             
             # Tabela de usuários
             self.user_table = QTableWidget()
-            self.user_table.setColumnCount(4)  # Reduzido para 4 colunas (removido ID)
+            self.user_table.setColumnCount(5)  # Aumentado para 5 colunas (adicionado Empresa)
             self.user_table.setHorizontalHeaderLabels([
-                "Nome", "Email", "Tipo Acesso", "Status"
+                "Nome", "Email", "Tipo Acesso", "Status", "Empresa"
             ])
             self.user_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
             self.user_table.setSelectionBehavior(QTableWidget.SelectRows)
@@ -457,73 +525,94 @@ class AdminWindow(QMainWindow):
             equipment_tab = QWidget()
             equipment_layout = QVBoxLayout(equipment_tab)
             
-            # Botões de ação para equipamentos
-            equipment_buttons = QHBoxLayout()
+            # Container para botões e barra de pesquisa
+            equipment_top_container = QHBoxLayout()
             
-            # Botão Adicionar Equipamento
-            self.add_equipment_button = self.create_crud_button("add", "Adicionar", self.add_equipment)
-            equipment_buttons.addWidget(self.add_equipment_button)
-            equipment_buttons.addSpacing(5)  # Espaçamento entre botões
+            # Container para botões (lado esquerdo)
+            equipment_buttons_container = QHBoxLayout()
             
-            # Botão Editar Equipamento
-            self.edit_equipment_button = self.create_crud_button("edit", "Editar", self.edit_equipment)
-            equipment_buttons.addWidget(self.edit_equipment_button)
-            equipment_buttons.addSpacing(5)  # Espaçamento entre botões
+            # Botão Adicionar
+            logger.debug("Criando botão adicionar equipamento")
+            self.add_equipment_button = self.create_crud_button('add', "Adicionar Equipamento", self.add_equipment)
+            equipment_buttons_container.addWidget(self.add_equipment_button)
             
-            # Botão Ativar/Desativar Equipamento
-            self.toggle_equipment_button = self.create_crud_button("toggle", "Ativar/Desativar", self.toggle_equipment, show_text=True, text="Ativar/Desativar")
-            equipment_buttons.addWidget(self.toggle_equipment_button)
-            equipment_buttons.addSpacing(5)  # Espaçamento entre botões
+            # Botão Editar
+            logger.debug("Criando botão editar equipamento")
+            self.edit_equipment_button = self.create_crud_button('edit', "Editar Equipamento", self.edit_equipment)
+            equipment_buttons_container.addWidget(self.edit_equipment_button)
             
-            # Botão Remover Equipamento
-            self.remove_equipment_button = self.create_crud_button("delete", "Remover Equipamento", self.delete_equipment)
-            equipment_buttons.addWidget(self.remove_equipment_button)
+            # Botão Ativar/Desativar
+            logger.debug("Criando botão toggle equipamento")
+            self.toggle_equipment_button = self.create_crud_button('toggle', "Alternar Estado", self.toggle_equipment)
+            equipment_buttons_container.addWidget(self.toggle_equipment_button)
             
-            # Inicialmente esconder botões de ação que precisam de seleção
-            self.toggle_equipment_button.setVisible(False)
-            self.remove_equipment_button.setVisible(False)
+            # Botão Excluir
+            logger.debug("Criando botão excluir equipamento")
+            self.delete_equipment_button = self.create_crud_button('delete', "Excluir Equipamento", self.delete_equipment)
+            equipment_buttons_container.addWidget(self.delete_equipment_button)
             
-            equipment_buttons.addStretch()
+            # Botão Manutenção
+            logger.debug("Criando botão de manutenção de equipamento")
+            self.maintenance_button = self.create_crud_button('maintenance', "Registrar Manutenção", self.register_maintenance)
+            equipment_buttons_container.addWidget(self.maintenance_button)
             
-            # Campo de busca para equipamentos
-            self.equipment_search_box = QLineEdit()
-            self.equipment_search_box.setPlaceholderText("Buscar equipamentos...")
-            self.equipment_search_box.setMinimumWidth(200)
-            self.equipment_search_box.setMaximumWidth(300)
-            self.equipment_search_box.setMinimumHeight(36)
-            self.equipment_search_box.textChanged.connect(self.filter_equipment)
-            self.equipment_search_box.setStyleSheet("""
-                QLineEdit {
-                    border: 1px solid #666;
-                    border-radius: 4px;
-                    padding: 5px 10px;
-                    background: #333;
-                    color: white;
-                }
-                QLineEdit:focus {
-                    border: 1px solid #2196F3;
-                }
-            """)
-            equipment_buttons.addWidget(self.equipment_search_box)
+            equipment_top_container.addLayout(equipment_buttons_container)
+            equipment_top_container.addStretch()
             
-            equipment_layout.addLayout(equipment_buttons)
+            # Container para barra de pesquisa (lado direito)
+            equipment_search_container = QHBoxLayout()
             
-            # Tabela de equipamentos
+            # Label para pesquisa
+            equipment_search_label = QLabel("Pesquisar:")
+            equipment_search_container.addWidget(equipment_search_label)
+            
+            # Campo de pesquisa
+            self.equipment_search_input = QLineEdit()
+            self.equipment_search_input.setPlaceholderText("Digite para filtrar...")
+            self.equipment_search_input.textChanged.connect(self.filter_equipment)
+            equipment_search_container.addWidget(self.equipment_search_input)
+            
+            # Filtro por empresa
+            equipment_company_label = QLabel("Empresa:")
+            equipment_search_container.addWidget(equipment_company_label)
+            
+            self.equipment_company_combo = QComboBox()
+            self.equipment_company_combo.currentIndexChanged.connect(self.filter_equipment_by_company)
+            equipment_search_container.addWidget(self.equipment_company_combo)
+            
+            equipment_top_container.addLayout(equipment_search_container)
+            
+            equipment_layout.addLayout(equipment_top_container)
+            
+            # Tabela de Equipamentos
+            logger.debug("Criando tabela de equipamentos")
             self.equipment_table = QTableWidget()
-            self.equipment_table.setColumnCount(10)  # Reduzido para 10 colunas (removido ID)
+            self.equipment_table.setColumnCount(16)  # Ajustado para os campos de manutenção
             self.equipment_table.setHorizontalHeaderLabels([
-                "Tag", "Categoria", "Empresa ID", "Fabricante", "Ano Fabricação", "Pressão Projeto", "Pressão Trabalho", "Volume", "Fluido", "Status"
+                "Tag", "Categoria", "Empresa", "Fabricante", "Ano", "P. Projeto",
+                "P. Trabalho", "Volume", "Fluido", "Status", "Cat. NR13", "PMTA", "Placa ID", 
+                "Nº Registro", "Última Manutenção", "Próxima Manutenção"
             ])
-            self.equipment_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+            
+            # Configurar tabela para não mostrar números de linha
+            self.equipment_table.verticalHeader().setVisible(False)
+            
+            # Configurar comportamento de seleção
             self.equipment_table.setSelectionBehavior(QTableWidget.SelectRows)
             self.equipment_table.setSelectionMode(QTableWidget.SingleSelection)
-            self.equipment_table.setAlternatingRowColors(True)
-            self.equipment_table.setEditTriggers(QTableWidget.NoEditTriggers)  # Desabilita edição direta
-            self.equipment_table.verticalHeader().setVisible(False)  # Oculta o cabeçalho vertical
-            # Adiciona o evento de seleção para atualizar o botão
+            
+            # Configurar cabeçalhos para preencher a tabela
+            self.equipment_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+            
+            # Ajustar tamanho específico para colunas comuns
+            equipment_header = self.equipment_table.horizontalHeader()
+            equipment_header.setSectionResizeMode(0, QHeaderView.ResizeToContents)  # Tag
+            equipment_header.setSectionResizeMode(1, QHeaderView.ResizeToContents)  # Categoria
+            equipment_header.setSectionResizeMode(2, QHeaderView.ResizeToContents)  # Empresa
+            
+            # Conectar sinal de seleção alterada para atualizar botões
             self.equipment_table.itemSelectionChanged.connect(self.update_toggle_equipment_button)
-            logger.debug("Carregando equipamentos")
-            self.load_equipment()
+            
             equipment_layout.addWidget(self.equipment_table)
             
             # Aba de Inspeções
@@ -693,6 +782,11 @@ class AdminWindow(QMainWindow):
             self.tabs.addTab(equipment_tab, self.get_tab_icon("equipamentos.png"), "Equipamentos")
             self.tabs.addTab(inspection_tab, self.get_tab_icon("inspecoes.png"), "Inspeções")
             self.tabs.addTab(report_tab, self.get_tab_icon("relatorios.png"), "Relatórios")
+            
+            # Comentado: Não exibir mais a aba de Equipamentos por Empresa
+            # company_equipment_tab = self.create_company_equipment_tab()
+            # self.tabs.addTab(company_equipment_tab, self.get_tab_icon("equipamentos.png"), "Equipamentos por Empresa")
+            
             self.tabs.setIconSize(QSize(35, 35))
             layout.addWidget(self.tabs)
             
@@ -834,6 +928,10 @@ class AdminWindow(QMainWindow):
             # Atualiza o botão de ativar/desativar
             self.update_toggle_button()
             
+            # Atualizar ícones de logout e tema
+            self.theme_button.setIcon(self.create_icon_from_svg(self.icons['theme']))
+            self.logout_button.setIcon(self.create_icon_from_svg(self.icons['logout']))
+            
         except Exception as e:
             logger.error(f"Erro ao aplicar tema: {str(e)}")
             QMessageBox.critical(self, "Erro", f"Erro ao aplicar tema: {str(e)}")
@@ -875,17 +973,29 @@ class AdminWindow(QMainWindow):
                 status_item.setFlags(status_item.flags() & ~Qt.ItemIsEditable)
                 self.user_table.setItem(i, 3, status_item)
                 
+                # Empresa
+                empresa_item = QTableWidgetItem(user.get('empresa', ''))
+                empresa_item.setFlags(empresa_item.flags() & ~Qt.ItemIsEditable)
+                self.user_table.setItem(i, 4, empresa_item)
+                
         except Exception as e:
             logger.error(f"Erro ao carregar usuários: {str(e)}")
             logger.error(traceback.format_exc())
             QMessageBox.critical(self, "Erro", f"Erro ao carregar usuários: {str(e)}")
             
     def load_equipment(self):
-        """Carrega os equipamentos na tabela"""
+        """Carrega todos os equipamentos na tabela, incluindo o ID da empresa como UserRole na coluna Empresa"""
         try:
             logger.debug("Carregando equipamentos")
             equipment = self.equipment_controller.get_all_equipment()
             self.equipment_table.setRowCount(len(equipment))
+            
+            # Obter todas as empresas para usar como mapeamento ID -> Nome
+            empresas = self.auth_controller.get_companies()
+            empresa_map = {empresa['id']: empresa['nome'] for empresa in empresas}
+            
+            # Data atual para cálculos de manutenção
+            data_atual = datetime.now().date()
             
             for i, item in enumerate(equipment):
                 # Armazena o ID como dados do item (invisível para o usuário)
@@ -907,7 +1017,11 @@ class AdminWindow(QMainWindow):
                 categoria_item.setFlags(categoria_item.flags() & ~Qt.ItemIsEditable)
                 self.equipment_table.setItem(i, 1, categoria_item)
                 
-                empresa_item = QTableWidgetItem(str(item.get('empresa_id', '')))
+                # Empresa - usando o nome em vez do ID
+                empresa_id = item.get('empresa_id', '')
+                empresa_nome = empresa_map.get(empresa_id, f"ID: {empresa_id}")
+                empresa_item = QTableWidgetItem(empresa_nome)
+                empresa_item.setData(Qt.UserRole, empresa_id)  # Armazena o ID como dado do item
                 empresa_item.setFlags(empresa_item.flags() & ~Qt.ItemIsEditable)
                 self.equipment_table.setItem(i, 2, empresa_item)
                 
@@ -941,6 +1055,126 @@ class AdminWindow(QMainWindow):
                 status_item.setFlags(status_item.flags() & ~Qt.ItemIsEditable)
                 self.equipment_table.setItem(i, 9, status_item)
                 
+                # Novos campos NR-13
+                categoria_nr13_item = QTableWidgetItem(item.get('categoria_nr13', ''))
+                categoria_nr13_item.setFlags(categoria_nr13_item.flags() & ~Qt.ItemIsEditable)
+                self.equipment_table.setItem(i, 10, categoria_nr13_item)
+                
+                pmta_item = QTableWidgetItem(str(item.get('pmta', '')))
+                pmta_item.setFlags(pmta_item.flags() & ~Qt.ItemIsEditable)
+                self.equipment_table.setItem(i, 11, pmta_item)
+                
+                placa_identificacao_item = QTableWidgetItem(item.get('placa_identificacao', ''))
+                placa_identificacao_item.setFlags(placa_identificacao_item.flags() & ~Qt.ItemIsEditable)
+                self.equipment_table.setItem(i, 12, placa_identificacao_item)
+                
+                numero_registro_item = QTableWidgetItem(item.get('numero_registro', ''))
+                numero_registro_item.setFlags(numero_registro_item.flags() & ~Qt.ItemIsEditable)
+                self.equipment_table.setItem(i, 13, numero_registro_item)
+                
+                # Campos de manutenção
+                # Última manutenção
+                data_ultima_manutencao = item.get('data_ultima_manutencao', '')
+                data_ultima_str = ''
+                data_ultima_obj = None
+                
+                if data_ultima_manutencao:
+                    try:
+                        if isinstance(data_ultima_manutencao, str):
+                            # Tratamento robusto para strings de data
+                            if len(data_ultima_manutencao) >= 10:
+                                data_ultima_obj = datetime.strptime(data_ultima_manutencao[:10], '%Y-%m-%d').date()
+                                data_ultima_str = data_ultima_obj.strftime('%d/%m/%Y')
+                            else:
+                                data_ultima_str = data_ultima_manutencao
+                                logger.warning(f"Formato de data inválido: {data_ultima_manutencao}")
+                        elif isinstance(data_ultima_manutencao, datetime):
+                            data_ultima_obj = data_ultima_manutencao.date()
+                            data_ultima_str = data_ultima_obj.strftime('%d/%m/%Y')
+                        else:
+                            data_ultima_str = str(data_ultima_manutencao)
+                            logger.warning(f"Tipo de data não reconhecido: {type(data_ultima_manutencao)}")
+                    except Exception as e:
+                        data_ultima_str = str(data_ultima_manutencao)
+                        logger.warning(f"Erro ao processar data de manutenção: {str(e)}")
+                
+                ultima_manutencao_item = QTableWidgetItem(data_ultima_str)
+                ultima_manutencao_item.setFlags(ultima_manutencao_item.flags() & ~Qt.ItemIsEditable)
+                self.equipment_table.setItem(i, 14, ultima_manutencao_item)
+                
+                # Próxima manutenção
+                data_proxima_str = ''
+                frequencia = item.get('frequencia_manutencao', 0)
+                dias_restantes = None
+                
+                if data_ultima_manutencao and frequencia:
+                    try:
+                        # Se ainda não temos o objeto data_ultima_obj, tentar convertê-lo novamente
+                        if data_ultima_obj is None and isinstance(data_ultima_manutencao, str):
+                            try:
+                                if len(data_ultima_manutencao) >= 10:
+                                    data_ultima_obj = datetime.strptime(data_ultima_manutencao[:10], '%Y-%m-%d').date()
+                            except Exception:
+                                logger.warning(f"Não foi possível converter a data: {data_ultima_manutencao}")
+                        
+                        if data_ultima_obj:
+                            data_proxima = data_ultima_obj + timedelta(days=frequencia)
+                            data_proxima_str = data_proxima.strftime('%d/%m/%Y')
+                            
+                            # Calcular dias restantes
+                            dias_restantes = (data_proxima - data_atual).days
+                            
+                            # Aplicar indicadores visuais baseados na urgência da manutenção
+                            proxima_manutencao_item = QTableWidgetItem(data_proxima_str)
+                            proxima_manutencao_item.setFlags(proxima_manutencao_item.flags() & ~Qt.ItemIsEditable)
+                            self.equipment_table.setItem(i, 15, proxima_manutencao_item)
+                            
+                            # Verifica se está atrasado ou próximo
+                            if dias_restantes < 0 and item.get('ativo', 1):  # Atrasado e ativo
+                                # Cores mais suaves para manter consistência visual
+                                cor_linha = QColor(255, 200, 200)  # Vermelho pastel
+                                cor_texto = QColor(139, 0, 0)     # Vermelho escuro para contraste
+                                
+                                # Adiciona indicador visual de manutenção atrasada
+                                proxima_manutencao_item.setText("❗ " + data_proxima_str)
+                                
+                                for col in range(self.equipment_table.columnCount()):
+                                    cell = self.equipment_table.item(i, col)
+                                    if cell:
+                                        cell.setBackground(cor_linha)
+                                        cell.setForeground(cor_texto)
+                                logger.debug(f"Equipamento {item.get('tag')} com manutenção ATRASADA")
+                            elif dias_restantes <= 30 and item.get('ativo', 1):  # Próximo e ativo
+                                # Cores mais suaves para manter consistência visual
+                                cor_linha = QColor(255, 248, 209)  # Amarelo pastel
+                                cor_texto = QColor(138, 109, 0)    # Âmbar escuro para contraste
+                                
+                                # Adiciona indicador visual de manutenção próxima
+                                proxima_manutencao_item.setText("⚠️ " + data_proxima_str)
+                                
+                                for col in range(self.equipment_table.columnCount()):
+                                    cell = self.equipment_table.item(i, col)
+                                    if cell:
+                                        cell.setBackground(cor_linha)
+                                        cell.setForeground(cor_texto)
+                                logger.debug(f"Equipamento {item.get('tag')} com manutenção PRÓXIMA ({dias_restantes} dias)")
+                        else:
+                            proxima_manutencao_item = QTableWidgetItem("Não programada")
+                            proxima_manutencao_item.setFlags(proxima_manutencao_item.flags() & ~Qt.ItemIsEditable)
+                            self.equipment_table.setItem(i, 15, proxima_manutencao_item)
+                    except Exception as e:
+                        logger.error(f"Erro ao calcular próxima manutenção: {str(e)}")
+                        data_proxima_str = "Erro no cálculo"
+                        proxima_manutencao_item = QTableWidgetItem(data_proxima_str)
+                        proxima_manutencao_item.setFlags(proxima_manutencao_item.flags() & ~Qt.ItemIsEditable)
+                        self.equipment_table.setItem(i, 15, proxima_manutencao_item)
+                else:
+                    proxima_manutencao_item = QTableWidgetItem("Não programada")
+                    proxima_manutencao_item.setFlags(proxima_manutencao_item.flags() & ~Qt.ItemIsEditable)
+                    self.equipment_table.setItem(i, 15, proxima_manutencao_item)
+            
+            # Forçar atualização imediata da tabela
+            self.equipment_table.viewport().update()
             logger.debug(f"Carregados {len(equipment)} equipamentos na tabela")
         except Exception as e:
             logger.error(f"Erro ao carregar equipamentos: {str(e)}")
@@ -1090,31 +1324,38 @@ class AdminWindow(QMainWindow):
     def add_equipment(self):
         """Abre o modal para adicionar um novo equipamento"""
         try:
-            modal = EquipmentModal(self)
-            modal.load_empresas()
+            modal = EquipmentModal(self, self.is_dark)
             
-            if modal.exec():
+            # Carrega as empresas no modal
+            companies = self.auth_controller.get_companies()
+            modal.load_company_options(companies)
+            
+            if modal.exec() == QDialog.Accepted:
                 equipment_data = modal.get_data()
                 
-                # Obter o ID da empresa pelo nome
-                empresa_nome = equipment_data.get('empresa_nome')
-                empresa_id = self.get_empresa_id_by_name(empresa_nome)
+                # O ID da empresa já vem do modal
+                empresa_id = equipment_data.get('empresa_id')
                 
                 if not empresa_id:
-                    QMessageBox.warning(self, "Atenção", f"Empresa '{empresa_nome}' não encontrada")
+                    QMessageBox.warning(self, "Erro", "Nenhuma empresa foi selecionada ou o ID é inválido.")
                     return
                 
                 # Criar o equipamento
                 success, message = self.equipment_controller.criar_equipamento(
                     tag=equipment_data['tag'],
                     categoria=equipment_data['categoria'],
-                    empresa_id=empresa_id,
+                    empresa_id=empresa_id, # Passa o ID diretamente
                     fabricante=equipment_data['fabricante'],
                     ano_fabricacao=equipment_data['ano_fabricacao'],
                     pressao_projeto=equipment_data['pressao_projeto'],
                     pressao_trabalho=equipment_data['pressao_trabalho'],
                     volume=equipment_data['volume'],
-                    fluido=equipment_data['fluido']
+                    fluido=equipment_data['fluido'],
+                    # Campos NR-13
+                    categoria_nr13=equipment_data.get('categoria_nr13'),
+                    pmta=equipment_data.get('pmta'),
+                    placa_identificacao=equipment_data.get('placa_identificacao'),
+                    numero_registro=equipment_data.get('numero_registro')
                 )
                 
                 # Força a sincronização
@@ -1127,47 +1368,7 @@ class AdminWindow(QMainWindow):
                     QMessageBox.critical(self, "Erro", message)
         except Exception as e:
             QMessageBox.critical(self, "Erro", f"Erro ao adicionar equipamento: {str(e)}")
-                
-    def get_empresa_id_by_name(self, empresa_nome: str) -> int:
-        """Obtém o ID de uma empresa pelo nome"""
-        try:
-            logger.debug(f"Buscando ID da empresa: '{empresa_nome}'")
-            if not empresa_nome:
-                logger.warning("Nome da empresa vazio, retornando ID padrão 1")
-                return 1
-                
-            conn = self.db_models.db.get_connection()
-            cursor = conn.cursor()
-            
-            # Busca usuário cujo campo 'empresa' é igual ao nome fornecido
-            cursor.execute("SELECT id FROM usuarios WHERE empresa = ?", (empresa_nome,))
-            row = cursor.fetchone()
-            if row:
-                logger.debug(f"Empresa encontrada pelo campo 'empresa': ID {row[0]}")
-                return row[0]
-                
-            # Se não encontrou, tenta buscar pelo nome do usuário com tipo_acesso = 'emp'
-            cursor.execute("SELECT id FROM usuarios WHERE nome = ? AND tipo_acesso = 'emp'", (empresa_nome,))
-            row = cursor.fetchone()
-            if row:
-                logger.debug(f"Empresa encontrada pelo nome e tipo 'emp': ID {row[0]}")
-                return row[0]
-                
-            # Se ainda não encontrou, busca qualquer usuário com esse nome
-            cursor.execute("SELECT id FROM usuarios WHERE nome = ?", (empresa_nome,))
-            row = cursor.fetchone()
-            if row:
-                logger.debug(f"Usuário encontrado pelo nome: ID {row[0]}")
-                return row[0]
-                
-            # Se não encontrar nada, retorna o ID 1 (geralmente admin)
-            logger.warning(f"Empresa '{empresa_nome}' não encontrada, retornando ID padrão 1")
-            return 1
-        except Exception as e:
-            logger.error(f"Erro ao buscar ID da empresa: {str(e)}")
-            return 1  # Retorna ID 1 como fallback
-        finally:
-            cursor.close()
+            logger.error(f"Erro no add_equipment: {traceback.format_exc()}")
             
     def add_inspection(self):
         """Abre o modal para adicionar uma nova inspeção"""
@@ -1733,13 +1934,23 @@ class AdminWindow(QMainWindow):
                 if data['nome'] != user.get('nome', '') or data['email'] != user.get('email', '') or \
                 tipo_acesso != user.get('tipo_acesso', '') or data['empresa'] != user.get('empresa', ''):
                     # Implementar a atualização do usuário
+                    success, message = self.auth_controller.atualizar_usuario(
+                        user_id, 
+                        data['nome'], 
+                        data['email'], 
+                        tipo_acesso, 
+                        data['empresa'], 
+                        data['senha'] if data['senha'] else None
+                    )
+                    
+                    if success:
                     QMessageBox.information(self, "Sucesso", "Usuário atualizado com sucesso!")
                     self.load_users()
-                    
                     # Se estamos editando um engenheiro, atualizar a lista de engenheiros também
                     if tipo_acesso == "eng" or user.get('tipo_acesso') == "eng":
                         self.load_engineers()
-                        
+                    else:
+                        QMessageBox.critical(self, "Erro", f"Erro ao atualizar usuário: {message}")
                 else:
                     QMessageBox.information(self, "Informação", "Nenhuma alteração foi feita.")
         except Exception as e:
@@ -2550,7 +2761,11 @@ class AdminWindow(QMainWindow):
                 return
                 
             # Cria o modal de edição
-            modal = EquipmentModal(self, equipment, self.auth_controller)
+            modal = EquipmentModal(self, self.is_dark, equipment)
+            
+            # Carrega as empresas no modal (importante para permitir edição do campo empresa)
+            companies = self.auth_controller.get_companies()
+            modal.load_company_options(companies)
             
             if modal.exec_() == QDialog.Accepted:
                 # Obtém os novos dados
@@ -2654,42 +2869,49 @@ class AdminWindow(QMainWindow):
             QMessageBox.critical(self, "Erro", f"Erro ao excluir equipamento: {str(e)}")
 
     def update_toggle_equipment_button(self):
-        """Atualiza o botão de ativar/desativar baseado no equipamento selecionado"""
+        """Atualiza o estado do botão de toggle de acordo com o item selecionado"""
         try:
-            # Garante que o botão de remover equipamento esteja visível
-            if not self.remove_equipment_button.isVisible():
-                logger.debug("Restaurando visibilidade do botão de remover equipamento")
-                self.remove_equipment_button.setVisible(True)
-                
-            selected_rows = self.equipment_table.selectedItems()
-            if not selected_rows:
-                # Ocultar o botão em vez de apenas desabilitar
-                self.toggle_equipment_button.setVisible(False)
+            # Verificar se está visível, se não, sair
+            if not self.delete_equipment_button.isVisible():
+                return
+
+            # Obter o ID do equipamento selecionado
+            equipment_id = self.get_selected_equipment_id()
+            
+            if not equipment_id:
+                # Desabilitar botões se nenhum equipamento estiver selecionado
+                self.toggle_equipment_button.setEnabled(False)
+                self.edit_equipment_button.setEnabled(False)
+                self.delete_equipment_button.setEnabled(False)
+                self.maintenance_button.setEnabled(False)
                 return
             
-            # Mostrar o botão se estiver oculto
-            if not self.toggle_equipment_button.isVisible():
-                self.toggle_equipment_button.setVisible(True)
-                
-            # Obter a linha selecionada e verificar o status do equipamento
-            row = selected_rows[0].row()
-            status_item = self.equipment_table.item(row, 9)  # Coluna status (última coluna)
+            # Habilitar botões de edição e exclusão
+            self.edit_equipment_button.setEnabled(True)
+            self.delete_equipment_button.setEnabled(True)
+            self.maintenance_button.setEnabled(True)
             
-            if not status_item:
-                self.toggle_equipment_button.setVisible(False)
+            # Buscar o status atual do equipamento
+            equipment_data = self.equipment_controller.get_equipment_by_id(equipment_id)
+            
+            if not equipment_data:
+                logger.error(f"Equipamento com ID {equipment_id} não encontrado")
                 return
                 
-            is_active = status_item.text() == "Ativo"
+            is_active = equipment_data.get('ativo', 1)
             
+            # Atualizar o texto e o estilo do botão
             if is_active:
                 self.toggle_equipment_button.setText("Desativar")
-                self.toggle_equipment_button.setIcon(self.create_icon_from_svg(self.icons['disable']))
-                self.toggle_equipment_button.setStyleSheet(self.button_style['delete'])  # Usa o estilo de delete para desativar
+                self.toggle_equipment_button.setToolTip("Desativar este equipamento")
+                new_style = self.button_style['toggle'].replace("background-color: #6c757d;", "background-color: #dc3545;")
             else:
                 self.toggle_equipment_button.setText("Ativar")
-                self.toggle_equipment_button.setIcon(self.create_icon_from_svg(self.icons['enable']))
-                self.toggle_equipment_button.setStyleSheet(self.button_style['add'])  # Usa o estilo de add para ativar
+                self.toggle_equipment_button.setToolTip("Ativar este equipamento")
+                new_style = self.button_style['toggle'].replace("background-color: #6c757d;", "background-color: #28a745;")
             
+            self.toggle_equipment_button.setStyleSheet(new_style)
+            self.toggle_equipment_button.setEnabled(True)
         except Exception as e:
             logger.error(f"Erro ao atualizar botão de ativar/desativar equipamentos: {str(e)}")
             logger.error(traceback.format_exc())
@@ -2811,4 +3033,615 @@ class AdminWindow(QMainWindow):
             logger.error(f"Erro ao atualizar tabelas: {str(e)}")
             logger.error(traceback.format_exc())
     
-    # Resto do código...
+    def logout(self):
+        """Emite o sinal de logout solicitado."""
+        logger.info("Botão de logout clicado.")
+        self.logout_requested.emit()
+    
+    def load_equipment_by_company(self, company_id=None):
+        """Carrega os equipamentos de uma empresa específica na tabela"""
+        # Verificar se a tabela existe
+
+        if not hasattr(self, 'company_equipment_table') or self.company_equipment_table is None:
+
+            logger.warning("Tabela de equipamentos por empresa não foi inicializada. Inicializando...")
+
+            self.company_equipment_table = QTableWidget()
+
+            self.company_equipment_table.setColumnCount(9)
+
+            self.company_equipment_table.setHorizontalHeaderLabels([
+
+                "Tag", "Categoria", "Fabricante", "Ano Fabricação", 
+
+                "Pressão Projeto", "Pressão Trabalho", "Volume", "Fluido", "Status"
+
+            ])
+
+
+        try:
+            logger.debug(f"Carregando equipamentos para empresa ID={company_id}")
+            if company_id is None:
+                # Se nenhuma empresa for selecionada, limpa a tabela
+                self.company_equipment_table.setRowCount(0)
+                return
+                
+            # Obter todos os equipamentos
+            all_equipment = self.equipment_controller.get_all_equipment()
+            
+            # Filtrar apenas os da empresa selecionada
+            company_equipment = [e for e in all_equipment if e.get('empresa_id') == company_id]
+            
+            # Configurar a tabela
+            self.company_equipment_table.setRowCount(len(company_equipment))
+            
+            for i, item in enumerate(company_equipment):
+                # Armazena o ID como dados do item (invisível para o usuário)
+                equip_id = item.get('id', '')
+                
+                # Tag
+                tag_item = QTableWidgetItem(item.get('tag', ''))
+                tag_item.setData(Qt.UserRole, equip_id)  # Armazena o ID como dado do item
+                tag_item.setFlags(tag_item.flags() & ~Qt.ItemIsEditable)  # Remove a flag de editável
+                self.company_equipment_table.setItem(i, 0, tag_item)
+                
+                # Resto dos campos - todos configurados como não editáveis
+                categoria_item = QTableWidgetItem(item.get('categoria', ''))
+                categoria_item.setFlags(categoria_item.flags() & ~Qt.ItemIsEditable)
+                self.company_equipment_table.setItem(i, 1, categoria_item)
+                
+                fabricante_item = QTableWidgetItem(item.get('fabricante', ''))
+                fabricante_item.setFlags(fabricante_item.flags() & ~Qt.ItemIsEditable)
+                self.company_equipment_table.setItem(i, 2, fabricante_item)
+                
+                ano_item = QTableWidgetItem(str(item.get('ano_fabricacao', '')))
+                ano_item.setFlags(ano_item.flags() & ~Qt.ItemIsEditable)
+                self.company_equipment_table.setItem(i, 3, ano_item)
+                
+                pressao_projeto_item = QTableWidgetItem(str(item.get('pressao_projeto', '')))
+                pressao_projeto_item.setFlags(pressao_projeto_item.flags() & ~Qt.ItemIsEditable)
+                self.company_equipment_table.setItem(i, 4, pressao_projeto_item)
+                
+                pressao_trabalho_item = QTableWidgetItem(str(item.get('pressao_trabalho', '')))
+                pressao_trabalho_item.setFlags(pressao_trabalho_item.flags() & ~Qt.ItemIsEditable)
+                self.company_equipment_table.setItem(i, 5, pressao_trabalho_item)
+                
+                volume_item = QTableWidgetItem(str(item.get('volume', '')))
+                volume_item.setFlags(volume_item.flags() & ~Qt.ItemIsEditable)
+                self.company_equipment_table.setItem(i, 6, volume_item)
+                
+                fluido_item = QTableWidgetItem(item.get('fluido', ''))
+                fluido_item.setFlags(fluido_item.flags() & ~Qt.ItemIsEditable)
+                self.company_equipment_table.setItem(i, 7, fluido_item)
+                
+                # Status
+                status = "Ativo" if item.get('ativo', 1) else "Inativo"
+                status_item = QTableWidgetItem(status)
+                status_item.setFlags(status_item.flags() & ~Qt.ItemIsEditable)
+                self.company_equipment_table.setItem(i, 8, status_item)
+            
+            logger.debug(f"Carregados {len(company_equipment)} equipamentos da empresa na tabela")
+        except Exception as e:
+            logger.error(f"Erro ao carregar equipamentos por empresa: {str(e)}")
+            logger.error(traceback.format_exc())
+            QMessageBox.critical(self, "Erro", f"Erro ao carregar equipamentos por empresa: {str(e)}")
+    def company_changed(self, index):
+        # Chamado quando a empresa selecionada é alterada
+        try:
+            # Obter o ID da empresa selecionada
+            company_id = self.company_selector.currentData()
+            
+            # Atualizar a tabela de equipamentos
+            self.load_equipment_by_company(company_id)
+            
+        except Exception as e:
+            logger.error(f"Erro ao mudar empresa selecionada: {str(e)}")
+            logger.error(traceback.format_exc())
+            
+    def add_equipment_to_company(self):
+        # Adiciona um novo equipamento à empresa selecionada
+        try:
+            # Verificar se uma empresa está selecionada
+            company_id = self.company_selector.currentData()
+            if company_id is None:
+                QMessageBox.warning(self, "Atenção", "Selecione uma empresa primeiro.")
+                return
+                
+            # Reutilizar o método existente, mas pré-configurar a empresa
+            modal = EquipmentModal(self, self.is_dark)
+            
+            # Carregar apenas a empresa selecionada no modal
+            company_data = {
+                'id': company_id,
+                'nome': self.company_selector.currentText()
+            }
+            modal.load_company_options([company_data])
+            
+            if modal.exec() == QDialog.Accepted:
+                equipment_data = modal.get_data()
+                
+                # Garantir que o ID da empresa está correto
+                equipment_data['empresa_id'] = company_id
+                
+                # Criar o equipamento
+                success, message = self.equipment_controller.criar_equipamento(
+                    tag=equipment_data['tag'],
+                    categoria=equipment_data['categoria'],
+                    empresa_id=equipment_data['empresa_id'],
+                    fabricante=equipment_data['fabricante'],
+                    ano_fabricacao=equipment_data['ano_fabricacao'],
+                    pressao_projeto=equipment_data['pressao_projeto'],
+                    pressao_trabalho=equipment_data['pressao_trabalho'],
+                    volume=equipment_data['volume'],
+                    fluido=equipment_data['fluido']
+                )
+                
+                # Força a sincronização
+                self.equipment_controller.force_sync()
+                
+                if success:
+                    QMessageBox.information(self, "Sucesso", message)
+                    self.load_equipment_by_company(company_id)
+                    # Atualizar também a aba de equipamentos geral
+                    self.load_equipment()
+                else:
+                    QMessageBox.critical(self, "Erro", message)
+                    
+        except Exception as e:
+            logger.error(f"Erro ao adicionar equipamento à empresa: {str(e)}")
+            logger.error(traceback.format_exc())
+            QMessageBox.critical(self, "Erro", f"Erro ao adicionar equipamento: {str(e)}")
+            
+    def edit_company_equipment(self):
+        # Edita o equipamento selecionado na aba de empresa
+        try:
+            # Obter o ID do equipamento selecionado
+            selected_row = self.company_equipment_table.currentRow()
+            if selected_row < 0:
+                QMessageBox.warning(self, "Atenção", "Selecione um equipamento para editar.")
+                return
+                
+            # Obter o ID do equipamento (armazenado no UserRole da coluna Tag)
+            item = self.company_equipment_table.item(selected_row, 0)
+            if not item:
+                QMessageBox.warning(self, "Erro", "Falha ao obter o equipamento selecionado.")
+                return
+                
+            equipment_id = item.data(Qt.UserRole)
+            
+            # Reusar o método existente
+            self.edit_equipment(equipment_id)
+            
+            # Atualizar a tabela após a edição
+            company_id = self.company_selector.currentData()
+            self.load_equipment_by_company(company_id)
+            
+        except Exception as e:
+            logger.error(f"Erro ao editar equipamento da empresa: {str(e)}")
+            logger.error(traceback.format_exc())
+            QMessageBox.critical(self, "Erro", f"Erro ao editar equipamento: {str(e)}")
+            
+    def delete_company_equipment(self):
+        # Remove o equipamento selecionado na aba de empresa
+        try:
+            # Obter o ID do equipamento selecionado
+            selected_row = self.company_equipment_table.currentRow()
+            if selected_row < 0:
+                QMessageBox.warning(self, "Atenção", "Selecione um equipamento para remover.")
+                return
+                
+            # Obter o ID do equipamento (armazenado no UserRole da coluna Tag)
+            item = self.company_equipment_table.item(selected_row, 0)
+            if not item:
+                QMessageBox.warning(self, "Erro", "Falha ao obter o equipamento selecionado.")
+                return
+                
+            equipment_id = item.data(Qt.UserRole)
+            
+            # Reutilizar o método existente
+            self.delete_equipment(equipment_id)
+            
+            # Atualizar a tabela após a remoção
+            company_id = self.company_selector.currentData()
+            self.load_equipment_by_company(company_id)
+            
+        except Exception as e:
+            logger.error(f"Erro ao remover equipamento da empresa: {str(e)}")
+            logger.error(traceback.format_exc())
+            QMessageBox.critical(self, "Erro", f"Erro ao remover equipamento: {str(e)}")
+            
+    def load_companies_to_combobox(self):
+        # Carrega as empresas no combobox de seleção
+        try:
+            self.company_selector.clear()
+            
+            # Adicionar item padrão
+            self.company_selector.addItem("Selecione uma empresa", None)
+            
+            # Obter empresas
+            companies = self.auth_controller.get_companies()
+            
+            # Adicionar cada empresa ao combobox
+            for company in companies:
+                self.company_selector.addItem(company['nome'], company['id'])
+                
+            logger.debug(f"Carregadas {len(companies)} empresas no combobox")
+        except Exception as e:
+            logger.error(f"Erro ao carregar empresas no combobox: {str(e)}")
+            logger.error(traceback.format_exc())
+
+    
+    def create_company_equipment_tab(self):
+        """Cria e configura a aba 'Equipamentos por Empresa'"""
+        try:
+            # Criar widget da aba
+            company_equipment_tab = QWidget()
+            tab_layout = QVBoxLayout(company_equipment_tab)
+            
+            # Área superior - seleção de empresa
+            top_container = QHBoxLayout()
+            
+            # Label para seleção de empresa
+            company_label = QLabel("Selecione a Empresa:")
+            company_label.setStyleSheet("font-weight: bold; font-size: 14px;")
+            top_container.addWidget(company_label)
+            
+            # ComboBox para seleção de empresa
+            self.company_selector = QComboBox()
+            self.company_selector.setMinimumWidth(250)
+            self.company_selector.setMinimumHeight(36)
+            self.company_selector.currentIndexChanged.connect(self.company_changed)
+            
+            # Carregar empresas no combobox
+            self.load_companies_to_combobox()
+            
+            top_container.addWidget(self.company_selector)
+            top_container.addStretch()
+            
+            # Botões de ação para equipamentos
+            buttons_container = QHBoxLayout()
+            
+            # Botão Adicionar Equipamento
+            self.add_company_equipment_button = self.create_crud_button("add", "Adicionar Equipamento para esta Empresa", self.add_equipment_to_company)
+            buttons_container.addWidget(self.add_company_equipment_button)
+            buttons_container.addSpacing(5)  # Espaçamento entre botões
+            
+            # Botão Editar Equipamento
+            self.edit_company_equipment_button = self.create_crud_button("edit", "Editar", self.edit_company_equipment)
+            buttons_container.addWidget(self.edit_company_equipment_button)
+            buttons_container.addSpacing(5)  # Espaçamento entre botões
+            
+            # Botão Remover Equipamento
+            self.remove_company_equipment_button = self.create_crud_button("delete", "Remover", self.delete_company_equipment)
+            buttons_container.addWidget(self.remove_company_equipment_button)
+            
+            buttons_container.addStretch()
+            
+            # Tabela de equipamentos da empresa
+            self.company_equipment_table = QTableWidget()
+            self.company_equipment_table.setColumnCount(9)  # Sem a coluna de Empresa
+            self.company_equipment_table.setHorizontalHeaderLabels([
+                "Tag", "Categoria", "Fabricante", "Ano Fabricação", 
+                "Pressão Projeto", "Pressão Trabalho", "Volume", "Fluido", "Status"
+            ])
+            self.company_equipment_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+            self.company_equipment_table.setSelectionBehavior(QTableWidget.SelectRows)
+            self.company_equipment_table.setSelectionMode(QTableWidget.SingleSelection)
+            self.company_equipment_table.setAlternatingRowColors(True)
+            self.company_equipment_table.setEditTriggers(QTableWidget.NoEditTriggers)
+            self.company_equipment_table.verticalHeader().setVisible(False)
+            
+            # Adicionar elementos ao layout da aba
+            tab_layout.addLayout(top_container)
+            tab_layout.addLayout(buttons_container)
+            tab_layout.addWidget(self.company_equipment_table)
+            
+            return company_equipment_tab
+            
+        except Exception as e:
+            logger.error(f"Erro ao criar aba 'Equipamentos por Empresa': {str(e)}")
+            logger.error(traceback.format_exc())
+            QMessageBox.critical(self, "Erro", f"Erro ao criar aba de equipamentos por empresa: {str(e)}")
+            # Retorna um widget vazio em caso de erro
+            return QWidget()
+            
+    def load_companies_to_equipment_combobox(self):
+        """Carrega as empresas no combobox de filtro da aba Equipamentos"""
+        try:
+            self.equipment_company_selector.blockSignals(True)
+            self.equipment_company_selector.clear()
+            self.equipment_company_selector.addItem("Todas as empresas", None)
+            companies = self.auth_controller.get_companies()
+            for company in companies:
+                self.equipment_company_selector.addItem(company['nome'], company['id'])
+        except Exception as e:
+            logger.error(f"Erro ao carregar empresas no combobox de equipamentos: {str(e)}")
+            logger.error(traceback.format_exc())
+        finally:
+            self.equipment_company_selector.blockSignals(False)
+
+    def filter_equipment_by_company(self):
+        """Filtra a tabela de equipamentos pela empresa selecionada no ComboBox"""
+        company_id = self.equipment_company_selector.currentData()
+        for row in range(self.equipment_table.rowCount()):
+            item = self.equipment_table.item(row, 2)  # Coluna Empresa
+            if company_id is None or (item and int(item.data(Qt.UserRole)) == company_id):
+                self.equipment_table.setRowHidden(row, False)
+            else:
+                self.equipment_table.setRowHidden(row, True)
+        # Também aplicar o filtro de texto, se houver
+        self.filter_equipment(self.equipment_search_box.text())
+
+    def filter_equipment(self, text):
+        """Filtra os equipamentos na tabela com base no texto inserido e empresa selecionada"""
+        try:
+            search_text = text.lower()
+            company_id = self.equipment_company_selector.currentData()
+            for row in range(self.equipment_table.rowCount()):
+                should_show = True
+                # Filtro por empresa
+                if company_id is not None:
+                    item_empresa = self.equipment_table.item(row, 2)  # Coluna Empresa
+                    if not item_empresa or int(item_empresa.data(Qt.UserRole)) != company_id:
+                        should_show = False
+                # Filtro por texto
+                if should_show and search_text:
+                    found = False
+                    for col in range(self.equipment_table.columnCount()):
+                        item = self.equipment_table.item(row, col)
+                        if item and search_text in item.text().lower():
+                            found = True
+                            break
+                    should_show = found
+                self.equipment_table.setRowHidden(row, not should_show)
+        except Exception as e:
+            logger.error(f"Erro ao filtrar equipamentos: {str(e)}")
+            logger.error(traceback.format_exc())
+
+    def load_equipment(self):
+        """Carrega todos os equipamentos na tabela, incluindo o ID da empresa como UserRole na coluna Empresa"""
+        try:
+            logger.debug("Carregando equipamentos")
+            equipment = self.equipment_controller.get_all_equipment()
+            self.equipment_table.setRowCount(len(equipment))
+            
+            # Obter todas as empresas para usar como mapeamento ID -> Nome
+            empresas = self.auth_controller.get_companies()
+            empresa_map = {empresa['id']: empresa['nome'] for empresa in empresas}
+            
+            # Data atual para cálculos de manutenção
+            data_atual = datetime.now().date()
+            
+            for i, item in enumerate(equipment):
+                # Armazena o ID como dados do item (invisível para o usuário)
+                equip_id = item.get('id', '')
+                logger.debug(f"Carregando equipamento ID={equip_id}, Tag={item.get('tag', '')}")
+                
+                # Tag
+                tag_item = QTableWidgetItem(item.get('tag', ''))
+                tag_item.setData(Qt.UserRole, equip_id)  # Armazena o ID como dado do item
+                tag_item.setFlags(tag_item.flags() & ~Qt.ItemIsEditable)  # Remove a flag de editável
+                self.equipment_table.setItem(i, 0, tag_item)
+                
+                # Para debug - verifica se o ID foi armazenado corretamente
+                id_stored = tag_item.data(Qt.UserRole)
+                logger.debug(f"ID armazenado no item da tabela: {id_stored}")
+                
+                # Resto dos campos - todos configurados como não editáveis
+                categoria_item = QTableWidgetItem(item.get('categoria', ''))
+                categoria_item.setFlags(categoria_item.flags() & ~Qt.ItemIsEditable)
+                self.equipment_table.setItem(i, 1, categoria_item)
+                
+                # Empresa - usando o nome em vez do ID
+                empresa_id = item.get('empresa_id', '')
+                empresa_nome = empresa_map.get(empresa_id, f"ID: {empresa_id}")
+                empresa_item = QTableWidgetItem(empresa_nome)
+                empresa_item.setData(Qt.UserRole, empresa_id)  # Armazena o ID como dado do item
+                empresa_item.setFlags(empresa_item.flags() & ~Qt.ItemIsEditable)
+                self.equipment_table.setItem(i, 2, empresa_item)
+                
+                fabricante_item = QTableWidgetItem(item.get('fabricante', ''))
+                fabricante_item.setFlags(fabricante_item.flags() & ~Qt.ItemIsEditable)
+                self.equipment_table.setItem(i, 3, fabricante_item)
+                
+                ano_item = QTableWidgetItem(str(item.get('ano_fabricacao', '')))
+                ano_item.setFlags(ano_item.flags() & ~Qt.ItemIsEditable)
+                self.equipment_table.setItem(i, 4, ano_item)
+                
+                pressao_projeto_item = QTableWidgetItem(str(item.get('pressao_projeto', '')))
+                pressao_projeto_item.setFlags(pressao_projeto_item.flags() & ~Qt.ItemIsEditable)
+                self.equipment_table.setItem(i, 5, pressao_projeto_item)
+                
+                pressao_trabalho_item = QTableWidgetItem(str(item.get('pressao_trabalho', '')))
+                pressao_trabalho_item.setFlags(pressao_trabalho_item.flags() & ~Qt.ItemIsEditable)
+                self.equipment_table.setItem(i, 6, pressao_trabalho_item)
+                
+                volume_item = QTableWidgetItem(str(item.get('volume', '')))
+                volume_item.setFlags(volume_item.flags() & ~Qt.ItemIsEditable)
+                self.equipment_table.setItem(i, 7, volume_item)
+                
+                fluido_item = QTableWidgetItem(item.get('fluido', ''))
+                fluido_item.setFlags(fluido_item.flags() & ~Qt.ItemIsEditable)
+                self.equipment_table.setItem(i, 8, fluido_item)
+                
+                # Status
+                status = "Ativo" if item.get('ativo', 1) else "Inativo"
+                status_item = QTableWidgetItem(status)
+                status_item.setFlags(status_item.flags() & ~Qt.ItemIsEditable)
+                self.equipment_table.setItem(i, 9, status_item)
+                
+                # Novos campos NR-13
+                categoria_nr13_item = QTableWidgetItem(item.get('categoria_nr13', ''))
+                categoria_nr13_item.setFlags(categoria_nr13_item.flags() & ~Qt.ItemIsEditable)
+                self.equipment_table.setItem(i, 10, categoria_nr13_item)
+                
+                pmta_item = QTableWidgetItem(str(item.get('pmta', '')))
+                pmta_item.setFlags(pmta_item.flags() & ~Qt.ItemIsEditable)
+                self.equipment_table.setItem(i, 11, pmta_item)
+                
+                placa_identificacao_item = QTableWidgetItem(item.get('placa_identificacao', ''))
+                placa_identificacao_item.setFlags(placa_identificacao_item.flags() & ~Qt.ItemIsEditable)
+                self.equipment_table.setItem(i, 12, placa_identificacao_item)
+                
+                numero_registro_item = QTableWidgetItem(item.get('numero_registro', ''))
+                numero_registro_item.setFlags(numero_registro_item.flags() & ~Qt.ItemIsEditable)
+                self.equipment_table.setItem(i, 13, numero_registro_item)
+                
+                # Campos de manutenção
+                # Última manutenção
+                data_ultima_manutencao = item.get('data_ultima_manutencao', '')
+                data_ultima_str = ''
+                data_ultima_obj = None
+                
+                if data_ultima_manutencao:
+                    try:
+                        if isinstance(data_ultima_manutencao, str):
+                            # Tratamento robusto para strings de data
+                            if len(data_ultima_manutencao) >= 10:
+                                data_ultima_obj = datetime.strptime(data_ultima_manutencao[:10], '%Y-%m-%d').date()
+                                data_ultima_str = data_ultima_obj.strftime('%d/%m/%Y')
+                            else:
+                                data_ultima_str = data_ultima_manutencao
+                                logger.warning(f"Formato de data inválido: {data_ultima_manutencao}")
+                        elif isinstance(data_ultima_manutencao, datetime):
+                            data_ultima_obj = data_ultima_manutencao.date()
+                            data_ultima_str = data_ultima_obj.strftime('%d/%m/%Y')
+                        else:
+                            data_ultima_str = str(data_ultima_manutencao)
+                            logger.warning(f"Tipo de data não reconhecido: {type(data_ultima_manutencao)}")
+                    except Exception as e:
+                        data_ultima_str = str(data_ultima_manutencao)
+                        logger.warning(f"Erro ao processar data de manutenção: {str(e)}")
+                
+                ultima_manutencao_item = QTableWidgetItem(data_ultima_str)
+                ultima_manutencao_item.setFlags(ultima_manutencao_item.flags() & ~Qt.ItemIsEditable)
+                self.equipment_table.setItem(i, 14, ultima_manutencao_item)
+                
+                # Próxima manutenção
+                data_proxima_str = ''
+                frequencia = item.get('frequencia_manutencao', 0)
+                dias_restantes = None
+                
+                if data_ultima_manutencao and frequencia:
+                    try:
+                        # Se ainda não temos o objeto data_ultima_obj, tentar convertê-lo novamente
+                        if data_ultima_obj is None and isinstance(data_ultima_manutencao, str):
+                            try:
+                                if len(data_ultima_manutencao) >= 10:
+                                    data_ultima_obj = datetime.strptime(data_ultima_manutencao[:10], '%Y-%m-%d').date()
+                            except Exception:
+                                logger.warning(f"Não foi possível converter a data: {data_ultima_manutencao}")
+                        
+                        if data_ultima_obj:
+                            data_proxima = data_ultima_obj + timedelta(days=frequencia)
+                            data_proxima_str = data_proxima.strftime('%d/%m/%Y')
+                            
+                            # Calcular dias restantes
+                            dias_restantes = (data_proxima - data_atual).days
+                            
+                            # Aplicar indicadores visuais baseados na urgência da manutenção
+                            proxima_manutencao_item = QTableWidgetItem(data_proxima_str)
+                            proxima_manutencao_item.setFlags(proxima_manutencao_item.flags() & ~Qt.ItemIsEditable)
+                            self.equipment_table.setItem(i, 15, proxima_manutencao_item)
+                            
+                            # Verifica se está atrasado ou próximo
+                            if dias_restantes < 0 and item.get('ativo', 1):  # Atrasado e ativo
+                                # Cores mais suaves para manter consistência visual
+                                cor_linha = QColor(255, 200, 200)  # Vermelho pastel
+                                cor_texto = QColor(139, 0, 0)     # Vermelho escuro para contraste
+                                
+                                # Adiciona indicador visual de manutenção atrasada
+                                proxima_manutencao_item.setText("❗ " + data_proxima_str)
+                                
+                                for col in range(self.equipment_table.columnCount()):
+                                    cell = self.equipment_table.item(i, col)
+                                    if cell:
+                                        cell.setBackground(cor_linha)
+                                        cell.setForeground(cor_texto)
+                                logger.debug(f"Equipamento {item.get('tag')} com manutenção ATRASADA")
+                            elif dias_restantes <= 30 and item.get('ativo', 1):  # Próximo e ativo
+                                # Cores mais suaves para manter consistência visual
+                                cor_linha = QColor(255, 248, 209)  # Amarelo pastel
+                                cor_texto = QColor(138, 109, 0)    # Âmbar escuro para contraste
+                                
+                                # Adiciona indicador visual de manutenção próxima
+                                proxima_manutencao_item.setText("⚠️ " + data_proxima_str)
+                                
+                                for col in range(self.equipment_table.columnCount()):
+                                    cell = self.equipment_table.item(i, col)
+                                    if cell:
+                                        cell.setBackground(cor_linha)
+                                        cell.setForeground(cor_texto)
+                                logger.debug(f"Equipamento {item.get('tag')} com manutenção PRÓXIMA ({dias_restantes} dias)")
+                        else:
+                            proxima_manutencao_item = QTableWidgetItem("Não programada")
+                            proxima_manutencao_item.setFlags(proxima_manutencao_item.flags() & ~Qt.ItemIsEditable)
+                            self.equipment_table.setItem(i, 15, proxima_manutencao_item)
+                    except Exception as e:
+                        logger.error(f"Erro ao calcular próxima manutenção: {str(e)}")
+                        data_proxima_str = "Erro no cálculo"
+                        proxima_manutencao_item = QTableWidgetItem(data_proxima_str)
+                        proxima_manutencao_item.setFlags(proxima_manutencao_item.flags() & ~Qt.ItemIsEditable)
+                        self.equipment_table.setItem(i, 15, proxima_manutencao_item)
+                else:
+                    proxima_manutencao_item = QTableWidgetItem("Não programada")
+                    proxima_manutencao_item.setFlags(proxima_manutencao_item.flags() & ~Qt.ItemIsEditable)
+                    self.equipment_table.setItem(i, 15, proxima_manutencao_item)
+            
+            # Forçar atualização imediata da tabela
+            self.equipment_table.viewport().update()
+            logger.debug(f"Carregados {len(equipment)} equipamentos na tabela")
+        except Exception as e:
+            logger.error(f"Erro ao carregar equipamentos: {str(e)}")
+            logger.error(traceback.format_exc())
+            QMessageBox.critical(self, "Erro", f"Erro ao carregar equipamentos: {str(e)}")
+
+    def register_maintenance(self):
+        """Abre a janela modal para registrar manutenção de equipamento"""
+        try:
+            # Verificar se um equipamento está selecionado
+            equipment_id = self.get_selected_equipment_id()
+            if not equipment_id:
+                QMessageBox.warning(self, "Aviso", "Selecione um equipamento para registrar a manutenção")
+                return
+                
+            # Buscar dados do equipamento
+            equipment_data = None
+            all_equipment = self.equipment_controller.get_all_equipment()
+            
+            for equip in all_equipment:
+                if equip.get('id') == equipment_id:
+                    equipment_data = equip
+                    break
+                    
+            if not equipment_data:
+                QMessageBox.warning(self, "Erro", f"Não foi possível encontrar o equipamento com ID {equipment_id}")
+                return
+            
+            # Abrir o modal de manutenção
+            # Usa tema claro ou escuro conforme o estado atual
+            is_dark = self.palette().color(self.backgroundRole()).lightness() < 128
+            modal = MaintenanceModal(self, is_dark)
+            
+            # Preencher o campo de frequência com o valor atual do equipamento (se existir)
+            if equipment_data and equipment_data.get('frequencia_manutencao'):
+                modal.freq_input.setText(str(equipment_data.get('frequencia_manutencao')))
+            
+            if modal.exec_() == QDialog.Accepted:
+                data = modal.get_data()
+                success, message = self.equipment_controller.atualizar_manutencao_equipamento(
+                    equipment_id=equipment_id,
+                    data_ultima_manutencao=data['data_manutencao'],
+                    frequencia_manutencao=data['frequencia']
+                )
+                
+                if success:
+                    QMessageBox.information(self, "Sucesso", "Manutenção registrada com sucesso!")
+                    self.load_equipment()  # Atualiza a tabela
+                else:
+                    QMessageBox.warning(self, "Erro", f"Não foi possível registrar a manutenção: {message}")
+                    
+        except Exception as e:
+            logger.error(f"Erro ao registrar manutenção: {str(e)}")
+            logger.error(traceback.format_exc())
+            QMessageBox.warning(self, "Erro", f"Erro ao registrar manutenção: {str(e)}")

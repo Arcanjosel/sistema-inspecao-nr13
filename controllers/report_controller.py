@@ -230,46 +230,48 @@ class ReportController:
         finally:
             cursor.close()
             
-    def get_reports_by_company(self, company: str) -> list[dict]:
+    def get_reports_by_company(self, company_id: int) -> list[dict]:
         """Retorna os relatórios de uma empresa específica"""
         try:
-            logger.debug(f"Buscando relatórios da empresa {company}")
-            conn = self.db_models.db.get_connection()
+            logger.debug(f"Buscando relatórios da empresa ID: {company_id}")
+            self._ensure_connection()
+            conn = self.connection
             cursor = conn.cursor()
             
             cursor.execute("""
-                SELECT r.id, r.inspecao_id, r.engenheiro_responsavel, 
-                       r.data_emissao, r.link_arquivo,
-                       i.equipamento_id, i.tipo_inspecao,
-                       e.tipo as equipamento_tipo, e.empresa as equipamento_empresa,
+                SELECT r.id, r.inspecao_id, 
+                       r.data_emissao, r.link_arquivo, r.observacoes,
+                       i.equipamento_id, i.tipo_inspecao, i.engenheiro_id,
+                       e.tag as equipamento_tag, e.categoria as equipamento_categoria,
                        u.nome as engenheiro_nome
                 FROM relatorios r
                 JOIN inspecoes i ON r.inspecao_id = i.id
                 JOIN equipamentos e ON i.equipamento_id = e.id
-                JOIN usuarios u ON r.engenheiro_responsavel = u.id
-                WHERE e.empresa = ?
-            """, (company,))
+                JOIN usuarios u ON i.engenheiro_id = u.id
+                WHERE e.empresa_id = ?
+            """, (company_id,))
             
             reports = []
             for row in cursor.fetchall():
                 reports.append({
                     'id': row[0],
                     'inspecao_id': row[1],
-                    'engenheiro_id': row[2],
-                    'data': row[3],
-                    'arquivo': row[4],
+                    'data_emissao': row[2],
+                    'link_arquivo': row[3],
+                    'observacoes': row[4],
                     'equipamento_id': row[5],
                     'tipo_inspecao': row[6],
-                    'equipamento_tipo': row[7],
-                    'equipamento_empresa': row[8],
-                    'engenheiro_nome': row[9]
+                    'engenheiro_id': row[7],
+                    'equipamento_tag': row[8],
+                    'equipamento_categoria': row[9],
+                    'engenheiro_nome': row[10]
                 })
                 
-            logger.debug(f"Encontrados {len(reports)} relatórios para a empresa {company}")
+            logger.debug(f"Encontrados {len(reports)} relatórios para a empresa ID: {company_id}")
             return reports
             
         except Exception as e:
-            logger.error(f"Erro ao buscar relatórios da empresa {company}: {str(e)}")
+            logger.error(f"Erro ao buscar relatórios da empresa {company_id}: {str(e)}")
             logger.error(traceback.format_exc())
             return []
             

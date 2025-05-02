@@ -98,6 +98,39 @@ class Styles:
                 border: 1px solid #444;
                 selection-background-color: #007bff;
             }
+            QComboBox QAbstractItemView::item {
+                color: #f1f1f1;
+            }
+            QSpinBox, QDoubleSpinBox {
+                background-color: #232629;
+                color: #f1f1f1;
+                border: 1px solid #444;
+                border-radius: 6px;
+                padding: 8px;
+            }
+            QSpinBox::up-button, QDoubleSpinBox::up-button {
+                subcontrol-origin: border;
+                subcontrol-position: top right;
+                width: 20px;
+                border-left: 1px solid #444;
+                background-color: #2a2d30;
+            }
+            QSpinBox::down-button, QDoubleSpinBox::down-button {
+                subcontrol-origin: border;
+                subcontrol-position: bottom right;
+                width: 20px;
+                border-left: 1px solid #444;
+                background-color: #2a2d30;
+            }
+            QSpinBox::up-arrow, QDoubleSpinBox::up-arrow,
+            QSpinBox::down-arrow, QDoubleSpinBox::down-arrow {
+                width: 6px;
+                height: 6px;
+                background-color: #f1f1f1;
+            }
+            QAbstractSpinBox {
+                color: #f1f1f1;
+            }
             QMessageBox {
                 background-color: #181a1b;
             }
@@ -213,6 +246,39 @@ class Styles:
                 color: #212529;
                 border: 1px solid #ced4da;
                 selection-background-color: #007bff;
+            }
+            QComboBox QAbstractItemView::item {
+                color: #212529;
+            }
+            QSpinBox, QDoubleSpinBox {
+                background-color: #fff;
+                color: #212529;
+                border: 1px solid #ced4da;
+                border-radius: 6px;
+                padding: 8px;
+            }
+            QSpinBox::up-button, QDoubleSpinBox::up-button {
+                subcontrol-origin: border;
+                subcontrol-position: top right;
+                width: 20px;
+                border-left: 1px solid #ced4da;
+                background-color: #e9ecef;
+            }
+            QSpinBox::down-button, QDoubleSpinBox::down-button {
+                subcontrol-origin: border;
+                subcontrol-position: bottom right;
+                width: 20px;
+                border-left: 1px solid #ced4da;
+                background-color: #e9ecef;
+            }
+            QSpinBox::up-arrow, QDoubleSpinBox::up-arrow,
+            QSpinBox::down-arrow, QDoubleSpinBox::down-arrow {
+                width: 6px;
+                height: 6px;
+                background-color: #212529;
+            }
+            QAbstractSpinBox {
+                color: #212529;
             }
             QMessageBox {
                 background-color: #f8f9fa;

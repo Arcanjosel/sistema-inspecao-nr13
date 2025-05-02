@@ -319,23 +319,24 @@ class InspectionController:
         finally:
             cursor.close()
             
-    def get_inspections_by_company(self, company: str) -> list[dict]:
+    def get_inspections_by_company(self, company_id: int) -> list[dict]:
         """Retorna as inspeções de uma empresa específica"""
         try:
-            logger.debug(f"Buscando inspeções da empresa {company}")
+            logger.debug(f"Buscando inspeções da empresa ID: {company_id}")
+            self._ensure_connection()
             conn = self.connection
             cursor = conn.cursor()
             
             cursor.execute("""
                 SELECT i.id, i.equipamento_id, i.engenheiro_id, 
-                       i.data_inspecao, i.tipo_inspecao,
+                       i.data_inspecao, i.tipo_inspecao, i.resultado,
                        e.tag as equipamento_tag, e.categoria as equipamento_categoria,
                        u.nome as engenheiro_nome
                 FROM inspecoes i
                 JOIN equipamentos e ON i.equipamento_id = e.id
                 JOIN usuarios u ON i.engenheiro_id = u.id
                 WHERE e.empresa_id = ?
-            """, (company,))
+            """, (company_id,))
             
             inspections = []
             for row in cursor.fetchall():
@@ -345,16 +346,17 @@ class InspectionController:
                     'engenheiro_id': row[2],
                     'data': row[3],
                     'tipo': row[4],
-                    'equipamento_tag': row[5],
-                    'equipamento_categoria': row[6],
-                    'engenheiro_nome': row[7]
+                    'resultado': row[5],
+                    'equipamento_tag': row[6],
+                    'equipamento_categoria': row[7],
+                    'engenheiro_nome': row[8]
                 })
                 
-            logger.debug(f"Encontradas {len(inspections)} inspeções para a empresa {company}")
+            logger.debug(f"Encontradas {len(inspections)} inspeções para a empresa ID: {company_id}")
             return inspections
             
         except Exception as e:
-            logger.error(f"Erro ao buscar inspeções da empresa {company}: {str(e)}")
+            logger.error(f"Erro ao buscar inspeções da empresa {company_id}: {str(e)}")
             logger.error(traceback.format_exc())
             return []
             

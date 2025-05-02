@@ -1,6 +1,7 @@
 from database.models import DatabaseModels
 import logging
 import traceback
+from datetime import datetime, timedelta
 
 logger = logging.getLogger(__name__)
 
@@ -51,38 +52,36 @@ class EquipmentController:
     def criar_equipamento(self, tag: str, categoria: str, empresa_id: int,
                          fabricante: str, ano_fabricacao: int,
                          pressao_projeto: float, pressao_trabalho: float,
-                         volume: float, fluido: str) -> tuple[bool, str]:
+                         volume: float, fluido: str,
+                         categoria_nr13: str = None, pmta: str = None,
+                         placa_identificacao: str = None, numero_registro: str = None) -> tuple[bool, str]:
         """Cria um novo equipamento no sistema"""
         try:
             # Garante que a conexão está ativa
             self._ensure_connection()
-            
             logger.debug(f"Criando equipamento com tag {tag}")
             conn = self.connection
             cursor = conn.cursor()
-            
             cursor.execute("""
                 INSERT INTO equipamentos (tag, categoria, empresa_id,
                                         fabricante, ano_fabricacao,
                                         pressao_projeto, pressao_trabalho,
-                                        volume, fluido)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                                        volume, fluido,
+                                        categoria_nr13, pmta, placa_identificacao, numero_registro)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (tag, categoria, empresa_id, fabricante, ano_fabricacao,
-                  pressao_projeto, pressao_trabalho, volume, fluido))
-            
+                  pressao_projeto, pressao_trabalho, volume, fluido,
+                  categoria_nr13, pmta, placa_identificacao, numero_registro))
             # Força a sincronização
             self.force_sync()
-            
             logger.info(f"Equipamento {tag} criado com sucesso")
             return True, "Equipamento criado com sucesso!"
-            
         except Exception as e:
             logger.error(f"Erro ao criar equipamento {tag}: {str(e)}")
             logger.error(traceback.format_exc())
             if 'conn' in locals():
                 conn.rollback()
             return False, f"Erro ao criar equipamento: {str(e)}"
-            
         finally:
             if 'cursor' in locals():
                 cursor.close()
@@ -92,24 +91,28 @@ class EquipmentController:
         try:
             # Garante que a conexão está ativa
             self._ensure_connection()
-            
             logger.debug("Buscando todos os equipamentos")
             conn = self.connection
             cursor = conn.cursor()
-            
             cursor.execute("""
                 SELECT e.id, e.tag, e.categoria, e.empresa_id,
                        e.fabricante, e.ano_fabricacao, e.pressao_projeto,
-                       e.pressao_trabalho, e.volume, e.fluido, e.ativo,
+                       e.pressao_trabalho, e.volume, e.fluido, 
+                       e.frequencia_manutencao, e.data_ultima_manutencao,
+                       e.categoria_nr13, e.pmta, e.placa_identificacao, e.numero_registro,
+                       CASE 
+                           WHEN e.ativo IS NOT NULL THEN e.ativo 
+                           WHEN e.status = 'ativo' THEN 1
+                           ELSE 0
+                       END AS ativo_calculado,
                        u.nome as empresa_nome
                 FROM equipamentos e
                 LEFT JOIN usuarios u ON e.empresa_id = u.id
                 ORDER BY e.tag
             """)
-            
             equipment = []
             for row in cursor.fetchall():
-                equipment.append({
+                equipment_item = {
                     'id': row[0],
                     'tag': row[1],
                     'categoria': row[2],
@@ -120,45 +123,72 @@ class EquipmentController:
                     'pressao_trabalho': row[7],
                     'volume': row[8],
                     'fluido': row[9],
-                    'ativo': bool(row[10]),
-                    'empresa_nome': row[11] if row[11] else ''
-                })
+                    'frequencia_manutencao': row[10],
+                    'data_ultima_manutencao': row[11],
+                    'categoria_nr13': row[12],
+                    'pmta': row[13],
+                    'placa_identificacao': row[14],
+                    'numero_registro': row[15],
+                    'ativo': bool(row[16]),
+                    'empresa_nome': row[17] if row[17] else ''
+                }
+                
+                # Calcular dias até próxima manutenção se houver data de última manutenção
+                if equipment_item['data_ultima_manutencao'] and equipment_item['frequencia_manutencao']:
+                    dias_ate_manutencao = self.calcular_dias_ate_proxima_manutencao(
+                        equipment_item['data_ultima_manutencao'], 
+                        equipment_item['frequencia_manutencao']
+                    )
+                    equipment_item['dias_ate_manutencao'] = dias_ate_manutencao
+                else:
+                    equipment_item['dias_ate_manutencao'] = None
+                    
+                equipment.append(equipment_item)
                 
             logger.debug(f"Encontrados {len(equipment)} equipamentos")
             return equipment
-            
         except Exception as e:
             logger.error(f"Erro ao buscar equipamentos: {str(e)}")
             logger.error(traceback.format_exc())
             return []
-            
         finally:
             if 'cursor' in locals():
                 cursor.close()
             
     def get_equipment_by_company(self, company_id: int) -> list[dict]:
-        """Retorna os equipamentos de uma empresa específica"""
+        """
+        Busca todos os equipamentos de uma empresa
+        """
         try:
-            # Garante que a conexão está ativa
+            logger.debug(f"Buscando equipamentos da empresa ID: {company_id}")
             self._ensure_connection()
-            
-            logger.debug(f"Buscando equipamentos da empresa {company_id}")
             conn = self.connection
             cursor = conn.cursor()
             
+            logger.debug(f"Executando consulta para buscar equipamentos da empresa ID: {company_id}")
+            
+            # Query atualizada para incluir campos de manutenção
             cursor.execute("""
-                SELECT e.id, e.tag, e.categoria, e.empresa_id,
-                       e.fabricante, e.ano_fabricacao, e.pressao_projeto,
-                       e.pressao_trabalho, e.volume, e.fluido,
-                       u.nome as empresa_nome
-                FROM equipamentos e
-                JOIN usuarios u ON e.empresa_id = u.id
-                WHERE e.empresa_id = ? AND e.ativo = 1
+                SELECT 
+                    id, tag, categoria, empresa_id, fabricante, 
+                    ano_fabricacao, pressao_projeto, pressao_trabalho, 
+                    volume, fluido, frequencia_manutencao, data_ultima_manutencao,
+                    CASE 
+                        WHEN ativo IS NOT NULL THEN ativo 
+                        WHEN status = 'ativo' THEN 1
+                        ELSE 0
+                    END AS ativo
+                FROM equipamentos 
+                WHERE empresa_id = ?
             """, (company_id,))
             
-            equipment = []
-            for row in cursor.fetchall():
-                equipment.append({
+            results = cursor.fetchall()
+            equipment_list = []
+            
+            logger.debug(f"Foram encontrados {len(results)} equipamentos para a empresa ID: {company_id}")
+            
+            for row in results:
+                equipment = {
                     'id': row[0],
                     'tag': row[1],
                     'categoria': row[2],
@@ -169,17 +199,30 @@ class EquipmentController:
                     'pressao_trabalho': row[7],
                     'volume': row[8],
                     'fluido': row[9],
-                    'empresa_nome': row[10]
-                })
+                    'frequencia_manutencao': row[10],
+                    'data_ultima_manutencao': row[11],
+                    'ativo': row[12]
+                }
                 
-            logger.debug(f"Encontrados {len(equipment)} equipamentos para a empresa {company_id}")
-            return equipment
-            
+                # Calcular dias até próxima manutenção se houver data de última manutenção
+                if equipment['data_ultima_manutencao'] and equipment['frequencia_manutencao']:
+                    dias_ate_manutencao = self.calcular_dias_ate_proxima_manutencao(
+                        equipment['data_ultima_manutencao'], 
+                        equipment['frequencia_manutencao']
+                    )
+                    equipment['dias_ate_manutencao'] = dias_ate_manutencao
+                else:
+                    equipment['dias_ate_manutencao'] = None
+                
+                equipment_list.append(equipment)
+                logger.debug(f"Adicionado equipamento ID={equipment['id']}, Tag={equipment['tag']}")
+                
+            logger.debug(f"Processados {len(equipment_list)} equipamentos para a empresa ID: {company_id}")
+            return equipment_list
         except Exception as e:
             logger.error(f"Erro ao buscar equipamentos da empresa {company_id}: {str(e)}")
             logger.error(traceback.format_exc())
             return []
-            
         finally:
             if 'cursor' in locals():
                 cursor.close()
@@ -231,28 +274,25 @@ class EquipmentController:
     def update_equipment(self, equipment_id: int, **kwargs) -> tuple[bool, str]:
         """Atualiza os dados de um equipamento"""
         try:
-            # Garante que a conexão está ativa
             self._ensure_connection()
-            
             logger.debug(f"Atualizando equipamento {equipment_id}")
             conn = self.connection
             cursor = conn.cursor()
-            
             update_fields = []
             values = []
-            
+            # Permitir atualização dos campos NR-13
             for field, value in kwargs.items():
-                if value is not None:
+                if value is not None and field in [
+                    'tag', 'categoria', 'empresa_id', 'fabricante', 'ano_fabricacao',
+                    'pressao_projeto', 'pressao_trabalho', 'volume', 'fluido',
+                    'categoria_nr13', 'pmta', 'placa_identificacao', 'numero_registro']:
                     update_fields.append(f"{field} = ?")
                     values.append(value)
                     logger.debug(f"Campo a atualizar: {field} = {value}")
-                    
             if not update_fields:
                 logger.warning("Nenhum campo para atualizar")
                 return False, "Nenhum campo para atualizar"
-                
             values.append(equipment_id)
-            
             update_query = f"""
                 UPDATE equipamentos
                 SET {', '.join(update_fields)}
@@ -260,30 +300,21 @@ class EquipmentController:
             """
             logger.debug(f"Query de atualização: {update_query}")
             logger.debug(f"Valores: {values}")
-            
             cursor.execute(update_query, values)
-            
-            # Verifica se alguma linha foi afetada
             rows_affected = cursor.rowcount
             logger.debug(f"Linhas afetadas: {rows_affected}")
-            
             if rows_affected == 0:
                 logger.warning(f"Nenhuma linha afetada na atualização do equipamento {equipment_id}")
                 return False, "Nenhuma alteração realizada"
-            
-            # Força a sincronização
             self.force_sync()
-            
             logger.info(f"Equipamento {equipment_id} atualizado com sucesso. Linhas afetadas: {rows_affected}")
             return True, "Equipamento atualizado com sucesso!"
-            
         except Exception as e:
             logger.error(f"Erro ao atualizar equipamento {equipment_id}: {str(e)}")
             logger.error(traceback.format_exc())
             if 'conn' in locals():
                 conn.rollback()
             return False, f"Erro ao atualizar equipamento: {str(e)}"
-            
         finally:
             if 'cursor' in locals():
                 cursor.close()
@@ -337,31 +368,25 @@ class EquipmentController:
         if not equipment_id:
             logger.warning("ID do equipamento não fornecido")
             return None
-            
         try:
-            # Garante que a conexão está ativa
             self._ensure_connection()
-            
             logger.debug(f"Obtendo equipamento {equipment_id}")
             conn = self.connection
             cursor = conn.cursor()
-            
             cursor.execute("""
                 SELECT e.id, e.tag, e.categoria, e.empresa_id,
                        e.fabricante, e.ano_fabricacao, e.pressao_projeto,
                        e.pressao_trabalho, e.volume, e.fluido, e.ativo,
+                       e.categoria_nr13, e.pmta, e.placa_identificacao, e.numero_registro,
                        u.nome as empresa_nome
                 FROM equipamentos e
                 LEFT JOIN usuarios u ON e.empresa_id = u.id
                 WHERE e.id = ?
             """, (equipment_id,))
-            
             row = cursor.fetchone()
             if not row:
                 logger.warning(f"Nenhum equipamento encontrado com ID {equipment_id}")
                 return None
-                
-            # Criar dicionário com os dados do equipamento
             equipment = {
                 'id': row[0],
                 'tag': row[1],
@@ -374,17 +399,18 @@ class EquipmentController:
                 'volume': row[8],
                 'fluido': row[9],
                 'ativo': bool(row[10]),
-                'empresa_nome': row[11] if row[11] else ''
+                'categoria_nr13': row[11],
+                'pmta': row[12],
+                'placa_identificacao': row[13],
+                'numero_registro': row[14],
+                'empresa_nome': row[15] if row[15] else ''
             }
-            
             logger.debug(f"Equipamento {equipment_id} encontrado: {equipment['tag']}")
             return equipment
-            
         except Exception as e:
             logger.error(f"Erro ao buscar equipamento {equipment_id}: {str(e)}")
             logger.error(traceback.format_exc())
             return None
-            
         finally:
             if 'cursor' in locals():
                 cursor.close()
@@ -490,4 +516,126 @@ class EquipmentController:
         
     def deactivate_equipment(self, equipment_id):
         """Desativa um equipamento"""
-        return self.toggle_equipment_status(equipment_id, False) 
+        return self.toggle_equipment_status(equipment_id, False)
+
+    def atualizar_manutencao_equipamento(self, equipment_id: int, data_ultima_manutencao, frequencia_manutencao=None) -> tuple[bool, str]:
+        """Atualiza a data da última manutenção e opcionalmente a frequência de manutenção de um equipamento"""
+        try:
+            self._ensure_connection()
+            logger.debug(f"Atualizando manutenção do equipamento ID={equipment_id}")
+            conn = self.connection
+            cursor = conn.cursor()
+            
+            # Converter a data para string se for um objeto datetime
+            if isinstance(data_ultima_manutencao, datetime):
+                data_ultima_manutencao_str = data_ultima_manutencao.strftime('%Y-%m-%d')
+            else:
+                data_ultima_manutencao_str = data_ultima_manutencao
+            
+            logger.debug(f"Data formatada: {data_ultima_manutencao_str}")
+            
+            # Usar SQL direto sem placeholders para evitar problemas com o driver
+            if frequencia_manutencao:
+                sql = f"UPDATE equipamentos SET data_ultima_manutencao = '{data_ultima_manutencao_str}', frequencia_manutencao = {frequencia_manutencao} WHERE id = {equipment_id}"
+            else:
+                sql = f"UPDATE equipamentos SET data_ultima_manutencao = '{data_ultima_manutencao_str}' WHERE id = {equipment_id}"
+            
+            logger.debug(f"SQL: {sql}")
+            cursor.execute(sql)
+            
+            # Forçar commit das alterações
+            conn.commit()
+            logger.info(f"Manutenção do equipamento ID={equipment_id} atualizada com sucesso")
+            return True, "Manutenção atualizada com sucesso"
+        except Exception as e:
+            logger.error(f"Erro ao atualizar manutenção do equipamento ID={equipment_id}: {str(e)}")
+            logger.error(traceback.format_exc())
+            if 'conn' in locals():
+                conn.rollback()
+            return False, f"Erro ao atualizar manutenção: {str(e)}"
+        finally:
+            if 'cursor' in locals():
+                cursor.close()
+
+    def atualizar_tabela_equipamentos(self):
+        """Atualiza a estrutura da tabela equipamentos para adicionar novos campos"""
+        try:
+            self._ensure_connection()
+            logger.debug("Atualizando estrutura da tabela equipamentos")
+            conn = self.connection
+            cursor = conn.cursor()
+            
+            # Verificar se a coluna frequencia_manutencao já existe
+            cursor.execute("""
+                SELECT COUNT(*) 
+                FROM INFORMATION_SCHEMA.COLUMNS 
+                WHERE TABLE_NAME = 'equipamentos' AND COLUMN_NAME = 'frequencia_manutencao'
+            """)
+            
+            if cursor.fetchone()[0] == 0:
+                # Adicionar a coluna frequencia_manutencao
+                cursor.execute("""
+                    ALTER TABLE equipamentos
+                    ADD frequencia_manutencao INT DEFAULT 180
+                """)
+                logger.info("Coluna frequencia_manutencao adicionada à tabela equipamentos")
+            
+            # Verificar se a coluna data_ultima_manutencao já existe
+            cursor.execute("""
+                SELECT COUNT(*) 
+                FROM INFORMATION_SCHEMA.COLUMNS 
+                WHERE TABLE_NAME = 'equipamentos' AND COLUMN_NAME = 'data_ultima_manutencao'
+            """)
+            
+            if cursor.fetchone()[0] == 0:
+                # Adicionar a coluna data_ultima_manutencao
+                cursor.execute("""
+                    ALTER TABLE equipamentos
+                    ADD data_ultima_manutencao DATE
+                """)
+                logger.info("Coluna data_ultima_manutencao adicionada à tabela equipamentos")
+            
+            # Forçar commit das alterações
+            conn.commit()
+            return True, "Tabela equipamentos atualizada com sucesso"
+        except Exception as e:
+            logger.error(f"Erro ao atualizar tabela equipamentos: {str(e)}")
+            logger.error(traceback.format_exc())
+            if 'conn' in locals():
+                conn.rollback()
+            return False, f"Erro ao atualizar tabela equipamentos: {str(e)}"
+        finally:
+            if 'cursor' in locals():
+                cursor.close()
+
+    def calcular_dias_ate_proxima_manutencao(self, data_ultima_manutencao, frequencia_dias):
+        """Calcula quantos dias faltam para a próxima manutenção"""
+        if not data_ultima_manutencao or not frequencia_dias:
+            return None
+            
+        try:
+            # Converter data_ultima_manutencao para datetime se for string
+            if isinstance(data_ultima_manutencao, str):
+                try:
+                    # Tentar converter para datetime
+                    if len(data_ultima_manutencao) >= 10:
+                        data_ultima_manutencao = datetime.strptime(data_ultima_manutencao[:10], '%Y-%m-%d')
+                    else:
+                        logger.warning(f"Formato de data inválido: {data_ultima_manutencao}")
+                        return None
+                except Exception as e:
+                    logger.error(f"Erro ao converter data: {str(e)}")
+                    return None
+                
+            hoje = datetime.now().date()
+            proxima_manutencao = data_ultima_manutencao + timedelta(days=frequencia_dias)
+            
+            # Se data_ultima_manutencao é datetime mas não date, converter
+            if isinstance(proxima_manutencao, datetime):
+                proxima_manutencao = proxima_manutencao.date()
+                
+            return (proxima_manutencao - hoje).days
+        except Exception as e:
+            logger.error(f"Erro ao calcular dias até próxima manutenção: {str(e)}")
+            logger.error(traceback.format_exc())
+            return None

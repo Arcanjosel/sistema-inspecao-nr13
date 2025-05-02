@@ -171,6 +171,82 @@ class AuthController:
             if 'cursor' in locals():
                 cursor.close()
             
+    def atualizar_usuario(self, user_id: int, nome: str, email: str, tipo_acesso: str, empresa: Optional[str] = None, senha: Optional[str] = None) -> Tuple[bool, str]:
+        """
+        Atualiza os dados de um usuário existente.
+        
+        Args:
+            user_id: ID do usuário a ser atualizado
+            nome: Novo nome do usuário
+            email: Novo email do usuário
+            tipo_acesso: Novo tipo de acesso ('admin', 'cliente', 'eng')
+            empresa: Nome da empresa (opcional)
+            senha: Nova senha (opcional, atualizada apenas se fornecida)
+            
+        Returns:
+            Tuple[bool, str]: (sucesso, mensagem)
+        """
+        try:
+            # Garante que a conexão está ativa
+            self._ensure_connection()
+            
+            conn = self.connection
+            cursor = conn.cursor()
+            
+            # Verifica se o email já existe para outro usuário
+            cursor.execute("SELECT id FROM usuarios WHERE email = ? AND id != ?", (email, user_id))
+            if cursor.fetchone():
+                return False, "Email já está sendo usado por outro usuário"
+            
+            # Constrói a query de atualização
+            update_fields = []
+            params = []
+            
+            # Sempre atualiza esses campos
+            update_fields.append("nome = ?")
+            params.append(nome)
+            
+            update_fields.append("email = ?")
+            params.append(email)
+            
+            update_fields.append("tipo_acesso = ?")
+            params.append(tipo_acesso)
+            
+            update_fields.append("empresa = ?")
+            params.append(empresa)
+            
+            # Atualiza a senha apenas se fornecida
+            if senha:
+                senha_hash = self._hash_password(senha)
+                update_fields.append("senha_hash = ?")
+                params.append(senha_hash)
+            
+            # Adiciona o ID do usuário como último parâmetro
+            params.append(user_id)
+            
+            # Constrói e executa a query
+            query = f"UPDATE usuarios SET {', '.join(update_fields)} WHERE id = ?"
+            cursor.execute(query, params)
+            
+            # Verifica se algum registro foi atualizado
+            if cursor.rowcount == 0:
+                return False, "Nenhum usuário foi atualizado"
+            
+            # Força a sincronização
+            self.force_sync()
+            
+            return True, "Usuário atualizado com sucesso"
+            
+        except Exception as e:
+            logger.error(f"Erro ao atualizar usuário: {str(e)}")
+            if 'conn' in locals():
+                conn.rollback()
+            return False, f"Erro ao atualizar usuário: {str(e)}"
+            
+        finally:
+            if 'cursor' in locals():
+                cursor.close()
+            
     def get_usuario_atual(self) -> Optional[dict]:
         """
         Retorna os dados do usuário atual.
@@ -461,6 +537,44 @@ class AuthController:
             logger.error(traceback.format_exc())
             return None
             
+        finally:
+            if 'cursor' in locals():
+                cursor.close()
+
+    def get_companies(self) -> list[dict]:
+        """Retorna uma lista de todos os usuários marcados como cliente (empresa)."""
+        try:
+            self._ensure_connection()
+            logger.debug("Buscando todas as empresas (usuários tipo 'cliente')")
+            conn = self.connection
+            cursor = conn.cursor()
+            
+            cursor.execute("""
+                SELECT id, nome, empresa 
+                FROM usuarios 
+                WHERE tipo_acesso = 'cliente' AND ativo = 1 
+                ORDER BY nome
+            """)
+            
+            empresas = []
+            for row in cursor.fetchall():
+                # Usar o campo 'empresa' se existir, senão usar 'nome'
+                nome_empresa = row[2] if row[2] else row[1]
+                if not nome_empresa:
+                    nome_empresa = f"Cliente ID {row[0]}" # Fallback
+                    
+                empresas.append({
+                    'id': row[0], # O ID do usuário cliente é o ID da empresa
+                    'nome': nome_empresa
+                })
+                
+            logger.debug(f"Encontradas {len(empresas)} empresas (clientes)")
+            return empresas
+            
+        except Exception as e:
+            logger.error(f"Erro ao buscar empresas: {str(e)}")
+            logger.error(traceback.format_exc())
+            return []
         finally:
             if 'cursor' in locals():
                 cursor.close() 

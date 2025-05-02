@@ -17,6 +17,7 @@ from controllers.auth_controller import AuthController
 import pyodbc
 from ui.debug_window import DebugWindow
 from database.models import DatabaseModels
+from PyQt5.QtCore import pyqtSignal
 
 # Configuração do logging
 logging.basicConfig(
@@ -96,6 +97,9 @@ class SistemaInspecao:
                 cursor.close()
                 
                 self.window = ClientWindow(self.auth_controller, usuario_id, company)
+            
+            # Conectar sinal de logout
+            self.window.logout_requested.connect(self.handle_logout)
                 
             self.window.is_dark = self.is_dark
             self.window.apply_theme()
@@ -103,7 +107,18 @@ class SistemaInspecao:
             logger.info(f"Janela principal exibida para usuário: {usuario['tipo_acesso']}")
         except Exception as e:
             logger.error(f"Erro ao processar login: {str(e)}")
+            logger.error(traceback.format_exc())
             raise
+        
+    def handle_logout(self):
+        """Fecha a janela atual e mostra a tela de login."""
+        logger.info("Logout solicitado.")
+        if self.window:
+            self.window.close()
+            self.window = None
+            logger.info("Janela principal fechada.")
+        self.show_login()
+        logger.info("Retornando para a tela de login.")
         
     def run(self):
         """Inicia a aplicação"""

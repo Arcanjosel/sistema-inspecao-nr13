@@ -112,6 +112,24 @@ class UserModal(BaseModal):
             "tipo": self.tipo_input.currentText(),
             "empresa": self.empresa_input.text().strip()
         }
+        
+    def accept(self):
+        """Validar e aceitar o modal"""
+        # Validação básica de campos
+        if not self.nome_input.text().strip():
+            QMessageBox.warning(self, "Atenção", "O campo Nome é obrigatório")
+            return
+            
+        if not self.email_input.text().strip():
+            QMessageBox.warning(self, "Atenção", "O campo Email é obrigatório")
+            return
+            
+        if not self.senha_input.text().strip():
+            QMessageBox.warning(self, "Atenção", "O campo Senha é obrigatório")
+            return
+            
+        # Se passou pela validação, aceita o diálogo
+        super().accept()
 
 class EquipmentModal(QDialog):
     def __init__(self, parent=None, is_dark=False, equipment_data=None):
@@ -124,6 +142,9 @@ class EquipmentModal(QDialog):
         self.resize(650, 750)
         self.setup_ui()
         self.apply_theme()
+        # Carregar dados apenas se for edição
+        if self.equipment_data:
+            self.load_equipment_data()
         
     def setup_ui(self):
         """Configura a interface do modal"""
@@ -190,8 +211,11 @@ class EquipmentModal(QDialog):
         self.categoria_input.setToolTip("Tipo/categoria do equipamento")
         form_layout.addRow("Categoria*:", self.categoria_input)
         
-        # O campo empresa_id é invisível e será preenchido automaticamente
-        self.empresa_id = 0
+        # ---- Adicionar ComboBox de Empresa ----
+        self.empresa_combo = setup_input(QComboBox())
+        self.empresa_combo.setToolTip("Empresa à qual o equipamento pertence")
+        form_layout.addRow("Empresa*:", self.empresa_combo)
+        # --------------------------------------
         
         spacer_widget2 = QWidget()
         spacer_widget2.setMinimumHeight(20)
@@ -262,6 +286,36 @@ class EquipmentModal(QDialog):
         spacer_widget4.setMinimumHeight(20)
         form_layout.addRow("", spacer_widget4)
         
+        # ---- Adicionar campos NR-13 ----
+        nr13_section = create_section_title("Dados NR-13")
+        form_layout.addRow(nr13_section)
+        nr13_spacer = QWidget()
+        nr13_spacer.setMinimumHeight(10)
+        form_layout.addRow("", nr13_spacer)
+
+        self.categoria_nr13_input = setup_input(QComboBox())
+        self.categoria_nr13_input.addItems([
+            "Não se Aplica", "Categoria I", "Categoria II", "Categoria III", "Categoria IV"
+        ])
+        self.categoria_nr13_input.setToolTip("Categoria NR-13 do equipamento")
+        form_layout.addRow("Categoria NR-13:", self.categoria_nr13_input)
+
+        self.pmta_input = setup_input(QLineEdit())
+        self.pmta_input.setPlaceholderText("Ex: 123456")
+        self.pmta_input.setToolTip("PMTA do equipamento")
+        form_layout.addRow("PMTA:", self.pmta_input)
+
+        self.placa_identificacao_input = setup_input(QLineEdit())
+        self.placa_identificacao_input.setPlaceholderText("Ex: ABC-1234")
+        self.placa_identificacao_input.setToolTip("Placa de identificação do equipamento")
+        form_layout.addRow("Placa Identificação:", self.placa_identificacao_input)
+
+        self.numero_registro_input = setup_input(QLineEdit())
+        self.numero_registro_input.setPlaceholderText("Ex: 987654")
+        self.numero_registro_input.setToolTip("Número de registro do equipamento")
+        form_layout.addRow("Nº Registro:", self.numero_registro_input)
+        # ---- Fim campos NR-13 ----
+        
         self.note_label = QLabel("* Campos obrigatórios")
         self.note_label.setProperty("note", True)
         form_layout.addRow("", self.note_label)
@@ -289,9 +343,7 @@ class EquipmentModal(QDialog):
         
         main_layout.addLayout(buttons_layout)
         
-        self.load_empresas()
-        if self.equipment_data:
-            self.load_equipment_data()
+        self.load_company_options()
     
     def apply_theme(self):
         """Aplica o tema escuro ou claro ao modal"""
@@ -346,6 +398,20 @@ class EquipmentModal(QDialog):
                 QSpinBox::down-button:hover, QDoubleSpinBox::down-button:hover {
                     background-color: #505050;
                 }
+                QSpinBox::up-arrow, QDoubleSpinBox::up-arrow {
+                    width: 6px;
+                    height: 6px;
+                    background-color: #E0E0E0;
+                }
+                QSpinBox::down-arrow, QDoubleSpinBox::down-arrow {
+                    width: 6px;
+                    height: 6px;
+                    background-color: #E0E0E0;
+                }
+                /* Garante que o texto na linha de edição é visível */
+                QAbstractSpinBox {
+                    color: #E0E0E0;
+                }
                 QComboBox::drop-down {
                     border: none;
                     width: 20px;
@@ -359,6 +425,9 @@ class EquipmentModal(QDialog):
                     color: #E0E0E0;
                     selection-background-color: #404040;
                     border: 1px solid #505050;
+                }
+                QComboBox QAbstractItemView::item {
+                    color: #E0E0E0;
                 }
                 QPushButton {
                     background-color: #0078D7;
@@ -455,6 +524,20 @@ class EquipmentModal(QDialog):
                 QSpinBox::down-button:hover, QDoubleSpinBox::down-button:hover {
                     background-color: #D0D0D0;
                 }
+                QSpinBox::up-arrow, QDoubleSpinBox::up-arrow {
+                    width: 6px;
+                    height: 6px;
+                    background-color: #333333;
+                }
+                QSpinBox::down-arrow, QDoubleSpinBox::down-arrow {
+                    width: 6px;
+                    height: 6px;
+                    background-color: #333333;
+                }
+                /* Garante que o texto na linha de edição é visível */
+                QAbstractSpinBox {
+                    color: #333333;
+                }
                 QComboBox::drop-down {
                     border: none;
                     width: 20px;
@@ -468,6 +551,9 @@ class EquipmentModal(QDialog):
                     color: #333333;
                     selection-background-color: #E0E0E0;
                     border: 1px solid #C0C0C0;
+                }
+                QComboBox QAbstractItemView::item {
+                    color: #333333;
                 }
                 QPushButton {
                     background-color: #0078D7;
@@ -520,36 +606,44 @@ class EquipmentModal(QDialog):
             self.note_label.style().unpolish(self.note_label)
             self.note_label.style().polish(self.note_label)
         
-    def load_empresas(self):
-        """
-        Esta função não exibe mais o combobox de empresas, mas
-        mantém a funcionalidade para compatibilidade e para obter o ID da empresa atual
-        """
+    def load_company_options(self, companies=None):
+        """Carrega as opções de empresas no combobox"""
         try:
-            logger.debug("O campo empresa não está mais sendo exibido")
-            # Obtém o usuário logado atual
-            if hasattr(self.parent(), 'auth_controller') and hasattr(self.parent(), 'current_user'):
-                current_user = self.parent().current_user
-                if current_user and current_user.get('id'):
-                    self.empresa_id = current_user.get('id')
-                    logger.debug(f"ID do usuário atual definido como empresa_id: {self.empresa_id}")
+            logger.debug(f"Carregando {len(companies) if companies else 0} empresas no modal")
+            self.empresa_combo.clear()
+            # Sempre habilita o ComboBox
+            self.empresa_combo.setEnabled(True)
+            if companies is None or not companies:
+                logger.warning("Nenhuma empresa encontrada para carregar no modal.")
+                self.empresa_combo.addItem("Nenhuma empresa cadastrada", 0)
+                return
+            for company in companies:
+                self.empresa_combo.addItem(company['nome'], company['id'])
+            logger.debug(f"{len(companies)} empresas carregadas no ComboBox.")
+            # Se estiver editando, selecionar a empresa correta
+            if self.equipment_data and self.equipment_data.get('empresa_id'):
+                empresa_id_edicao = self.equipment_data.get('empresa_id')
+                index = self.empresa_combo.findData(empresa_id_edicao)
+                if index >= 0:
+                    self.empresa_combo.setCurrentIndex(index)
+                else:
+                    logger.warning(f"Empresa ID {empresa_id_edicao} do equipamento em edição não encontrada na lista.")
         except Exception as e:
-            logger.error(f"Erro ao configurar empresa_id: {e}")
-            
+            logger.error(f"Erro ao carregar empresas no modal: {str(e)}")
+
     def load_equipment_data(self):
         """Carrega os dados do equipamento para edição"""
         if not self.equipment_data:
             return
-            
+        
         self.tag_input.setText(self.equipment_data.get('tag', ''))
         
         categoria_idx = self.categoria_input.findText(self.equipment_data.get('categoria', ''))
         if categoria_idx >= 0:
             self.categoria_input.setCurrentIndex(categoria_idx)
-            
-        # Obtém o ID da empresa diretamente do equipamento
-        self.empresa_id = self.equipment_data.get('empresa_id', 0)
-        logger.debug(f"ID da empresa obtido do equipamento: {self.empresa_id}")
+        
+        # A seleção da empresa é feita em load_company_options quando chamado pelo admin_ui
+        # Não precisamos definir self.empresa_id aqui explicitamente.
         
         fabricante = self.equipment_data.get('fabricante', '')
         if fabricante:
@@ -591,30 +685,47 @@ class EquipmentModal(QDialog):
             else:
                 self.fluido_input.setCurrentText(fluido)
         
+        # NR-13
+        categoria_nr13 = self.equipment_data.get('categoria_nr13', '')
+        if categoria_nr13:
+            idx = self.categoria_nr13_input.findText(categoria_nr13)
+            if idx >= 0:
+                self.categoria_nr13_input.setCurrentIndex(idx)
+            else:
+                self.categoria_nr13_input.setCurrentText(categoria_nr13)
+        self.pmta_input.setText(self.equipment_data.get('pmta', ''))
+        self.placa_identificacao_input.setText(self.equipment_data.get('placa_identificacao', ''))
+        self.numero_registro_input.setText(self.equipment_data.get('numero_registro', ''))
+        
     def get_data(self):
         """Retorna os dados preenchidos no formulário"""
         tag = self.tag_input.text().strip() or None
         categoria = self.categoria_input.currentText() or None
-        empresa_id = self.empresa_id  # Usamos o ID da empresa armazenado
+        empresa_id = self.empresa_combo.currentData() 
         fabricante = self.fabricante_input.currentText() or None
-        
         ano_fabricacao = str(self.ano_fabricacao_input.value() or 0)
         pressao_projeto = str(self.pressao_projeto_input.value() or 0)
         pressao_trabalho = str(self.pressao_trabalho_input.value() or 0)
         volume = str(self.volume_input.value() or 0)
-        
         fluido = self.fluido_input.currentText() or None
-        
+        categoria_nr13 = self.categoria_nr13_input.currentText() or None
+        pmta = self.pmta_input.text().strip() or None
+        placa_identificacao = self.placa_identificacao_input.text().strip() or None
+        numero_registro = self.numero_registro_input.text().strip() or None
         return {
             'tag': tag,
             'categoria': categoria,
-            'empresa_id': empresa_id,  # Retorna diretamente o ID da empresa
+            'empresa_id': empresa_id,
             'fabricante': fabricante,
             'ano_fabricacao': ano_fabricacao,
             'pressao_projeto': pressao_projeto,
             'pressao_trabalho': pressao_trabalho,
             'volume': volume,
-            'fluido': fluido
+            'fluido': fluido,
+            'categoria_nr13': categoria_nr13,
+            'pmta': pmta,
+            'placa_identificacao': placa_identificacao,
+            'numero_registro': numero_registro
         }
         
     def validate_data(self):
@@ -624,8 +735,10 @@ class EquipmentModal(QDialog):
             self.tag_input.setFocus()
             return False
             
-        if not self.empresa_id:
-            QMessageBox.warning(self, "Erro de Configuração", "O ID da empresa não foi definido corretamente.")
+        # Validar se uma empresa foi selecionada
+        if self.empresa_combo.currentIndex() < 0 or not self.empresa_combo.currentData():
+            QMessageBox.warning(self, "Campos Obrigatórios", "Selecione a empresa à qual o equipamento pertence.")
+            self.empresa_combo.setFocus()
             return False
             
         if self.pressao_projeto_input.value() <= 0:
@@ -797,6 +910,23 @@ class InspectionModal(BaseModal):
             "resultado": self.resultado_input.currentText(),
             "recomendacoes": self.recomendacoes_input.toPlainText().strip()
         }
+        
+    def accept(self):
+        """Valida os campos antes de aceitar o modal"""
+        # Verifica se um equipamento foi selecionado
+        if self.equipamento_input.currentIndex() == -1 or self.equipamento_input.currentText() == "":
+            QMessageBox.warning(self, "Campos Obrigatórios", "Selecione um equipamento.")
+            self.equipamento_input.setFocus()
+            return
+            
+        # Verifica se um engenheiro foi selecionado
+        if self.engenheiro_input.currentIndex() == -1 or self.engenheiro_input.currentText() == "":
+            QMessageBox.warning(self, "Campos Obrigatórios", "Selecione um engenheiro.")
+            self.engenheiro_input.setFocus()
+            return
+            
+        # Se passou por todas as validações, aceita o modal
+        super().accept()
 
 class ReportModal(QDialog):
     """Modal para adicionar/editar relatórios"""
@@ -808,6 +938,7 @@ class ReportModal(QDialog):
         super().__init__(parent)
         self.is_dark = is_dark
         self.setup_ui()
+        self.apply_theme()
         
     def setup_ui(self):
         """Configura a interface do modal"""
@@ -863,46 +994,19 @@ class ReportModal(QDialog):
         # Botão Salvar
         self.save_btn = QPushButton("Salvar")
         self.save_btn.setMinimumHeight(36)
-        self.save_btn.setStyleSheet("""
-            QPushButton {
-                background-color: #28a745;
-                color: white;
-                border: none;
-                padding: 8px 16px;
-                font-weight: bold;
-                border-radius: 4px;
-                min-width: 100px;
-            }
-            QPushButton:hover {
-                background-color: #218838;
-            }
-        """)
         self.save_btn.clicked.connect(self.accept)
         button_box.addWidget(self.save_btn)
         
         # Botão Cancelar
         self.cancel_btn = QPushButton("Cancelar")
         self.cancel_btn.setMinimumHeight(36)
-        self.cancel_btn.setStyleSheet("""
-            QPushButton {
-                background-color: #6c757d;
-                color: white;
-                border: none;
-                padding: 8px 16px;
-                font-weight: bold;
-                border-radius: 4px;
-                min-width: 100px;
-            }
-            QPushButton:hover {
-                background-color: #5a6268;
-            }
-        """)
         self.cancel_btn.clicked.connect(self.reject)
         button_box.addWidget(self.cancel_btn)
         
         layout.addLayout(button_box)
-        
-        # Aplica o tema
+            
+    def apply_theme(self):
+        """Aplica o tema escuro ou claro ao modal"""
         if self.is_dark:
             self.setStyleSheet("""
                 QDialog {
@@ -919,8 +1023,100 @@ class ReportModal(QDialog):
                     border-radius: 4px;
                     padding: 5px;
                 }
+                QComboBox QAbstractItemView {
+                    background-color: #333333;
+                    color: #ffffff;
+                    selection-background-color: #505050;
+                    border: 1px solid #555555;
+                }
+                QComboBox QAbstractItemView::item {
+                    color: #ffffff;
+                }
                 QComboBox:focus, QLineEdit:focus, QDateEdit:focus, QTextEdit:focus {
                     border: 1px solid #2196F3;
+                }
+                QPushButton {
+                    background-color: #0078D7;
+                    color: white;
+                    border: none;
+                    border-radius: 4px;
+                    padding: 8px 16px;
+                    font-weight: bold;
+                    min-width: 100px;
+                }
+                QPushButton:hover {
+                    background-color: #1C97EA;
+                }
+                QPushButton:pressed {
+                    background-color: #00559B;
+                }
+                QPushButton[text="Cancelar"] {
+                    background-color: #6c757d;
+                }
+                QPushButton[text="Cancelar"]:hover {
+                    background-color: #5a6268;
+                }
+                QPushButton[text="Salvar"] {
+                    background-color: #28a745;
+                }
+                QPushButton[text="Salvar"]:hover {
+                    background-color: #218838;
+                }
+            """)
+        else:
+            self.setStyleSheet("""
+                QDialog {
+                    background-color: #f5f5f5;
+                    color: #333333;
+                }
+                QLabel {
+                    color: #333333;
+                }
+                QComboBox, QLineEdit, QDateEdit, QTextEdit {
+                    background-color: white;
+                    color: #333333;
+                    border: 1px solid #cccccc;
+                    border-radius: 4px;
+                    padding: 5px;
+                }
+                QComboBox QAbstractItemView {
+                    background-color: white;
+                    color: #333333;
+                    selection-background-color: #e0e0e0;
+                    border: 1px solid #cccccc;
+                }
+                QComboBox QAbstractItemView::item {
+                    color: #333333;
+                }
+                QComboBox:focus, QLineEdit:focus, QDateEdit:focus, QTextEdit:focus {
+                    border: 1px solid #0078D7;
+                }
+                QPushButton {
+                    background-color: #0078D7;
+                    color: white;
+                    border: none;
+                    border-radius: 4px;
+                    padding: 8px 16px;
+                    font-weight: bold;
+                    min-width: 100px;
+                }
+                QPushButton:hover {
+                    background-color: #1C97EA;
+                }
+                QPushButton:pressed {
+                    background-color: #00559B;
+                }
+                QPushButton[text="Cancelar"] {
+                    background-color: #6c757d;
+                }
+                QPushButton[text="Cancelar"]:hover {
+                    background-color: #5a6268;
+                }
+                QPushButton[text="Salvar"] {
+                    background-color: #28a745;
+                }
+                QPushButton[text="Salvar"]:hover {
+                    background-color: #218838;
                 }
             """)
             
@@ -960,3 +1156,123 @@ class ReportModal(QDialog):
         
         # Aceita o diálogo e fecha
         super().accept() 
+
+class MaintenanceModal(QDialog):
+    """Modal para registrar manutenção de equipamento"""
+    
+    def __init__(self, parent=None, is_dark=True):
+        super().__init__(parent)
+        self.is_dark = is_dark
+        self.initUI()
+        
+    def initUI(self):
+        """Inicializa a interface do usuário"""
+        self.setWindowTitle("Registrar Manutenção")
+        self.setMinimumWidth(400)
+        
+        layout = QVBoxLayout(self)
+        layout.setSpacing(10)
+        
+        # Data da manutenção
+        data_layout = QHBoxLayout()
+        data_label = QLabel("Data da Manutenção:")
+        data_layout.addWidget(data_label)
+        
+        self.data_date = QDateEdit()
+        self.data_date.setCalendarPopup(True)
+        self.data_date.setDate(QDate.currentDate())  # Data atual como padrão
+        self.data_date.setDisplayFormat("dd/MM/yyyy")
+        data_layout.addWidget(self.data_date)
+        
+        layout.addLayout(data_layout)
+        
+        # Frequência de manutenção
+        freq_layout = QHBoxLayout()
+        freq_label = QLabel("Frequência (dias):")
+        freq_layout.addWidget(freq_label)
+        
+        self.freq_input = QLineEdit()
+        self.freq_input.setPlaceholderText("180")
+        freq_layout.addWidget(self.freq_input)
+        
+        layout.addLayout(freq_layout)
+        
+        # Observações
+        layout.addWidget(QLabel("Observações:"))
+        self.observacoes_text = QTextEdit()
+        self.observacoes_text.setMaximumHeight(100)
+        layout.addWidget(self.observacoes_text)
+        
+        # Botões
+        btn_layout = QHBoxLayout()
+        self.cancel_btn = QPushButton("Cancelar")
+        self.cancel_btn.clicked.connect(self.reject)
+        
+        self.submit_btn = QPushButton("Registrar")
+        self.submit_btn.clicked.connect(self.accept)
+        self.submit_btn.setDefault(True)
+        
+        btn_layout.addWidget(self.cancel_btn)
+        btn_layout.addWidget(self.submit_btn)
+        
+        layout.addLayout(btn_layout)
+        
+        # Estilo
+        if self.is_dark:
+            self.setStyleSheet("""
+                QDialog {
+                    background-color: #2D2D30;
+                    color: white;
+                }
+                QLabel {
+                    color: white;
+                }
+                QLineEdit, QTextEdit, QDateEdit {
+                    background-color: #1E1E1E;
+                    border: 1px solid #3F3F46;
+                    color: white;
+                    padding: 5px;
+                }
+                QPushButton {
+                    background-color: #0078D7;
+                    color: white;
+                    border: none;
+                    padding: 8px 16px;
+                    border-radius: 4px;
+                }
+                QPushButton:hover {
+                    background-color: #0063B1;
+                }
+                QPushButton:pressed {
+                    background-color: #004E8C;
+                }
+                QPushButton#cancel_btn {
+                    background-color: #3F3F46;
+                }
+                QPushButton#cancel_btn:hover {
+                    background-color: #505054;
+                }
+                QPushButton#cancel_btn:pressed {
+                    background-color: #606064;
+                }
+            """)
+        
+    def get_data(self):
+        """Retorna os dados do formulário"""
+        data_manutencao = self.data_date.date().toPyDate()
+        
+        # Tenta converter a frequência para um número inteiro
+        frequencia = None
+        if self.freq_input.text().strip():
+            try:
+                frequencia = int(self.freq_input.text().strip())
+            except ValueError:
+                pass
+                
+        observacoes = self.observacoes_text.toPlainText()
+        
+        return {
+            'data_manutencao': data_manutencao,
+            'frequencia': frequencia,
+            'observacoes': observacoes
+        } 

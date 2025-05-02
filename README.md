@@ -20,6 +20,7 @@ Sistema desktop em Python para gestão de inspeções de vasos de pressão, cald
 - [Interface Gráfica](#interface-gráfica)
 - [Dicas de Manutenção](#dicas-de-manutenção)
 - [Licença](#licença)
+- [Controle de Manutenção de Equipamentos](#controle-de-manutenção-de-equipamentos)
 
 ---
 
@@ -318,4 +319,34 @@ Este sistema garante que todos os usuários sempre vejam dados atualizados e que
 
 ## Licença
 
-Este projeto é open-source e pode ser adaptado conforme a necessidade da sua empresa ou cliente. 
+Este projeto é open-source e pode ser adaptado conforme a necessidade da sua empresa ou cliente.
+
+## Controle de Manutenção de Equipamentos
+
+O sistema agora inclui funcionalidades para controle de manutenção dos equipamentos:
+
+### Funcionalidades
+
+- Visualização da data da última manutenção
+- Cálculo automático da próxima manutenção necessária baseado na frequência definida
+- Alerta visual com código de cores:
+  - Vermelho: Manutenção atrasada
+  - Amarelo: Manutenção necessária em menos de 30 dias
+  - Normal: Manutenção em dia
+
+### Como Registrar uma Manutenção
+
+1. Na aba "Equipamentos", selecione o equipamento desejado
+2. Clique no botão "Registrar Manutenção"
+3. Preencha a data da manutenção
+4. Defina a frequência em dias (padrão: 180 dias)
+5. Adicione observações se necessário
+6. Clique em "Registrar"
+
+### Preparação da Base de Dados
+
+Antes de utilizar esta funcionalidade, execute o script para atualizar a estrutura da tabela de equipamentos:
+
+```bash
+python update_equipment_table.py
+``` 
