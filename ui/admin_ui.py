@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import (
     QMessageBox, QTabWidget, QLineEdit, QComboBox,
     QDateEdit, QTextEdit, QFileDialog, QToolButton, QMenu,
     QHeaderView, QDialog, QGridLayout, QFormLayout, QInputDialog,
-    QAction
+    QAction, QApplication
 )
 from PyQt5.QtCore import Qt, QDate, QSize, QTimer, pyqtSignal
 from datetime import datetime, timedelta
@@ -227,7 +227,7 @@ class AdminWindow(QMainWindow):
         if not show_text:
             button.setFixedSize(40, 40)  # Tamanho quadrado para botões sem texto
         else:
-            button.setMinimumSize(100, 40)  # Tamanho mínimo para botões com texto
+            button.setMinimumSize(150, 40)  # Tamanho mínimo para botões com texto (aumentado de 100 para 150)
             
         button.setToolTip(tooltip)  # Adiciona dica ao passar o mouse
         button.clicked.connect(callback)
@@ -543,7 +543,7 @@ class AdminWindow(QMainWindow):
             
             # Botão Ativar/Desativar
             logger.debug("Criando botão toggle equipamento")
-            self.toggle_equipment_button = self.create_crud_button('toggle', "Alternar Estado", self.toggle_equipment)
+            self.toggle_equipment_button = self.create_crud_button('toggle', "Alternar Estado", self.toggle_equipment, show_text=True, text="Ativar/Desativar")
             equipment_buttons_container.addWidget(self.toggle_equipment_button)
             
             # Botão Excluir
@@ -556,6 +556,12 @@ class AdminWindow(QMainWindow):
             self.maintenance_button = self.create_crud_button('maintenance', "Registrar Manutenção", self.register_maintenance)
             equipment_buttons_container.addWidget(self.maintenance_button)
             
+            # Definir visibilidade inicial dos botões que requerem seleção
+            self.edit_equipment_button.setEnabled(False)
+            self.toggle_equipment_button.setEnabled(False)
+            self.delete_equipment_button.setEnabled(False)
+            self.maintenance_button.setEnabled(False)
+            
             equipment_top_container.addLayout(equipment_buttons_container)
             equipment_top_container.addStretch()
             
@@ -567,22 +573,25 @@ class AdminWindow(QMainWindow):
             equipment_search_container.addWidget(equipment_search_label)
             
             # Campo de pesquisa
-            self.equipment_search_input = QLineEdit()
-            self.equipment_search_input.setPlaceholderText("Digite para filtrar...")
-            self.equipment_search_input.textChanged.connect(self.filter_equipment)
-            equipment_search_container.addWidget(self.equipment_search_input)
+            self.equipment_search_box = QLineEdit()
+            self.equipment_search_box.setPlaceholderText("Digite para filtrar...")
+            self.equipment_search_box.textChanged.connect(self.filter_equipment)
+            equipment_search_container.addWidget(self.equipment_search_box)
             
             # Filtro por empresa
             equipment_company_label = QLabel("Empresa:")
             equipment_search_container.addWidget(equipment_company_label)
             
-            self.equipment_company_combo = QComboBox()
-            self.equipment_company_combo.currentIndexChanged.connect(self.filter_equipment_by_company)
-            equipment_search_container.addWidget(self.equipment_company_combo)
+            self.equipment_company_selector = QComboBox()
+            self.equipment_company_selector.currentIndexChanged.connect(self.filter_equipment_by_company)
+            equipment_search_container.addWidget(self.equipment_company_selector)
             
             equipment_top_container.addLayout(equipment_search_container)
             
             equipment_layout.addLayout(equipment_top_container)
+            
+            # Carregar empresas no combobox de filtro
+            self.load_companies_to_equipment_combobox()
             
             # Tabela de Equipamentos
             logger.debug("Criando tabela de equipamentos")
@@ -790,16 +799,18 @@ class AdminWindow(QMainWindow):
             self.tabs.setIconSize(QSize(35, 35))
             layout.addWidget(self.tabs)
             
-            # Barra inferior com botão de configurações
+            # Barra inferior com versão do sistema
             logger.debug("Configurando barra inferior")
             bottom_bar = QHBoxLayout()
-            bottom_bar.setAlignment(Qt.AlignRight)
             
-            # Botão de tema
-            self.theme_button = self.create_crud_button("theme", "Alternar tema claro/escuro", self.toggle_theme)
-            bottom_bar.addWidget(self.theme_button)
+            # Informações da versão
+            version_label = QLabel("Sistema de Inspeções NR-13 v1.0")
+            version_label.setStyleSheet("color: #777777; font-size: 11px;")
+            bottom_bar.addWidget(version_label)
             
-            bottom_bar.addStretch()
+            # Removido o spacer e o botão de logout para tornar a barra menor
+            # Adicionado margem mínima à direita para não cortar o texto
+            bottom_bar.setContentsMargins(0, 0, 10, 0)
             
             layout.addLayout(bottom_bar)
             
@@ -814,8 +825,18 @@ class AdminWindow(QMainWindow):
     def apply_theme(self):
         """Aplica o tema escuro ou claro à interface"""
         try:
+            logger.debug(f"Aplicando tema {'escuro' if self.is_dark else 'claro'}")
+            QApplication.setOverrideCursor(Qt.WaitCursor)  # Mostra cursor de "aguarde" durante a operação
+            
+            # Bloqueie os sinais das tabelas para evitar atualizações desnecessárias
+            self.user_table.blockSignals(True)
+            self.equipment_table.blockSignals(True)
+            self.inspection_table.blockSignals(True)
+            self.report_table.blockSignals(True)
+            
+            # Cria os estilos antes de aplicar (para melhor performance)
             if self.is_dark:
-                self.setStyleSheet(Styles.get_dark_theme())
+                app_style = Styles.get_dark_theme()
                 
                 # Estilos específicos para tabelas no modo escuro
                 table_style = """
@@ -830,6 +851,7 @@ class AdminWindow(QMainWindow):
                         color: #ffffff;
                         padding: 8px;
                         border: 1px solid #3a3d40;
+                        font-weight: bold;
                     }
                     QTableWidget::item:selected {
                         background-color: #3a3d40;
@@ -839,35 +861,22 @@ class AdminWindow(QMainWindow):
                 
                 # Estilo específico para o botão de tema no modo escuro (cinza claro)
                 theme_button_style = """
-                    QPushButton {
+                    QToolButton {
                         background-color: #aaaaaa;
                         color: #121212;
                         border: none;
                         border-radius: 4px;
-                        padding: 8px;
+                        padding: 5px;
                     }
-                    QPushButton:hover {
+                    QToolButton:hover {
                         background-color: #999999;
                     }
-                    QPushButton:pressed {
+                    QToolButton:pressed {
                         background-color: #888888;
                     }
                 """
-                self.theme_button.setStyleSheet(theme_button_style)
-                
-                # Aplica estilos às tabelas
-                self.user_table.setStyleSheet(table_style)
-                self.equipment_table.setStyleSheet(table_style)
-                self.inspection_table.setStyleSheet(table_style)
-                self.report_table.setStyleSheet(table_style)
-                
-                # Ativa cores alternadas
-                self.user_table.setAlternatingRowColors(True)
-                self.equipment_table.setAlternatingRowColors(True)
-                self.inspection_table.setAlternatingRowColors(True)
-                self.report_table.setAlternatingRowColors(True)
             else:
-                self.setStyleSheet(Styles.get_light_theme())
+                app_style = Styles.get_light_theme()
                 
                 # Estilos específicos para tabelas no modo claro
                 table_style = """
@@ -882,6 +891,7 @@ class AdminWindow(QMainWindow):
                         color: #000000;
                         padding: 8px;
                         border: 1px solid #d0d0d0;
+                        font-weight: bold;
                     }
                     QTableWidget::item:selected {
                         background-color: #e0e0e0;
@@ -891,55 +901,70 @@ class AdminWindow(QMainWindow):
                 
                 # Estilo específico para o botão de tema no modo claro (preto)
                 theme_button_style = """
-                    QPushButton {
+                    QToolButton {
                         background-color: #000000;
                         color: white;
                         border: none;
                         border-radius: 4px;
-                        padding: 8px;
+                        padding: 5px;
                     }
-                    QPushButton:hover {
+                    QToolButton:hover {
                         background-color: #333333;
                     }
-                    QPushButton:pressed {
+                    QToolButton:pressed {
                         background-color: #222222;
                     }
                 """
-                self.theme_button.setStyleSheet(theme_button_style)
-                
-                # Aplica estilos às tabelas
-                self.user_table.setStyleSheet(table_style)
-                self.equipment_table.setStyleSheet(table_style)
-                self.inspection_table.setStyleSheet(table_style)
-                self.report_table.setStyleSheet(table_style)
-                
-                # Ativa cores alternadas
-                self.user_table.setAlternatingRowColors(True)
-                self.equipment_table.setAlternatingRowColors(True)
-                self.inspection_table.setAlternatingRowColors(True)
-                self.report_table.setAlternatingRowColors(True)
-                
+            
+            # Aplica os estilos a toda a aplicação
+            self.setStyleSheet(app_style)
+            
+            # Aplica estilo ao botão de tema (apenas o do cabeçalho, o da barra inferior foi removido)
+            self.theme_button.setStyleSheet(theme_button_style)
+            
+            # Aplica estilos às tabelas em um único lote
+            for table in [self.user_table, self.equipment_table, self.inspection_table, self.report_table]:
+                table.setStyleSheet(table_style)
+                table.setAlternatingRowColors(True)
+            
             # Atualiza os ícones das abas ao trocar o tema
-            self.tabs.setTabIcon(0, self.get_tab_icon("user.png"))
-            self.tabs.setTabIcon(1, self.get_tab_icon("equipamentos.png"))
-            self.tabs.setTabIcon(2, self.get_tab_icon("inspecoes.png"))
-            self.tabs.setTabIcon(3, self.get_tab_icon("relatorios.png"))
+            for idx, icon_name in enumerate(["user.png", "equipamentos.png", "inspecoes.png", "relatorios.png"]):
+                self.tabs.setTabIcon(idx, self.get_tab_icon(icon_name))
             
             # Atualiza o botão de ativar/desativar
             self.update_toggle_button()
             
-            # Atualizar ícones de logout e tema
+            # Atualizar ícones dos botões
             self.theme_button.setIcon(self.create_icon_from_svg(self.icons['theme']))
             self.logout_button.setIcon(self.create_icon_from_svg(self.icons['logout']))
             
+            # Desbloqueia os sinais
+            self.user_table.blockSignals(False)
+            self.equipment_table.blockSignals(False)
+            self.inspection_table.blockSignals(False)
+            self.report_table.blockSignals(False)
+            
+            # Forçar uma atualização visual das tabelas
+            for table in [self.user_table, self.equipment_table, self.inspection_table, self.report_table]:
+                table.update()
+            
+            QApplication.restoreOverrideCursor()  # Restaura o cursor normal
+            logger.debug(f"Tema {'escuro' if self.is_dark else 'claro'} aplicado com sucesso")
+            
         except Exception as e:
+            QApplication.restoreOverrideCursor()  # Restaura o cursor em caso de erro
             logger.error(f"Erro ao aplicar tema: {str(e)}")
+            logger.error(traceback.format_exc())
             QMessageBox.critical(self, "Erro", f"Erro ao aplicar tema: {str(e)}")
 
     def toggle_theme(self):
         """Alterna entre tema escuro e claro"""
+        logger.debug("Alternando tema")
+        # Altera a flag do tema
         self.is_dark = not self.is_dark
-        self.apply_theme()
+        
+        # Aplica o tema com otimizações para melhor performance
+        QTimer.singleShot(10, self.apply_theme)  # Executar após 10ms para dar tempo à interface atualizar
         
     def load_users(self):
         """Carrega os usuários na tabela"""
@@ -1131,9 +1156,13 @@ class AdminWindow(QMainWindow):
                             
                             # Verifica se está atrasado ou próximo
                             if dias_restantes < 0 and item.get('ativo', 1):  # Atrasado e ativo
-                                # Cores mais suaves para manter consistência visual
-                                cor_linha = QColor(255, 200, 200)  # Vermelho pastel
-                                cor_texto = QColor(139, 0, 0)     # Vermelho escuro para contraste
+                                # Cores baseadas no tema atual
+                                if self.is_dark:
+                                    cor_linha = QColor(90, 10, 10)  # Vermelho muito escuro para tema escuro
+                                    cor_texto = QColor(255, 130, 130)  # Texto vermelho claro
+                                else:
+                                    cor_linha = QColor(255, 200, 200)  # Vermelho pastel
+                                    cor_texto = QColor(139, 0, 0)  # Vermelho escuro para contraste
                                 
                                 # Adiciona indicador visual de manutenção atrasada
                                 proxima_manutencao_item.setText("❗ " + data_proxima_str)
@@ -1144,10 +1173,32 @@ class AdminWindow(QMainWindow):
                                         cell.setBackground(cor_linha)
                                         cell.setForeground(cor_texto)
                                 logger.debug(f"Equipamento {item.get('tag')} com manutenção ATRASADA")
-                            elif dias_restantes <= 30 and item.get('ativo', 1):  # Próximo e ativo
-                                # Cores mais suaves para manter consistência visual
-                                cor_linha = QColor(255, 248, 209)  # Amarelo pastel
-                                cor_texto = QColor(138, 109, 0)    # Âmbar escuro para contraste
+                            elif dias_restantes <= 7 and item.get('ativo', 1):  # Próximo (1 semana) e ativo
+                                # Cores baseadas no tema atual
+                                if self.is_dark:
+                                    cor_linha = QColor(90, 20, 20)  # Vermelho escuro para tema escuro
+                                    cor_texto = QColor(255, 150, 150)  # Texto vermelho claro
+                                else:
+                                    cor_linha = QColor(255, 200, 200)  # Vermelho claro
+                                    cor_texto = QColor(139, 0, 0)  # Texto escuro para contraste
+                                
+                                # Adiciona indicador visual de manutenção próxima
+                                proxima_manutencao_item.setText("❗ " + data_proxima_str)
+                                
+                                for col in range(self.equipment_table.columnCount()):
+                                    cell = self.equipment_table.item(i, col)
+                                    if cell:
+                                        cell.setBackground(cor_linha)
+                                        cell.setForeground(cor_texto)
+                                logger.debug(f"Equipamento {item.get('tag')} com manutenção URGENTE (≤ 7 dias)")
+                            elif dias_restantes <= 15 and item.get('ativo', 1):  # Próximo (15 dias) e ativo
+                                # Cores baseadas no tema atual
+                                if self.is_dark:
+                                    cor_linha = QColor(90, 60, 10)  # Laranja escuro para tema escuro
+                                    cor_texto = QColor(255, 200, 120)  # Texto laranja claro
+                                else:
+                                    cor_linha = QColor(255, 230, 180)  # Laranja claro
+                                    cor_texto = QColor(102, 51, 0)  # Marrom escuro para contraste
                                 
                                 # Adiciona indicador visual de manutenção próxima
                                 proxima_manutencao_item.setText("⚠️ " + data_proxima_str)
@@ -1157,7 +1208,25 @@ class AdminWindow(QMainWindow):
                                     if cell:
                                         cell.setBackground(cor_linha)
                                         cell.setForeground(cor_texto)
-                                logger.debug(f"Equipamento {item.get('tag')} com manutenção PRÓXIMA ({dias_restantes} dias)")
+                                logger.debug(f"Equipamento {item.get('tag')} com manutenção ALTA (≤ 15 dias)")
+                            elif dias_restantes <= 30 and item.get('ativo', 1):  # Próximo (30 dias) e ativo
+                                # Cores baseadas no tema atual
+                                if self.is_dark:
+                                    cor_linha = QColor(90, 90, 10)  # Amarelo escuro para tema escuro
+                                    cor_texto = QColor(255, 255, 150)  # Texto amarelo claro
+                                else:
+                                    cor_linha = QColor(255, 255, 180)  # Amarelo claro
+                                    cor_texto = QColor(102, 102, 0)  # Amarelo escuro para contraste
+                                
+                                # Adiciona indicador visual de manutenção próxima
+                                proxima_manutencao_item.setText("⚠️ " + data_proxima_str)
+                                
+                                for col in range(self.equipment_table.columnCount()):
+                                    cell = self.equipment_table.item(i, col)
+                                    if cell:
+                                        cell.setBackground(cor_linha)
+                                        cell.setForeground(cor_texto)
+                                logger.debug(f"Equipamento {item.get('tag')} com manutenção MÉDIA (≤ 30 dias)")
                         else:
                             proxima_manutencao_item = QTableWidgetItem("Não programada")
                             proxima_manutencao_item.setFlags(proxima_manutencao_item.flags() & ~Qt.ItemIsEditable)
@@ -1944,11 +2013,11 @@ class AdminWindow(QMainWindow):
                     )
                     
                     if success:
-                    QMessageBox.information(self, "Sucesso", "Usuário atualizado com sucesso!")
-                    self.load_users()
-                    # Se estamos editando um engenheiro, atualizar a lista de engenheiros também
-                    if tipo_acesso == "eng" or user.get('tipo_acesso') == "eng":
-                        self.load_engineers()
+                        QMessageBox.information(self, "Sucesso", "Usuário atualizado com sucesso!")
+                        self.load_users()
+                        # Se estamos editando um engenheiro, atualizar a lista de engenheiros também
+                        if tipo_acesso == "eng" or user.get('tipo_acesso') == "eng":
+                            self.load_engineers()
                     else:
                         QMessageBox.critical(self, "Erro", f"Erro ao atualizar usuário: {message}")
                 else:
@@ -2644,43 +2713,40 @@ class AdminWindow(QMainWindow):
             QMessageBox.critical(self, "Erro", f"Erro ao abrir modal: {str(e)}")
 
     def filter_equipment(self, text):
-        """
-        Filtra os equipamentos na tabela com base no texto inserido
-        """
+        """Filtra os equipamentos na tabela com base no texto inserido e empresa selecionada"""
         try:
-            logger.debug(f"Filtrando equipamentos com texto: '{text}'")
             search_text = text.lower()
+            logger.debug(f"Filtrando equipamentos com texto: '{search_text}'")
             
-            # Resetar visibilidade de todas as linhas se a pesquisa estiver vazia
-            if not search_text:
-                for row in range(self.equipment_table.rowCount()):
-                    self.equipment_table.setRowHidden(row, False)
-                logger.debug("Filtro de equipamentos limpo - mostrando todas as linhas")
-                return
+            company_id = self.equipment_company_selector.currentData()
+            logger.debug(f"Empresa selecionada ID={company_id}")
             
-            # Aplicar filtro apenas se houver texto de pesquisa
-            hidden_count = 0    
-            # Itera por todas as linhas da tabela
             for row in range(self.equipment_table.rowCount()):
-                should_show = False
+                should_show = True
                 
-                # Checa todas as colunas
-                for col in range(self.equipment_table.columnCount()):
-                    item = self.equipment_table.item(row, col)
-                    if item and search_text in item.text().lower():
-                        should_show = True
-                        break
-                
-                # Mostra ou oculta a linha com base na correspondência
+                # Filtro por empresa
+                if company_id is not None:
+                    item_empresa = self.equipment_table.item(row, 2)  # Coluna Empresa
+                    if not item_empresa or int(item_empresa.data(Qt.UserRole)) != company_id:
+                        should_show = False
+                        
+                # Filtro por texto
+                if should_show and search_text:
+                    found = False
+                    for col in range(self.equipment_table.columnCount()):
+                        item = self.equipment_table.item(row, col)
+                        if item and search_text in item.text().lower():
+                            found = True
+                            break
+                    should_show = found
+                    
                 self.equipment_table.setRowHidden(row, not should_show)
-                if not should_show:
-                    hidden_count += 1
-            
-            logger.debug(f"Filtro de equipamentos aplicado com sucesso - {hidden_count} linhas ocultas")
+                
+            logger.debug("Filtro de equipamentos aplicado com sucesso")
         except Exception as e:
             logger.error(f"Erro ao filtrar equipamentos: {str(e)}")
             logger.error(traceback.format_exc())
-
+    
     def get_equipment_id(self, row):
         """
         Obtém o ID do equipamento a partir de uma linha selecionada na tabela.
@@ -2871,10 +2937,6 @@ class AdminWindow(QMainWindow):
     def update_toggle_equipment_button(self):
         """Atualiza o estado do botão de toggle de acordo com o item selecionado"""
         try:
-            # Verificar se está visível, se não, sair
-            if not self.delete_equipment_button.isVisible():
-                return
-
             # Obter o ID do equipamento selecionado
             equipment_id = self.get_selected_equipment_id()
             
@@ -2904,11 +2966,11 @@ class AdminWindow(QMainWindow):
             if is_active:
                 self.toggle_equipment_button.setText("Desativar")
                 self.toggle_equipment_button.setToolTip("Desativar este equipamento")
-                new_style = self.button_style['toggle'].replace("background-color: #6c757d;", "background-color: #dc3545;")
+                new_style = self.button_style['delete'].replace("background-color: #dc3545;", "background-color: #dc3545;")
             else:
                 self.toggle_equipment_button.setText("Ativar")
                 self.toggle_equipment_button.setToolTip("Ativar este equipamento")
-                new_style = self.button_style['toggle'].replace("background-color: #6c757d;", "background-color: #28a745;")
+                new_style = self.button_style['add'].replace("background-color: #28a745;", "background-color: #28a745;")
             
             self.toggle_equipment_button.setStyleSheet(new_style)
             self.toggle_equipment_button.setEnabled(True)
@@ -3119,6 +3181,77 @@ class AdminWindow(QMainWindow):
                 status_item = QTableWidgetItem(status)
                 status_item.setFlags(status_item.flags() & ~Qt.ItemIsEditable)
                 self.company_equipment_table.setItem(i, 8, status_item)
+                
+                # Verificar se há dados de manutenção para colorir a linha
+                frequencia = item.get('frequencia_manutencao')
+                data_ultima = item.get('data_ultima_manutencao')
+                
+                if frequencia and data_ultima and item.get('ativo', 1):
+                    try:
+                        # Calcular próxima manutenção
+                        data_atual = datetime.now().date()
+                        data_ultima_obj = datetime.strptime(data_ultima, "%Y-%m-%d").date()
+                        data_proxima = data_ultima_obj + timedelta(days=int(frequencia))
+                        data_proxima_str = data_proxima.strftime("%Y-%m-%d")
+                        
+                        # Calcular dias restantes
+                        dias_restantes = (data_proxima - data_atual).days
+                        
+                        # Adicionar coluna para data de próxima manutenção
+                        proxima_item = QTableWidgetItem(data_proxima_str)
+                        proxima_item.setFlags(proxima_item.flags() & ~Qt.ItemIsEditable)
+                        
+                        # Definir cores para manutenções próximas
+                        if dias_restantes < 0:  # Atrasado
+                            if self.is_dark:
+                                cor_linha = QColor(90, 10, 10)  # Vermelho muito escuro para tema escuro
+                                cor_texto = QColor(255, 130, 130)  # Texto vermelho claro
+                            else:
+                                cor_linha = QColor(255, 200, 200)  # Vermelho pastel
+                                cor_texto = QColor(139, 0, 0)  # Vermelho escuro para contraste
+                            
+                            # Adiciona indicador visual de manutenção atrasada
+                            tag_item.setText("❗ " + tag_item.text())
+                        elif dias_restantes <= 7:  # Próximo (1 semana)
+                            if self.is_dark:
+                                cor_linha = QColor(90, 20, 20)  # Vermelho escuro para tema escuro
+                                cor_texto = QColor(255, 150, 150)  # Texto vermelho claro
+                            else:
+                                cor_linha = QColor(255, 200, 200)  # Vermelho claro
+                                cor_texto = QColor(139, 0, 0)  # Texto escuro para contraste
+                            
+                            # Adiciona indicador visual de manutenção próxima
+                            tag_item.setText("❗ " + tag_item.text())
+                        elif dias_restantes <= 15:  # Próximo (15 dias)
+                            if self.is_dark:
+                                cor_linha = QColor(90, 60, 10)  # Laranja escuro para tema escuro
+                                cor_texto = QColor(255, 200, 120)  # Texto laranja claro
+                            else:
+                                cor_linha = QColor(255, 230, 180)  # Laranja claro
+                                cor_texto = QColor(102, 51, 0)  # Marrom escuro para contraste
+                            
+                            # Adiciona indicador visual de manutenção próxima
+                            tag_item.setText("⚠️ " + tag_item.text())
+                        elif dias_restantes <= 30:  # Próximo (30 dias)
+                            if self.is_dark:
+                                cor_linha = QColor(90, 90, 10)  # Amarelo escuro para tema escuro
+                                cor_texto = QColor(255, 255, 150)  # Texto amarelo claro
+                            else:
+                                cor_linha = QColor(255, 255, 180)  # Amarelo claro
+                                cor_texto = QColor(102, 102, 0)  # Amarelo escuro para contraste
+                            
+                            # Adiciona indicador visual de manutenção próxima
+                            tag_item.setText("⚠️ " + tag_item.text())
+                        
+                        # Se definimos uma cor, aplicar à linha
+                        if 'cor_linha' in locals() and 'cor_texto' in locals():
+                            for col in range(self.company_equipment_table.columnCount()):
+                                cell = self.company_equipment_table.item(row_index, col)
+                                if cell:
+                                    cell.setBackground(cor_linha)
+                                    cell.setForeground(cor_texto)
+                    except Exception as e:
+                        logger.error(f"Erro ao calcular manutenção para equipamento: {str(e)}")
             
             logger.debug(f"Carregados {len(company_equipment)} equipamentos da empresa na tabela")
         except Exception as e:
@@ -3348,42 +3481,64 @@ class AdminWindow(QMainWindow):
     def load_companies_to_equipment_combobox(self):
         """Carrega as empresas no combobox de filtro da aba Equipamentos"""
         try:
+            logger.debug("Carregando empresas no combobox de equipamentos")
             self.equipment_company_selector.blockSignals(True)
             self.equipment_company_selector.clear()
             self.equipment_company_selector.addItem("Todas as empresas", None)
+            
+            # Obter empresas
             companies = self.auth_controller.get_companies()
+            logger.debug(f"Obtidas {len(companies)} empresas")
+            
+            # Adicionar empresas ao combobox
             for company in companies:
                 self.equipment_company_selector.addItem(company['nome'], company['id'])
+                
+            logger.debug("Empresas carregadas com sucesso no combobox de equipamentos")
         except Exception as e:
             logger.error(f"Erro ao carregar empresas no combobox de equipamentos: {str(e)}")
             logger.error(traceback.format_exc())
         finally:
             self.equipment_company_selector.blockSignals(False)
-
+    
     def filter_equipment_by_company(self):
         """Filtra a tabela de equipamentos pela empresa selecionada no ComboBox"""
-        company_id = self.equipment_company_selector.currentData()
-        for row in range(self.equipment_table.rowCount()):
-            item = self.equipment_table.item(row, 2)  # Coluna Empresa
-            if company_id is None or (item and int(item.data(Qt.UserRole)) == company_id):
-                self.equipment_table.setRowHidden(row, False)
-            else:
-                self.equipment_table.setRowHidden(row, True)
-        # Também aplicar o filtro de texto, se houver
-        self.filter_equipment(self.equipment_search_box.text())
-
+        try:
+            company_id = self.equipment_company_selector.currentData()
+            logger.debug(f"Filtrando equipamentos por empresa ID={company_id}")
+            
+            for row in range(self.equipment_table.rowCount()):
+                item = self.equipment_table.item(row, 2)  # Coluna Empresa
+                if company_id is None or (item and int(item.data(Qt.UserRole)) == company_id):
+                    self.equipment_table.setRowHidden(row, False)
+                else:
+                    self.equipment_table.setRowHidden(row, True)
+                    
+            # Também aplicar o filtro de texto, se houver
+            self.filter_equipment(self.equipment_search_box.text())
+            logger.debug("Filtro por empresa aplicado com sucesso")
+        except Exception as e:
+            logger.error(f"Erro ao filtrar equipamentos por empresa: {str(e)}")
+            logger.error(traceback.format_exc())
+    
     def filter_equipment(self, text):
         """Filtra os equipamentos na tabela com base no texto inserido e empresa selecionada"""
         try:
             search_text = text.lower()
+            logger.debug(f"Filtrando equipamentos com texto: '{search_text}'")
+            
             company_id = self.equipment_company_selector.currentData()
+            logger.debug(f"Empresa selecionada ID={company_id}")
+            
             for row in range(self.equipment_table.rowCount()):
                 should_show = True
+                
                 # Filtro por empresa
                 if company_id is not None:
                     item_empresa = self.equipment_table.item(row, 2)  # Coluna Empresa
                     if not item_empresa or int(item_empresa.data(Qt.UserRole)) != company_id:
                         should_show = False
+                        
                 # Filtro por texto
                 if should_show and search_text:
                     found = False
@@ -3393,11 +3548,14 @@ class AdminWindow(QMainWindow):
                             found = True
                             break
                     should_show = found
+                    
                 self.equipment_table.setRowHidden(row, not should_show)
+                
+            logger.debug("Filtro de equipamentos aplicado com sucesso")
         except Exception as e:
             logger.error(f"Erro ao filtrar equipamentos: {str(e)}")
             logger.error(traceback.format_exc())
-
+    
     def load_equipment(self):
         """Carrega todos os equipamentos na tabela, incluindo o ID da empresa como UserRole na coluna Empresa"""
         try:
@@ -3451,6 +3609,7 @@ class AdminWindow(QMainWindow):
                 pressao_projeto_item = QTableWidgetItem(str(item.get('pressao_projeto', '')))
                 pressao_projeto_item.setFlags(pressao_projeto_item.flags() & ~Qt.ItemIsEditable)
                 self.equipment_table.setItem(i, 5, pressao_projeto_item)
+                
                 
                 pressao_trabalho_item = QTableWidgetItem(str(item.get('pressao_trabalho', '')))
                 pressao_trabalho_item.setFlags(pressao_trabalho_item.flags() & ~Qt.ItemIsEditable)
@@ -3546,9 +3705,13 @@ class AdminWindow(QMainWindow):
                             
                             # Verifica se está atrasado ou próximo
                             if dias_restantes < 0 and item.get('ativo', 1):  # Atrasado e ativo
-                                # Cores mais suaves para manter consistência visual
-                                cor_linha = QColor(255, 200, 200)  # Vermelho pastel
-                                cor_texto = QColor(139, 0, 0)     # Vermelho escuro para contraste
+                                # Cores baseadas no tema atual
+                                if self.is_dark:
+                                    cor_linha = QColor(90, 10, 10)  # Vermelho muito escuro para tema escuro
+                                    cor_texto = QColor(255, 130, 130)  # Texto vermelho claro
+                                else:
+                                    cor_linha = QColor(255, 200, 200)  # Vermelho pastel
+                                    cor_texto = QColor(139, 0, 0)  # Vermelho escuro para contraste
                                 
                                 # Adiciona indicador visual de manutenção atrasada
                                 proxima_manutencao_item.setText("❗ " + data_proxima_str)
@@ -3559,10 +3722,32 @@ class AdminWindow(QMainWindow):
                                         cell.setBackground(cor_linha)
                                         cell.setForeground(cor_texto)
                                 logger.debug(f"Equipamento {item.get('tag')} com manutenção ATRASADA")
-                            elif dias_restantes <= 30 and item.get('ativo', 1):  # Próximo e ativo
-                                # Cores mais suaves para manter consistência visual
-                                cor_linha = QColor(255, 248, 209)  # Amarelo pastel
-                                cor_texto = QColor(138, 109, 0)    # Âmbar escuro para contraste
+                            elif dias_restantes <= 7 and item.get('ativo', 1):  # Próximo (1 semana) e ativo
+                                # Cores baseadas no tema atual
+                                if self.is_dark:
+                                    cor_linha = QColor(90, 20, 20)  # Vermelho escuro para tema escuro
+                                    cor_texto = QColor(255, 150, 150)  # Texto vermelho claro
+                                else:
+                                    cor_linha = QColor(255, 200, 200)  # Vermelho claro
+                                    cor_texto = QColor(139, 0, 0)  # Texto escuro para contraste
+                                
+                                # Adiciona indicador visual de manutenção próxima
+                                proxima_manutencao_item.setText("❗ " + data_proxima_str)
+                                
+                                for col in range(self.equipment_table.columnCount()):
+                                    cell = self.equipment_table.item(i, col)
+                                    if cell:
+                                        cell.setBackground(cor_linha)
+                                        cell.setForeground(cor_texto)
+                                logger.debug(f"Equipamento {item.get('tag')} com manutenção URGENTE (≤ 7 dias)")
+                            elif dias_restantes <= 15 and item.get('ativo', 1):  # Próximo (15 dias) e ativo
+                                # Cores baseadas no tema atual
+                                if self.is_dark:
+                                    cor_linha = QColor(90, 60, 10)  # Laranja escuro para tema escuro
+                                    cor_texto = QColor(255, 200, 120)  # Texto laranja claro
+                                else:
+                                    cor_linha = QColor(255, 230, 180)  # Laranja claro
+                                    cor_texto = QColor(102, 51, 0)  # Marrom escuro para contraste
                                 
                                 # Adiciona indicador visual de manutenção próxima
                                 proxima_manutencao_item.setText("⚠️ " + data_proxima_str)
@@ -3572,7 +3757,25 @@ class AdminWindow(QMainWindow):
                                     if cell:
                                         cell.setBackground(cor_linha)
                                         cell.setForeground(cor_texto)
-                                logger.debug(f"Equipamento {item.get('tag')} com manutenção PRÓXIMA ({dias_restantes} dias)")
+                                logger.debug(f"Equipamento {item.get('tag')} com manutenção ALTA (≤ 15 dias)")
+                            elif dias_restantes <= 30 and item.get('ativo', 1):  # Próximo (30 dias) e ativo
+                                # Cores baseadas no tema atual
+                                if self.is_dark:
+                                    cor_linha = QColor(90, 90, 10)  # Amarelo escuro para tema escuro
+                                    cor_texto = QColor(255, 255, 150)  # Texto amarelo claro
+                                else:
+                                    cor_linha = QColor(255, 255, 180)  # Amarelo claro
+                                    cor_texto = QColor(102, 102, 0)  # Amarelo escuro para contraste
+                                
+                                # Adiciona indicador visual de manutenção próxima
+                                proxima_manutencao_item.setText("⚠️ " + data_proxima_str)
+                                
+                                for col in range(self.equipment_table.columnCount()):
+                                    cell = self.equipment_table.item(i, col)
+                                    if cell:
+                                        cell.setBackground(cor_linha)
+                                        cell.setForeground(cor_texto)
+                                logger.debug(f"Equipamento {item.get('tag')} com manutenção MÉDIA (≤ 30 dias)")
                         else:
                             proxima_manutencao_item = QTableWidgetItem("Não programada")
                             proxima_manutencao_item.setFlags(proxima_manutencao_item.flags() & ~Qt.ItemIsEditable)

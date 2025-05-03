@@ -578,3 +578,100 @@ class AuthController:
         finally:
             if 'cursor' in locals():
                 cursor.close() 
+                
+    def get_company_id_by_name(self, company_name: str) -> Optional[int]:
+        """
+        Retorna o ID da empresa com base no nome.
+        
+        Args:
+            company_name: Nome da empresa
+            
+        Returns:
+            Optional[int]: ID da empresa ou None se não encontrada
+        """
+        if not company_name:
+            logger.warning("Nome da empresa não fornecido")
+            return None
+            
+        try:
+            # Garante que a conexão está ativa
+            self._ensure_connection()
+            
+            logger.debug(f"Buscando empresa com nome {company_name}")
+            conn = self.connection
+            cursor = conn.cursor()
+            
+            # Tentar encontrar pelo campo 'empresa' primeiro
+            cursor.execute("""
+                SELECT TOP 1 id FROM usuarios 
+                WHERE (empresa = ? OR nome = ?) AND tipo_acesso = 'cliente' AND ativo = 1
+            """, (company_name, company_name))
+            
+            row = cursor.fetchone()
+            if not row:
+                logger.warning(f"Nenhuma empresa encontrada com o nome {company_name}")
+                return None
+                
+            logger.debug(f"Empresa {company_name} encontrada com ID {row[0]}")
+            return row[0]
+            
+        except Exception as e:
+            logger.error(f"Erro ao buscar empresa {company_name}: {str(e)}")
+            logger.error(traceback.format_exc())
+            return None
+            
+        finally:
+            if 'cursor' in locals():
+                cursor.close()
+                
+    def get_company_by_id(self, company_id: int) -> Optional[dict]:
+        """
+        Retorna os dados de uma empresa específica pelo ID.
+        
+        Args:
+            company_id: ID da empresa (ID do usuário cliente)
+            
+        Returns:
+            Optional[dict]: Dados da empresa ou None se não encontrada
+        """
+        if not company_id:
+            logger.warning("ID da empresa não fornecido")
+            return None
+            
+        try:
+            # Garante que a conexão está ativa
+            self._ensure_connection()
+            
+            logger.debug(f"Buscando empresa com ID {company_id}")
+            conn = self.connection
+            cursor = conn.cursor()
+            
+            cursor.execute("""
+                SELECT id, nome, empresa, email 
+                FROM usuarios 
+                WHERE id = ? AND tipo_acesso = 'cliente'
+            """, (company_id,))
+            
+            row = cursor.fetchone()
+            if not row:
+                logger.warning(f"Nenhuma empresa encontrada com ID {company_id}")
+                return None
+                
+            # Criar dicionário com os dados da empresa
+            company = {
+                'id': row[0],
+                'nome': row[2] if row[2] else row[1],  # Prefere o campo 'empresa' se existir
+                'email': row[3]
+            }
+            
+            logger.debug(f"Empresa ID {company_id} encontrada: {company['nome']}")
+            return company
+            
+        except Exception as e:
+            logger.error(f"Erro ao buscar empresa ID {company_id}: {str(e)}")
+            logger.error(traceback.format_exc())
+            return None
+            
+        finally:
+            if 'cursor' in locals():
+                cursor.close() 
