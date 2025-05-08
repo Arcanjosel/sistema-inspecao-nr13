@@ -15,6 +15,7 @@ import os
 import sys
 from PyQt5.QtGui import QIntValidator, QDoubleValidator
 import logging
+import re
 
 # Adiciona o diretório raiz ao PATH para permitir importações relativas
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -23,6 +24,28 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 logger = logging.getLogger(__name__)
 
 from ui.styles import Styles
+
+# Funções de validação
+def validar_email(email):
+    """Valida se o email está em um formato válido"""
+    padrao = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    return bool(re.match(padrao, email))
+
+def validar_senha(senha):
+    """Valida a força da senha"""
+    # Pelo menos 6 caracteres
+    if len(senha) < 6:
+        return False, "A senha deve ter pelo menos 6 caracteres."
+    
+    # Verificar se tem pelo menos um número
+    if not any(c.isdigit() for c in senha):
+        return False, "A senha deve conter pelo menos um número."
+    
+    # Verificar se tem pelo menos uma letra maiúscula (opcional, mas recomendado)
+    if not any(c.isupper() for c in senha):
+        return False, "A senha deve conter pelo menos uma letra maiúscula."
+        
+    return True, "Senha válida."
 
 class BaseModal(QDialog):
     """Classe base para todas as janelas modais"""
@@ -248,13 +271,28 @@ class UserModal(BaseModal):
             self.nome_input.setFocus()
             return
             
-        if not self.email_input.text().strip():
+        email = self.email_input.text().strip()
+        if not email:
             QMessageBox.warning(self, "Atenção", "O campo Email é obrigatório")
             self.email_input.setFocus()
             return
+        
+        # Validação de formato de email
+        if not validar_email(email):
+            QMessageBox.warning(self, "Atenção", "O email informado não é válido")
+            self.email_input.setFocus()
+            return
             
-        if not self.senha_input.text().strip():
+        senha = self.senha_input.text().strip()
+        if not senha:
             QMessageBox.warning(self, "Atenção", "O campo Senha é obrigatório")
+            self.senha_input.setFocus()
+            return
+        
+        # Validação da força da senha
+        senha_valida, msg_senha = validar_senha(senha)
+        if not senha_valida:
+            QMessageBox.warning(self, "Atenção", msg_senha)
             self.senha_input.setFocus()
             return
         
@@ -944,6 +982,13 @@ class EquipmentModal(QDialog):
             self.tag_input.setFocus()
             return False
             
+        # Validar formato da tag (alfanumérica com possíveis hífens)
+        tag = self.tag_input.text().strip()
+        if not re.match(r'^[A-Za-z0-9\-]+$', tag):
+            QMessageBox.warning(self, "Formato Inválido", "A tag deve conter apenas letras, números e hífens.")
+            self.tag_input.setFocus()
+            return False
+            
         # Validar se uma empresa foi selecionada
         if self.empresa_combo.currentIndex() < 0 or not self.empresa_combo.currentData():
             QMessageBox.warning(self, "Campos Obrigatórios", "Selecione a empresa à qual o equipamento pertence.")
@@ -969,7 +1014,21 @@ class EquipmentModal(QDialog):
             QMessageBox.warning(self, "Campos Obrigatórios", "O campo 'Fluido' é obrigatório.")
             self.fluido_input.setFocus()
             return False
+        
+        # Validar que pressão de trabalho não excede a pressão de projeto
+        if self.pressao_trabalho_input.value() > self.pressao_projeto_input.value():
+            QMessageBox.warning(self, "Valor Inválido", "A pressão de trabalho não pode ser maior que a pressão de projeto.")
+            self.pressao_trabalho_input.setFocus()
+            return False
             
+        # Validar ano de fabricação
+        ano_atual = datetime.now().year
+        if self.ano_fabricacao_input.value() > ano_atual:
+            QMessageBox.warning(self, "Valor Inválido", "O ano de fabricação não pode ser futuro.")
+            self.ano_fabricacao_input.setFocus()
+            return False
+            
+        # Se passou por todas as validações
         return True
         
     def accept(self):
@@ -1132,6 +1191,25 @@ class InspectionModal(BaseModal):
         if self.engenheiro_input.currentIndex() == -1 or self.engenheiro_input.currentText() == "":
             QMessageBox.warning(self, "Campos Obrigatórios", "Selecione um engenheiro.")
             self.engenheiro_input.setFocus()
+            return
+            
+        # Verifica se a data não é futura
+        data_atual = QDate.currentDate()
+        if self.data_input.date() > data_atual:
+            QMessageBox.warning(self, "Data Inválida", "A data de inspeção não pode ser futura.")
+            self.data_input.setFocus()
+            return
+            
+        # Verifica se o tipo de inspeção foi selecionado
+        if not self.tipo_input.currentText():
+            QMessageBox.warning(self, "Campos Obrigatórios", "Selecione o tipo de inspeção.")
+            self.tipo_input.setFocus()
+            return
+            
+        # Verifica se o resultado foi selecionado
+        if not self.resultado_input.currentText():
+            QMessageBox.warning(self, "Campos Obrigatórios", "Selecione o resultado da inspeção.")
+            self.resultado_input.setFocus()
             return
             
         # Se passou por todas as validações, aceita o modal
@@ -1316,10 +1394,11 @@ class ReportModal(QDialog):
                     background-color: #00559B;
                 }
                 QPushButton[text="Cancelar"] {
-                    background-color: #6c757d;
+                    background-color: #E0E0E0;
+                    color: #333333;
                 }
                 QPushButton[text="Cancelar"]:hover {
-                    background-color: #5a6268;
+                    background-color: #D0D0D0;
                 }
                 QPushButton[text="Salvar"] {
                     background-color: #28a745;
@@ -1354,17 +1433,42 @@ class ReportModal(QDialog):
         # Valida campos obrigatórios
         if self.inspecao_combo.currentIndex() == -1:
             QMessageBox.warning(self, "Atenção", "Selecione uma inspeção.")
+            self.inspecao_combo.setFocus()
             return
             
         if not self.arquivo_input.text().strip():
             QMessageBox.warning(self, "Atenção", "Selecione um arquivo para o relatório.")
+            self.arquivo_input.setFocus()
+            return
+        
+        # Verifica se a data não é futura
+        data_atual = QDate.currentDate()
+        if self.data_input.date() > data_atual:
+            QMessageBox.warning(self, "Data Inválida", "A data de emissão não pode ser futura.")
+            self.data_input.setFocus()
+            return
+            
+        # Verifica extensão do arquivo
+        arquivo = self.arquivo_input.text().strip()
+        extensoes_permitidas = ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.jpg', '.jpeg', '.png']
+        
+        if not any(arquivo.lower().endswith(ext) for ext in extensoes_permitidas):
+            QMessageBox.warning(self, "Arquivo Inválido", 
+                               f"O arquivo deve ter uma das seguintes extensões: {', '.join(extensoes_permitidas)}")
+            self.arquivo_input.setFocus()
+            return
+            
+        # Verifica se o arquivo existe
+        if not os.path.isfile(arquivo):
+            QMessageBox.warning(self, "Arquivo Inválido", "O arquivo selecionado não existe.")
+            self.arquivo_input.setFocus()
             return
             
         # Emite o sinal indicando que o relatório foi salvo
         self.reportSaved.emit()
         
         # Aceita o diálogo e fecha
-        super().accept() 
+        super().accept()
 
 class MaintenanceModal(QDialog):
     """Modal para registrar manutenção de equipamento"""
@@ -1484,4 +1588,29 @@ class MaintenanceModal(QDialog):
             'data_manutencao': data_manutencao,
             'frequencia': frequencia,
             'observacoes': observacoes
-        } 
+        }
+        
+    def accept(self):
+        """Valida os dados antes de aceitar o modal"""
+        # Verifica data
+        data_atual = QDate.currentDate()
+        if self.data_date.date() > data_atual:
+            QMessageBox.warning(self, "Data Inválida", "A data de manutenção não pode ser futura.")
+            self.data_date.setFocus()
+            return
+        
+        # Verifica frequência
+        if self.freq_input.text().strip():
+            try:
+                freq = int(self.freq_input.text().strip())
+                if freq <= 0:
+                    QMessageBox.warning(self, "Valor Inválido", "A frequência deve ser um número positivo.")
+                    self.freq_input.setFocus()
+                    return
+            except ValueError:
+                QMessageBox.warning(self, "Valor Inválido", "A frequência deve ser um número inteiro.")
+                self.freq_input.setFocus()
+                return
+                
+        # Se passou pelas validações, aceita o diálogo
+        super().accept() 

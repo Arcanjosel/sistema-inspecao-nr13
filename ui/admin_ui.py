@@ -1987,8 +1987,9 @@ class AdminWindow(QMainWindow):
                 user_id = self.get_selected_user_id()
                 if not user_id:
                     QMessageBox.warning(self, "Atenção", "Selecione um usuário na tabela.")
-                return
-                logger.debug(f"Editando usuário ID: {user_id}")
+                    return
+            
+            logger.debug(f"Editando usuário ID: {user_id}")
             
             # Obter dados do usuário
             users = self.auth_controller.get_all_users()
@@ -1998,6 +1999,7 @@ class AdminWindow(QMainWindow):
                 QMessageBox.warning(self, "Erro", f"Usuário ID {user_id} não encontrado.")
                 return
             
+            # Usar is_dark para garantir que o tema seja aplicado corretamente
             modal = UserModal(self, self.is_dark)
             modal.setWindowTitle("Editar Usuário")
             
@@ -2016,6 +2018,11 @@ class AdminWindow(QMainWindow):
                 modal.tipo_input.setCurrentIndex(tipo_idx)
                 
             modal.empresa_input.setText(user.get('empresa', ''))
+            
+            # Se for engenheiro, mostrar e preencher o campo CREA
+            if tipo == "eng":
+                modal.toggle_engineer_fields(0)  # Mostra os campos de engenheiro
+                modal.crea_input.setText(user.get('crea', ''))
             
             if modal.exec_():
                 data = modal.get_data()
