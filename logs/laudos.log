@@ -1,0 +1,12 @@
+2025-05-07 23:20:22,120 - __main__ - INFO - === INICIANDO GERADOR DE LAUDOS NR-13 ===
+2025-05-07 23:20:22,263 - __main__ - ERROR - Erro fatal: No module named 'reportlab'
+2025-05-07 23:20:22,276 - __main__ - ERROR - Traceback (most recent call last):
+  File "C:\Users\jeanc\Documents\C-TREINA\sistema-inspecao-nr13\gerar_laudo.py", line 40, in <module>
+    from ui.laudo_window import LaudoWindow
+  File "C:\Users\jeanc\Documents\C-TREINA\sistema-inspecao-nr13\ui\laudo_window.py", line 22, in <module>
+    from utils.pdf_generator import LaudoTecnicoPDF
+  File "C:\Users\jeanc\Documents\C-TREINA\sistema-inspecao-nr13\utils\pdf_generator.py", line 12, in <module>
+    from reportlab.lib.pagesizes import A4
+ModuleNotFoundError: No module named 'reportlab'
+
+2025-05-07 23:23:16,030 - __main__ - INFO - === INICIANDO GERADOR DE LAUDOS NR-13 ===

@@ -120,7 +120,7 @@ class AuthController:
             if 'cursor' in locals():
                 cursor.close()
             
-    def criar_usuario(self, nome: str, email: str, senha: str, tipo_acesso: str, empresa: Optional[str] = None) -> Tuple[bool, str]:
+    def criar_usuario(self, nome: str, email: str, senha: str, tipo_acesso: str, empresa: Optional[str] = None, crea: Optional[str] = None) -> Tuple[bool, str]:
         """
         Cria um novo usuário no sistema.
         
@@ -128,8 +128,9 @@ class AuthController:
             nome: Nome do usuário
             email: Email do usuário
             senha: Senha do usuário
-            tipo_acesso: Tipo de acesso do usuário ('admin' ou 'cliente')
+            tipo_acesso: Tipo de acesso do usuário ('admin', 'cliente' ou 'eng')
             empresa: Nome da empresa (opcional)
+            crea: Número do CREA (obrigatório para engenheiros)
             
         Returns:
             Tuple[bool, str]: (sucesso, mensagem)
@@ -146,15 +147,29 @@ class AuthController:
             if cursor.fetchone():
                 return False, "Email já cadastrado"
             
+            # Valida campos específicos por tipo de usuário
+            if tipo_acesso == 'eng' and not crea:
+                return False, "O campo CREA é obrigatório para engenheiros"
+                
             senha_hash = self._hash_password(senha)
             
-            cursor.execute(
-                """
-                INSERT INTO usuarios (nome, email, senha_hash, tipo_acesso, empresa)
-                VALUES (?, ?, ?, ?, ?)
-                """,
-                (nome, email, senha_hash, tipo_acesso, empresa)
-            )
+            # SQL para inserção com suporte ao campo CREA
+            if tipo_acesso == 'eng':
+                cursor.execute(
+                    """
+                    INSERT INTO usuarios (nome, email, senha_hash, tipo_acesso, empresa, crea)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                    """,
+                    (nome, email, senha_hash, tipo_acesso, empresa, crea)
+                )
+            else:
+                cursor.execute(
+                    """
+                    INSERT INTO usuarios (nome, email, senha_hash, tipo_acesso, empresa)
+                    VALUES (?, ?, ?, ?, ?)
+                    """,
+                    (nome, email, senha_hash, tipo_acesso, empresa)
+                )
             
             # Força a sincronização
             self.force_sync()
@@ -420,9 +435,9 @@ class AuthController:
             cursor = conn.cursor()
             
             cursor.execute("""
-                SELECT id, nome, email, empresa
+                SELECT id, nome, email, empresa, crea
                 FROM usuarios
-                WHERE tipo_acesso = 'engenheiro'
+                WHERE tipo_acesso = 'eng' AND ativo = 1
                 ORDER BY nome
             """)
             
@@ -432,7 +447,8 @@ class AuthController:
                     'id': row[0],
                     'nome': row[1],
                     'email': row[2],
-                    'empresa': row[3]
+                    'empresa': row[3],
+                    'crea': row[4] if len(row) > 4 else None  # Campo CREA pode não existir em versões antigas do banco
                 })
                 
             logger.debug(f"Encontrados {len(engineers)} engenheiros")

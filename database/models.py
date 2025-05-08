@@ -17,9 +17,10 @@ class Usuario:
     nome: str
     email: str
     senha_hash: str
-    tipo_acesso: str  # 'admin' ou 'cliente'
+    tipo_acesso: str  # 'admin', 'cliente' ou 'eng'
     empresa: Optional[str] = None
     ativo: bool = True
+    crea: Optional[str] = None  # Número do CREA para engenheiros
 
 @dataclass
 class Equipamento:
@@ -82,7 +83,8 @@ class DatabaseModels:
                     senha_hash VARCHAR(255) NOT NULL,
                     tipo_acesso VARCHAR(20) NOT NULL,
                     empresa VARCHAR(100),
-                    ativo BIT DEFAULT 1
+                    ativo BIT DEFAULT 1,
+                    crea VARCHAR(50)
                 )
             """)
             

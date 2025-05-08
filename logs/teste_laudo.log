@@ -1,0 +1,23 @@
+2025-05-08 00:01:01,824 - __main__ - INFO - === INICIANDO TESTE DE LAUDO TÉCNICO ===
+2025-05-08 00:01:02,691 - ui.laudo_window - ERROR - Erro ao preencher formulário com dados da inspeção: 'LaudoWindow' object has no attribute 'equip_nome'
+2025-05-08 00:01:02,693 - ui.laudo_window - ERROR - Traceback (most recent call last):
+  File "C:\Users\jeanc\Documents\C-TREINA\sistema-inspecao-nr13\ui\laudo_window.py", line 446, in preencher_com_dados_inspecao
+    self.equip_nome.setText(self.inspection_data.get('equipamento_nome', ''))
+    ^^^^^^^^^^^^^^^
+AttributeError: 'LaudoWindow' object has no attribute 'equip_nome'
+
+2025-05-08 00:01:05,758 - __main__ - INFO - Interface de laudo técnico iniciada
+2025-05-08 00:05:10,163 - __main__ - INFO - === INICIANDO TESTE DE LAUDO TÉCNICO ===
+2025-05-08 00:05:10,988 - ui.laudo_window - ERROR - Erro ao preencher formulário com dados da inspeção: 'LaudoWindow' object has no attribute 'equip_nome'
+2025-05-08 00:05:10,990 - ui.laudo_window - ERROR - Traceback (most recent call last):
+  File "C:\Users\jeanc\Documents\C-TREINA\sistema-inspecao-nr13\ui\laudo_window.py", line 446, in preencher_com_dados_inspecao
+    self.equip_nome.setText(self.inspection_data.get('equipamento_nome', ''))
+    ^^^^^^^^^^^^^^^
+AttributeError: 'LaudoWindow' object has no attribute 'equip_nome'
+
+2025-05-08 00:05:12,908 - __main__ - INFO - Interface de laudo técnico iniciada
+2025-05-08 00:06:09,696 - __main__ - INFO - === INICIANDO TESTE DE LAUDO TÉCNICO ===
+2025-05-08 00:06:10,530 - ui.laudo_window - DEBUG - Preenchendo formulário com dados: {'insp_id': 999, 'insp_data': PyQt5.QtCore.QDate(2025, 5, 8), 'insp_tipo': 'Periódica', 'insp_responsavel': 'Engenheiro de Teste', 'insp_resultado': 'Aprovado', 'insp_proxima': PyQt5.QtCore.QDate(2026, 5, 8), 'ensaios_realizados': 'Exame Visual Externo, Medição de Espessura', 'ensaios_adicionais': 'Ultrassom em pontos críticos', 'nao_conformidades': 'Sem não conformidades relevantes', 'recomendacoes': 'Manter plano de manutenção preventiva conforme cronograma', 'conclusao': 'Equipamento em boas condições operacionais, aprovado para operação.', 'equipamento_id': 123, 'equipamento_tag': 'VP-TESTE-001', 'equipamento_nome': 'Vaso de Pressão de Teste', 'equipamento_categoria': 'Vaso de Pressão', 'equipamento_tipo': 'Ar Comprimido', 'equipamento_localizacao': 'Sala de Compressores', 'equipamento_fabricante': 'Fabricante de Teste', 'equipamento_ano_fabricacao': '2020', 'equipamento_capacidade': '500 L', 'equipamento_pressao_trabalho': '10 bar', 'empresa_nome': 'Empresa de Teste LTDA', 'empresa_cnpj': '12.345.678/0001-99', 'empresa_endereco': 'Av. Teste, 123', 'empresa_cidade': 'São Paulo', 'empresa_estado': 'SP'}
+2025-05-08 00:06:10,534 - ui.laudo_window - WARNING - Erro ao converter valor: could not convert string to float: '500 L'
+2025-05-08 00:06:10,535 - ui.laudo_window - DEBUG - Formulário preenchido com dados da inspeção.
+2025-05-08 00:06:10,779 - __main__ - INFO - Interface de laudo técnico iniciada

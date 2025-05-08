@@ -17,6 +17,7 @@ from controllers.auth_controller import AuthController
 import pyodbc
 from ui.debug_window import DebugWindow
 from database.models import DatabaseModels
+from database.migrations import executar_migracoes
 from PyQt5.QtCore import pyqtSignal
 
 # Configuração do logging
@@ -145,11 +146,6 @@ class SistemaInspecao:
             self.show_login()
             logger.debug("show_login() executado com sucesso")
             
-            # Adiciona um pequeno delay para dar tempo da janela aparecer
-            import time
-            logger.debug("Aguardando 1 segundo antes de iniciar o loop de eventos")
-            time.sleep(1)
-            
             logger.info("Executando o loop de eventos da aplicação")
             return self.app.exec_()
         except Exception as e:
@@ -173,6 +169,10 @@ if __name__ == "__main__":
         logger.info("Inicializando banco de dados")
         db_models = DatabaseModels()
         db_models.criar_tabelas()
+        
+        # Executa as migrações pendentes
+        logger.info("Executando migrações do banco de dados")
+        executar_migracoes()
         
         # Cria o usuário admin se não existir
         logger.info("Verificando usuário admin")

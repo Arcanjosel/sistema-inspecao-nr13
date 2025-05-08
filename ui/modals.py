@@ -82,11 +82,32 @@ class UserModal(BaseModal):
         layout.addWidget(QLabel("Tipo:"))
         layout.addWidget(self.tipo_input)
         
+        # Adiciona campos específicos para engenheiros
+        self.tipo_input.currentTextChanged.connect(self.toggle_engineer_fields)
+        
+        # Container para campos de engenheiro
+        self.engineer_container = QWidget()
+        engineer_layout = QVBoxLayout(self.engineer_container)
+        engineer_layout.setContentsMargins(0, 0, 0, 0)
+        
+        # Campo CREA
+        self.crea_input = QLineEdit()
+        self.crea_input.setPlaceholderText("Número do CREA")
+        self.crea_input.setMinimumHeight(36)
+        engineer_layout.addWidget(QLabel("CREA:"))
+        engineer_layout.addWidget(self.crea_input)
+        
+        layout.addWidget(self.engineer_container)
+        
+        # Campo da empresa
         self.empresa_input = QLineEdit()
         self.empresa_input.setPlaceholderText("Empresa")
         self.empresa_input.setMinimumHeight(36)
         layout.addWidget(QLabel("Empresa:"))
         layout.addWidget(self.empresa_input)
+        
+        # Inicialmente esconde os campos de engenheiro
+        self.engineer_container.setVisible(False)
         
         # Botões
         buttons_layout = QHBoxLayout()
@@ -102,16 +123,36 @@ class UserModal(BaseModal):
         buttons_layout.addWidget(self.save_button)
         
         layout.addLayout(buttons_layout)
+
+    def toggle_engineer_fields(self, text):
+        """Mostra ou esconde campos específicos para engenheiros"""
+        is_engineer = text == "eng"
+        self.engineer_container.setVisible(is_engineer)
+        # Ajustar tamanho da janela quando os campos são exibidos/escondidos
+        if is_engineer:
+            # Aumenta o tamanho da janela para acomodar os campos extras
+            current_size = self.size()
+            self.resize(current_size.width(), current_size.height() + 100)
+        else:
+            # Reduz o tamanho da janela quando os campos extras são escondidos
+            current_size = self.size()
+            self.resize(current_size.width(), current_size.height() - 100)
         
     def get_data(self):
         """Retorna os dados do formulário"""
-        return {
+        data = {
             "nome": self.nome_input.text().strip(),
             "email": self.email_input.text().strip(),
             "senha": self.senha_input.text().strip(),
             "tipo": self.tipo_input.currentText(),
             "empresa": self.empresa_input.text().strip()
         }
+        
+        # Adiciona dados de engenheiro se aplicável
+        if self.tipo_input.currentText() == "eng":
+            data["crea"] = self.crea_input.text().strip()
+            
+        return data
         
     def accept(self):
         """Validar e aceitar o modal"""
@@ -126,6 +167,11 @@ class UserModal(BaseModal):
             
         if not self.senha_input.text().strip():
             QMessageBox.warning(self, "Atenção", "O campo Senha é obrigatório")
+            return
+        
+        # Validação específica para engenheiros
+        if self.tipo_input.currentText() == "eng" and not self.crea_input.text().strip():
+            QMessageBox.warning(self, "Atenção", "Para engenheiros, o campo CREA é obrigatório")
             return
             
         # Se passou pela validação, aceita o diálogo

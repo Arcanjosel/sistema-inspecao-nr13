@@ -245,6 +245,10 @@ class AdminWindow(QMainWindow):
         """Inicializa a interface do usuário."""
         try:
             logger.debug("Iniciando setup da interface")
+            
+            # Remover importação que está causando duplicação de botões coloridos
+            # from ui.inspection_ui import InspectionTab
+            
             self.setWindowTitle("Administração do Sistema")
             self.resize(1024, 768)
             
@@ -443,12 +447,12 @@ class AdminWindow(QMainWindow):
             buttons_container = QHBoxLayout()
             
             # Botão Adicionar
-            self.add_user_button = self.create_crud_button("add", "Adicionar", self.add_user)
+            self.add_user_button = self.create_crud_button("add", "Adicionar", self.add_user, show_text=True, text="Adicionar Usuário")
             buttons_container.addWidget(self.add_user_button)
             buttons_container.addSpacing(5)  # Espaçamento entre botões
             
             # Botão Editar
-            self.edit_user_button = self.create_crud_button("edit", "Editar", self.edit_selected_user)
+            self.edit_user_button = self.create_crud_button("edit", "Editar", self.edit_selected_user, show_text=True, text="Editar Usuário")
             buttons_container.addWidget(self.edit_user_button)
             buttons_container.addSpacing(5)  # Espaçamento entre botões
             
@@ -458,7 +462,7 @@ class AdminWindow(QMainWindow):
             buttons_container.addSpacing(5)  # Espaçamento entre botões
             
             # Botão Remover Usuário
-            self.remove_user_button = self.create_crud_button("delete", "Remover Usuário", self.remove_selected_user)
+            self.remove_user_button = self.create_crud_button("delete", "Remover Usuário", self.remove_selected_user, show_text=True, text="Remover Usuário")
             buttons_container.addWidget(self.remove_user_button)
             
             # Inicialmente esconder botões de ação que precisam de seleção
@@ -533,12 +537,12 @@ class AdminWindow(QMainWindow):
             
             # Botão Adicionar
             logger.debug("Criando botão adicionar equipamento")
-            self.add_equipment_button = self.create_crud_button('add', "Adicionar Equipamento", self.add_equipment)
+            self.add_equipment_button = self.create_crud_button('add', "Adicionar Equipamento", self.add_equipment, show_text=True, text="Adicionar Equipamento")
             equipment_buttons_container.addWidget(self.add_equipment_button)
             
             # Botão Editar
             logger.debug("Criando botão editar equipamento")
-            self.edit_equipment_button = self.create_crud_button('edit', "Editar Equipamento", self.edit_equipment)
+            self.edit_equipment_button = self.create_crud_button('edit', "Editar Equipamento", self.edit_equipment, show_text=True, text="Editar Equipamento")
             equipment_buttons_container.addWidget(self.edit_equipment_button)
             
             # Botão Ativar/Desativar
@@ -548,12 +552,12 @@ class AdminWindow(QMainWindow):
             
             # Botão Excluir
             logger.debug("Criando botão excluir equipamento")
-            self.delete_equipment_button = self.create_crud_button('delete', "Excluir Equipamento", self.delete_equipment)
+            self.delete_equipment_button = self.create_crud_button('delete', "Excluir Equipamento", self.delete_equipment, show_text=True, text="Excluir Equipamento")
             equipment_buttons_container.addWidget(self.delete_equipment_button)
             
             # Botão Manutenção
             logger.debug("Criando botão de manutenção de equipamento")
-            self.maintenance_button = self.create_crud_button('maintenance', "Registrar Manutenção", self.register_maintenance)
+            self.maintenance_button = self.create_crud_button('maintenance', "Registrar Manutenção", self.register_maintenance, show_text=True, text="Registrar Manutenção")
             equipment_buttons_container.addWidget(self.maintenance_button)
             
             # Definir visibilidade inicial dos botões que requerem seleção
@@ -624,87 +628,8 @@ class AdminWindow(QMainWindow):
             
             equipment_layout.addWidget(self.equipment_table)
             
-            # Aba de Inspeções
+            # Aba de Inspeções - Removida chamada redundante, será configurada abaixo
             logger.debug("Configurando aba de inspeções")
-            inspection_tab = QWidget()
-            inspection_layout = QVBoxLayout(inspection_tab)
-            
-            # Container para botões e barra de pesquisa
-            top_container = QHBoxLayout()
-            
-            # Container para botões (lado esquerdo)
-            buttons_container = QHBoxLayout()
-            
-            # Botão Adicionar Inspeção
-            self.add_inspection_btn = self.create_crud_button("add", "Adicionar Inspeção", self.add_inspection)
-            buttons_container.addWidget(self.add_inspection_btn)
-            buttons_container.addSpacing(5)  # Espaçamento entre botões
-            
-            # Botão Editar Inspeção
-            self.edit_inspection_btn = self.create_crud_button("edit", "Editar", self.edit_selected_inspection)
-            buttons_container.addWidget(self.edit_inspection_btn)
-            buttons_container.addSpacing(5)  # Espaçamento entre botões
-            
-            # Botão Excluir Inspeção
-            self.delete_inspection_btn = self.create_crud_button("delete", "Excluir", self.delete_selected_inspection)
-            buttons_container.addWidget(self.delete_inspection_btn)
-            buttons_container.addSpacing(5)  # Espaçamento entre botões
-            
-            # Botão Gerar Relatório
-            self.generate_report_btn = self.create_crud_button("add", "Gerar Relatório", self.generate_report_from_inspection)
-            buttons_container.addWidget(self.generate_report_btn)
-            
-            # Adiciona os botões ao container principal
-            top_container.addLayout(buttons_container)
-            
-            # Adiciona um espaçador expansível
-            top_container.addStretch()
-            
-            # Barra de pesquisa para inspeções
-            search_container = QHBoxLayout()
-            self.insp_search_input = QLineEdit()
-            self.insp_search_input.setPlaceholderText("Pesquisar inspeções...")
-            self.insp_search_input.setMinimumWidth(200)
-            self.insp_search_input.setMaximumWidth(300)
-            self.insp_search_input.setMinimumHeight(32)
-            self.insp_search_input.textChanged.connect(self.filter_inspections)
-            
-            # Estilo da barra de pesquisa
-            self.insp_search_input.setStyleSheet("""
-                QLineEdit {
-                    border: 1px solid #666;
-                    border-radius: 4px;
-                    padding: 5px 10px;
-                    background: #333;
-                    color: white;
-                }
-                QLineEdit:focus {
-                    border: 1px solid #2196F3;
-                }
-            """)
-            
-            search_container.addWidget(self.insp_search_input)
-            top_container.addLayout(search_container)
-            
-            # Adiciona o container principal ao layout da aba
-            inspection_layout.addLayout(top_container)
-            
-            # Lista de inspeções
-            self.inspection_table = QTableWidget()
-            self.inspection_table.setColumnCount(5)  # Reduzido para 5 colunas (removido ID)
-            self.inspection_table.setHorizontalHeaderLabels([
-                "Equipamento", "Data", "Tipo", "Engenheiro", "Resultado"
-            ])
-            self.inspection_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-            self.inspection_table.setSelectionBehavior(QTableWidget.SelectRows)
-            self.inspection_table.setSelectionMode(QTableWidget.SingleSelection)
-            self.inspection_table.setAlternatingRowColors(True)
-            self.inspection_table.setEditTriggers(QTableWidget.NoEditTriggers)
-            self.inspection_table.verticalHeader().setVisible(False)  # Já está oculto
-            
-            # Carrega as inspeções
-            self.load_inspections()
-            inspection_layout.addWidget(self.inspection_table)
             
             # Aba de Relatórios
             logger.debug("Configurando aba de relatórios")
@@ -719,22 +644,22 @@ class AdminWindow(QMainWindow):
             buttons_container = QHBoxLayout()
             
             # Botão Adicionar Relatório
-            self.add_report_btn = self.create_crud_button("add", "Adicionar Relatório", self.show_add_report_modal)
+            self.add_report_btn = self.create_crud_button("add", "Adicionar Relatório", self.show_add_report_modal, show_text=True, text="Adicionar Relatório")
             buttons_container.addWidget(self.add_report_btn)
             buttons_container.addSpacing(5)  # Espaçamento entre botões
             
             # Botão Editar
-            self.edit_report_btn = self.create_crud_button("edit", "Editar", self.edit_selected_report)
+            self.edit_report_btn = self.create_crud_button("edit", "Editar", self.edit_selected_report, show_text=True, text="Editar Relatório")
             buttons_container.addWidget(self.edit_report_btn)
             buttons_container.addSpacing(5)  # Espaçamento entre botões
             
             # Botão Excluir
-            self.delete_report_btn = self.create_crud_button("delete", "Excluir", self.delete_selected_report)
+            self.delete_report_btn = self.create_crud_button("delete", "Excluir", self.delete_selected_report, show_text=True, text="Excluir Relatório")
             buttons_container.addWidget(self.delete_report_btn)
             buttons_container.addSpacing(5)  # Espaçamento entre botões
             
             # Botão Visualizar
-            self.view_report_btn = self.create_crud_button("view", "Visualizar", self.view_selected_report)
+            self.view_report_btn = self.create_crud_button("view", "Visualizar", self.view_selected_report, show_text=True, text="Visualizar Relatório")
             buttons_container.addWidget(self.view_report_btn)
             
             top_container.addLayout(buttons_container)
@@ -789,7 +714,11 @@ class AdminWindow(QMainWindow):
             logger.debug("Adicionando abas ao TabWidget")
             self.tabs.addTab(users_tab, self.get_tab_icon("user.png"), "Usuários")
             self.tabs.addTab(equipment_tab, self.get_tab_icon("equipamentos.png"), "Equipamentos")
+            
+            # Setup da aba de inspeções antes de adicionar a aba de relatórios
+            inspection_tab = self.setup_inspection_tab()
             self.tabs.addTab(inspection_tab, self.get_tab_icon("inspecoes.png"), "Inspeções")
+            
             self.tabs.addTab(report_tab, self.get_tab_icon("relatorios.png"), "Relatórios")
             
             # Comentado: Não exibir mais a aba de Equipamentos por Empresa
@@ -831,7 +760,6 @@ class AdminWindow(QMainWindow):
             # Bloqueie os sinais das tabelas para evitar atualizações desnecessárias
             self.user_table.blockSignals(True)
             self.equipment_table.blockSignals(True)
-            self.inspection_table.blockSignals(True)
             self.report_table.blockSignals(True)
             
             # Cria os estilos antes de aplicar (para melhor performance)
@@ -923,13 +851,14 @@ class AdminWindow(QMainWindow):
             self.theme_button.setStyleSheet(theme_button_style)
             
             # Aplica estilos às tabelas em um único lote
-            for table in [self.user_table, self.equipment_table, self.inspection_table, self.report_table]:
+            for table in [self.user_table, self.equipment_table, self.report_table]:
                 table.setStyleSheet(table_style)
                 table.setAlternatingRowColors(True)
             
             # Atualiza os ícones das abas ao trocar o tema
             for idx, icon_name in enumerate(["user.png", "equipamentos.png", "inspecoes.png", "relatorios.png"]):
-                self.tabs.setTabIcon(idx, self.get_tab_icon(icon_name))
+                if idx < self.tabs.count():
+                    self.tabs.setTabIcon(idx, self.get_tab_icon(icon_name))
             
             # Atualiza o botão de ativar/desativar
             self.update_toggle_button()
@@ -941,11 +870,10 @@ class AdminWindow(QMainWindow):
             # Desbloqueia os sinais
             self.user_table.blockSignals(False)
             self.equipment_table.blockSignals(False)
-            self.inspection_table.blockSignals(False)
             self.report_table.blockSignals(False)
             
             # Forçar uma atualização visual das tabelas
-            for table in [self.user_table, self.equipment_table, self.inspection_table, self.report_table]:
+            for table in [self.user_table, self.equipment_table, self.report_table]:
                 table.update()
             
             QApplication.restoreOverrideCursor()  # Restaura o cursor normal
@@ -1255,6 +1183,12 @@ class AdminWindow(QMainWindow):
         try:
             logger.debug("Carregando inspeções do banco de dados")
             
+            # Delega a carga de inspeções para o InspectionTab, se existir
+            if hasattr(self, 'inspection_tab'):
+                self.inspection_tab.load_inspections()
+                return
+            
+            # Código legado - só será executado se inspection_tab não existir
             # Força a sincronização antes de carregar
             self.inspection_controller.force_sync()
             
@@ -1371,13 +1305,25 @@ class AdminWindow(QMainWindow):
             modal = UserModal(self)
             if modal.exec():
                 user_data = modal.get_data()
-                success, message = self.auth_controller.criar_usuario(
-                    nome=user_data['nome'],
-                    email=user_data['email'],
-                    senha=user_data['senha'],
-                    tipo_acesso=user_data['tipo'],
-                    empresa=user_data['empresa']
-                )
+                
+                # Verifica se é engenheiro para passar o campo CREA
+                if user_data['tipo'] == 'eng':
+                    success, message = self.auth_controller.criar_usuario(
+                        nome=user_data['nome'],
+                        email=user_data['email'],
+                        senha=user_data['senha'],
+                        tipo_acesso=user_data['tipo'],
+                        empresa=user_data['empresa'],
+                        crea=user_data.get('crea', '')
+                    )
+                else:
+                    success, message = self.auth_controller.criar_usuario(
+                        nome=user_data['nome'],
+                        email=user_data['email'],
+                        senha=user_data['senha'],
+                        tipo_acesso=user_data['tipo'],
+                        empresa=user_data['empresa']
+                    )
                 
                 # Força a sincronização
                 self.auth_controller.force_sync()
@@ -1859,49 +1805,85 @@ class AdminWindow(QMainWindow):
                 logger.warning(f"Inspeção {inspection_id} não encontrada")
                 QMessageBox.warning(self, "Erro", "Inspeção não encontrada no banco de dados.")
                 return
+                
+            # Depura a estrutura da inspeção para ver quais campos estão disponíveis
+            logger.debug(f"Estrutura da inspeção: {inspection.keys()}")
+                
+            # Verifica se temos a data da inspeção e a converte para QDate
+            if 'data' in inspection:
+                insp_date = QDate.fromString(inspection['data'], "yyyy-MM-dd")
+            elif 'data_inspecao' in inspection:
+                insp_date = QDate.fromString(inspection['data_inspecao'], "yyyy-MM-dd")
+            else:
+                # Se não encontrou a data, usa a data atual
+                logger.warning("Data da inspeção não encontrada, usando data atual")
+                insp_date = QDate.currentDate()
             
-            # Muda para a aba de relatórios
-            self.tabs.setCurrentIndex(3)  # Aba de relatórios
+            # Calcula a data da próxima inspeção (1 ano após)
+            proxima_date = insp_date.addYears(1)
             
-            # Preenche o formulário de relatório com dados da inspeção
+            # Busca dados do equipamento
+            equipamento = self.equipment_controller.get_equipment_by_id(inspection['equipamento_id'])
+            if not equipamento:
+                QMessageBox.warning(self, "Erro", "Não foi possível encontrar os dados do equipamento.")
+                return
+                
+            # Busca dados do engenheiro
+            engenheiro_id = inspection.get('engenheiro_id')
+            if not engenheiro_id:
+                QMessageBox.warning(self, "Erro", "ID do engenheiro não encontrado na inspeção.")
+                return
+                
+            engenheiro = self.auth_controller.get_user_by_id(engenheiro_id)
+            if not engenheiro:
+                QMessageBox.warning(self, "Erro", "Não foi possível encontrar os dados do engenheiro.")
+                return
             
-            # Seleciona a inspeção no combo
-            index = self.report_inspecao_combo.findData(inspection_id)
-            if index >= 0:
-                self.report_inspecao_combo.setCurrentIndex(index)
+            # Prepara os dados para o formulário do laudo
+            laudo_data = {
+                'insp_id': inspection['id'],
+                'insp_data': insp_date,
+                'insp_tipo': inspection.get('tipo_inspecao', 'Periodica'),
+                'insp_responsavel': engenheiro.get('nome', ''),
+                'insp_resultado': inspection.get('resultado', 'Aprovado'),
+                'insp_proxima': proxima_date,
+                'ensaios_realizados': "Exame Visual Externo, Medição de Espessura",  # Padrão
+                'ensaios_adicionais': "",
+                'nao_conformidades': "",
+                'recomendacoes': inspection.get('recomendacoes', ''),
+                'conclusao': f"Inspeção realizada em {insp_date.toString('dd/MM/yyyy')} com resultado: {inspection.get('resultado', 'Aprovado')}.",
+                
+                # Dados do equipamento
+                'equipamento_id': equipamento.get('id'),
+                'equipamento_tag': equipamento.get('tag', ''),
+                'equipamento_nome': equipamento.get('nome', ''),
+                'equipamento_categoria': equipamento.get('categoria', 'Vaso de Pressão'),
+                'equipamento_tipo': equipamento.get('tipo', ''),
+                'equipamento_localizacao': equipamento.get('localizacao', ''),
+                'equipamento_fabricante': equipamento.get('fabricante', ''),
+                'equipamento_ano_fabricacao': equipamento.get('ano_fabricacao', ''),
+                'equipamento_capacidade': equipamento.get('capacidade', ''),
+                'equipamento_pressao_trabalho': equipamento.get('pressao_trabalho', ''),
+                
+                # Dados da empresa (cliente)
+                'empresa_nome': equipamento.get('cliente_nome', ''),
+                'empresa_cnpj': equipamento.get('cliente_cnpj', ''),
+                'empresa_endereco': equipamento.get('cliente_endereco', ''),
+                'empresa_cidade': equipamento.get('cliente_cidade', ''),
+                'empresa_estado': equipamento.get('cliente_estado', ''),
+            }
             
-            # Define o título automático
-            equip_tag = inspection.get('equipamento_tag', 'Equipamento')
-            data = QDate.fromString(inspection['data_inspecao'], "yyyy-MM-dd").toString("dd/MM/yyyy")
-            self.report_titulo_input.setText(f"Relatório de Inspeção - {equip_tag} - {data}")
+            # Importa e abre a janela de geração de laudos
+            from ui.laudo_window import LaudoWindow
+            self.laudo_window = LaudoWindow(self, laudo_data)
+            self.laudo_window.show()
             
-            # Define o tipo com base na inspeção
-            index = self.report_tipo_combo.findText(inspection['tipo_inspecao'])
-            if index >= 0:
-                self.report_tipo_combo.setCurrentIndex(index)
-            
-            # Define o resultado com base na inspeção
-            index = self.report_resultado_combo.findText(inspection['resultado'])
-            if index >= 0:
-                self.report_resultado_combo.setCurrentIndex(index)
-            
-            # Foca no campo de observações para o usuário continuar preenchendo
-            self.report_observacoes_input.setFocus()
-            
-            # Define o modo de edição para criar um novo relatório
-            self.toggle_report_form_mode(is_editing=False)
-            
-            QMessageBox.information(
-                self, 
-                "Relatório Iniciado", 
-                f"Formulário preenchido com dados da inspeção do equipamento {equip_tag}.\n\n"
-                "Complete as informações e pressione Salvar para gerar o relatório."
-            )
+            logger.info(f"Gerador de laudo aberto para inspeção ID: {inspection_id}")
             
         except Exception as e:
             logger.error(f"Erro ao gerar relatório a partir da inspeção: {str(e)}")
             logger.error(traceback.format_exc())
-            QMessageBox.critical(self, "Erro", f"Falha ao gerar relatório: {str(e)}")
+            QMessageBox.critical(self, "Erro", f"Erro ao gerar relatório: {str(e)}")
 
     def get_selected_user_id(self):
         """Retorna o ID do usuário selecionado na tabela"""
@@ -1960,7 +1942,7 @@ class AdminWindow(QMainWindow):
                 user_id = self.get_selected_user_id()
                 if not user_id:
                     QMessageBox.warning(self, "Atenção", "Selecione um usuário na tabela.")
-                    return
+                return
                 logger.debug(f"Editando usuário ID: {user_id}")
             
             # Obter dados do usuário
@@ -1970,7 +1952,7 @@ class AdminWindow(QMainWindow):
             if not user:
                 QMessageBox.warning(self, "Erro", f"Usuário ID {user_id} não encontrado.")
                 return
-                
+            
             modal = UserModal(self, self.is_dark)
             modal.setWindowTitle("Editar Usuário")
             
@@ -3848,3 +3830,25 @@ class AdminWindow(QMainWindow):
             logger.error(f"Erro ao registrar manutenção: {str(e)}")
             logger.error(traceback.format_exc())
             QMessageBox.warning(self, "Erro", f"Erro ao registrar manutenção: {str(e)}")
+
+    def setup_inspection_tab(self):
+        """Configura a aba de inspeções"""
+        logger.debug("Configurando aba de inspeções")
+        
+        # Importar o InspectionTab evitando referência circular
+        from ui.inspection_ui import InspectionTab
+        
+        # Cria a aba de inspeções reutilizando os controllers já existentes
+        self.inspection_tab = InspectionTab(
+            parent=self,
+            auth_controller=self.auth_controller,
+            equipment_controller=self.equipment_controller,
+            inspection_controller=self.inspection_controller
+        )
+        
+        # Carrega inspeções do banco
+        logger.debug("Carregando inspeções do banco de dados")
+        self.load_inspections()
+        
+        # Retorna a aba criada para ser adicionada em initUI
+        return self.inspection_tab
