@@ -21,16 +21,20 @@ Sistema desktop em Python para gestão de inspeções de vasos de pressão, cald
 - [Dicas de Manutenção](#dicas-de-manutenção)
 - [Licença](#licença)
 - [Controle de Manutenção de Equipamentos](#controle-de-manutenção-de-equipamentos)
+- [Geração de Laudos Técnicos](#geração-de-laudos-técnicos)
+- [Migrações de Banco de Dados](#migrações-de-banco-de-dados)
 
 ---
 
 ## Funcionalidades
 
-- Autenticação de usuários (admin e cliente)
+- Autenticação de usuários (admin, cliente e engenheiros)
 - Cadastro e gerenciamento de usuários
+- Cadastro e gerenciamento de engenheiros com registro CREA
 - Cadastro e gerenciamento de equipamentos
 - Registro e consulta de inspeções técnicas
 - Emissão e consulta de relatórios
+- Geração de laudos técnicos em PDF conforme NR-13
 - Notificações e logs
 - Interface gráfica moderna (PyQt5)
 - Tema claro/escuro
@@ -38,6 +42,7 @@ Sistema desktop em Python para gestão de inspeções de vasos de pressão, cald
 - Atualização automática das tabelas a cada 5 segundos
 - Suporte multi-usuário com sincronização em tempo real
 - Janela de debug para visualização e cadastro rápido de usuários
+- Sistema de migração automática do banco de dados
 
 ---
 
@@ -49,6 +54,7 @@ Sistema desktop em Python para gestão de inspeções de vasos de pressão, cald
 - [python-dotenv](https://pypi.org/project/python-dotenv/)
 - [bcrypt](https://pypi.org/project/bcrypt/)
 - [PyQt5](https://pypi.org/project/PyQt5/)
+- [reportlab](https://pypi.org/project/reportlab/) (para geração de PDFs)
 
 ---
 
@@ -65,67 +71,33 @@ Sistema desktop em Python para gestão de inspeções de vasos de pressão, cald
    pip install -r requirements.txt
    ```
 
+3. Execute o script de instalação do banco de dados:
+   ```bash
+   python setup_database.py
+   ```
+   Ou use diretamente o script SQL no arquivo `database_setup.sql`.
+
 ---
 
 ## Configuração do Banco de Dados
 
-1. **Crie o banco de dados e as tabelas** no SQL Server:
+1. **Execute o script `database_setup.sql` no SQL Server:**
 
-   ```sql
-   CREATE DATABASE sistema_inspecao_db;
-   GO
+Este script criará:
+- O banco de dados `sistema_inspecao_db`
+- Todas as tabelas necessárias com suas respectivas colunas
+- Um usuário administrador padrão para testes
 
-   USE sistema_inspecao_db;
-   GO
+A estrutura atual do banco de dados inclui:
+- Tabela de usuários com suporte a engenheiros (campo CREA)
+- Tabela de equipamentos com informações técnicas
+- Tabela de inspeções com vínculo a engenheiros
+- Tabela de relatórios
 
-   CREATE TABLE usuarios (
-       id INT IDENTITY(1,1) PRIMARY KEY,
-       nome VARCHAR(100) NOT NULL,
-       email VARCHAR(100) UNIQUE NOT NULL,
-       senha_hash VARCHAR(255) NOT NULL,
-       tipo_acesso VARCHAR(20) NOT NULL,
-       empresa VARCHAR(100),
-       ativo BIT DEFAULT 1
-   );
-   GO
-
-   CREATE TABLE equipamentos (
-       id INT IDENTITY(1,1) PRIMARY KEY,
-       tipo VARCHAR(20) NOT NULL,
-       empresa VARCHAR(100) NOT NULL,
-       localizacao VARCHAR(200) NOT NULL,
-       codigo_projeto VARCHAR(50) NOT NULL,
-       pressao_maxima FLOAT NOT NULL,
-       temperatura_maxima FLOAT NOT NULL,
-       data_ultima_inspecao DATETIME NULL,
-       data_proxima_inspecao DATETIME NULL,
-       status VARCHAR(20) DEFAULT 'ativo'
-   );
-   GO
-
-   CREATE TABLE inspecoes (
-       id INT IDENTITY(1,1) PRIMARY KEY,
-       equipamento_id INT NOT NULL,
-       data_inspecao DATETIME NOT NULL,
-       tipo_inspecao VARCHAR(20) NOT NULL,
-       engenheiro_responsavel VARCHAR(100) NOT NULL,
-       resultado VARCHAR(20) NOT NULL,
-       recomendacoes TEXT NULL,
-       proxima_inspecao DATETIME NULL,
-       FOREIGN KEY (equipamento_id) REFERENCES equipamentos(id)
-   );
-   GO
-
-   CREATE TABLE relatorios (
-       id INT IDENTITY(1,1) PRIMARY KEY,
-       inspecao_id INT NOT NULL,
-       data_emissao DATETIME NOT NULL,
-       link_arquivo VARCHAR(255) NOT NULL,
-       observacoes TEXT NULL,
-       FOREIGN KEY (inspecao_id) REFERENCES inspecoes(id)
-   );
-   GO
-   ```
+Ou use a instalação automática com o script Python:
+```bash
+python setup_database.py
+```
 
 ---
 
@@ -171,8 +143,13 @@ python main.py
 
 ## Usuário Administrador Inicial
 
-**O sistema não cria um usuário admin automaticamente.**  
-Você pode criar o primeiro usuário admin de duas formas:
+O script de instalação cria automaticamente um usuário administrador padrão:
+- **Email:** admin@empresa.com
+- **Senha:** admin123
+
+Recomendamos alterar esta senha imediatamente após o primeiro login.
+
+Alternativamente, você pode criar o primeiro usuário admin de duas formas:
 
 ### 1. Pela janela de debug (recomendado para testes)
 
@@ -198,7 +175,7 @@ print(mensagem)
 ## Janela de Debug
 
 - Acesse pela tela de login, clicando no botão ⚙️.
-- Permite visualizar todos os usuários cadastrados e criar novos usuários (admin ou cliente) rapidamente.
+- Permite visualizar todos os usuários cadastrados e criar novos usuários (admin, cliente ou engenheiro) rapidamente.
 
 ---
 
@@ -210,6 +187,8 @@ seu-repo/
 ├── main.py
 ├── requirements.txt
 ├── .env
+├── database_setup.sql
+├── setup_database.py
 ├── logs/
 │   └── sistema.log
 ├── controllers/
@@ -217,13 +196,17 @@ seu-repo/
 │   ├── equipment_controller.py
 │   ├── inspection_controller.py
 │   └── report_controller.py
+│   └── engineer_controller.py
 ├── database/
 │   ├── connection.py
-│   └── models.py
+│   ├── models.py
+│   └── migrations.py
 ├── ui/
 │   ├── admin_ui.py
 │   ├── client_ui.py
 │   ├── login_window.py
+│   ├── inspection_ui.py
+│   ├── laudo_window.py
 │   └── debug_window.py
 │   ├── CTREINA_LOGO.png
 │   ├── CTREINA_LOGO_FIT.png
@@ -231,16 +214,17 @@ seu-repo/
 │   ├── equipamentos.png
 │   ├── inspecoes.png
 │   └── relatorios.png
-└── ...
+└── utils/
+    └── pdf_generator.py
 ```
 
 ---
 
 ## Estrutura do Banco de Dados
 
-- **usuarios:** id, nome, email, senha_hash, tipo_acesso, empresa, ativo
+- **usuarios:** id, nome, email, senha_hash, tipo_acesso, empresa, ativo, crea
 - **equipamentos:** id, tipo, empresa, localizacao, codigo_projeto, pressao_maxima, temperatura_maxima, data_ultima_inspecao, data_proxima_inspecao, status
-- **inspecoes:** id, equipamento_id, data_inspecao, tipo_inspecao, engenheiro_responsavel, resultado, recomendacoes, proxima_inspecao
+- **inspecoes:** id, equipamento_id, data_inspecao, tipo_inspecao, engenheiro_responsavel, resultado, recomendacoes, proxima_inspecao, engenheiro_id
 - **relatorios:** id, inspecao_id, data_emissao, link_arquivo, observacoes
 
 ---
@@ -249,56 +233,40 @@ seu-repo/
 
 O sistema implementa um mecanismo robusto de atualização em tempo real, permitindo que múltiplos usuários trabalhem simultaneamente sem conflitos de dados.
 
-### Características principais:
-
-- **Timer de Atualização:** Todas as tabelas são atualizadas automaticamente a cada 5 segundos através de um QTimer configurado na inicialização da aplicação.
-
-- **Sincronização Forçada:** Cada controlador (AuthController, EquipmentController, InspectionController, ReportController) possui um método `force_sync()` que garante a sincronização com o banco de dados.
-
-- **Atualização Após Operações CRUD:** Todas as operações de criação, edição e exclusão de registros forçam uma sincronização com o banco de dados e atualizam todas as tabelas relacionadas.
-
-- **Manutenção do Estado da Interface:** Durante a atualização das tabelas, o sistema preserva a aba atual e, quando possível, a linha selecionada.
-
-- **Conexão Persistente:** O sistema utiliza um padrão Singleton para gerenciar a conexão com o banco de dados, garantindo a reutilização da conexão e evitando vazamentos de recursos.
-
-### Como funciona:
-
-1. Quando um usuário realiza alterações (adicionar, editar ou excluir registros), o método `force_sync()` é chamado automaticamente.
-
-2. A cada 5 segundos, o método `refresh_all_tables()` é executado, realizando:
-   - Sincronização forçada com todos os controladores
-   - Recarregamento de todas as tabelas com dados atualizados
-   - Preservação da aba atual para não interromper o trabalho do usuário
-
-3. Se ocorrerem erros de conexão, o sistema tentará reconectar automaticamente ao banco de dados.
-
-Este sistema garante que todos os usuários sempre vejam dados atualizados e que as alterações de um usuário sejam rapidamente refletidas para os demais.
+Os dados são sincronizados regularmente, garantindo que as alterações feitas por um usuário sejam refletidas para todos os outros usuários do sistema.
 
 ---
 
-## Interface Gráfica
+## Geração de Laudos Técnicos
 
-### Recursos da Interface
+O sistema agora suporta a geração de laudos técnicos em PDF conforme a NR-13. Para gerar um laudo:
 
-- **Temas Claro/Escuro:** O sistema suporta alternância entre tema claro e escuro através do botão de tema na barra inferior.
-- **Botões CRUD Padronizados:** Todos os botões de ação (Adicionar, Editar, Excluir, Ativar/Desativar, Visualizar) seguem um padrão visual consistente com ícones SVG.
-- **Ícones SVG:** Utilizados na interface para melhor escalabilidade e adaptação ao tema.
-- **Tabelas Responsivas:** Todas as tabelas se adaptam ao tamanho da janela e possuem cores alternadas para melhor visualização.
-- **Abas com Ícones:** A navegação entre as diferentes seções (Usuários, Equipamentos, Inspeções, Relatórios) é feita através de abas com ícones intuitivos.
+1. Selecione uma inspeção na aba "Inspeções"
+2. Clique no botão "GERAR LAUDO TÉCNICO"
+3. Preencha os dados complementares no formulário
+4. Clique em "Gerar PDF"
 
-### Cores dos Botões CRUD
+O laudo técnico incluirá:
+- Informações do equipamento inspecionado
+- Dados do engenheiro responsável com número CREA
+- Resultados da inspeção
+- Recomendações técnicas
+- Datas de inspeção e próxima inspeção
 
-- **Adicionar:** Verde (#28a745)
-- **Editar:** Azul (#007bff)
-- **Excluir:** Vermelho (#dc3545)
-- **Ativar/Desativar:** Cinza (#6c757d)
-- **Visualizar:** Ciano (#17a2b8)
-- **Tema:** Preto/Cinza Claro (dependendo do tema atual)
+---
 
-### Espaçamento e Layout
+## Migrações de Banco de Dados
 
-- Os botões possuem espaçamento uniforme de 5 pixels entre si para melhor usabilidade.
-- Layout com margens adequadas e espaçamento entre os elementos para melhor organização visual.
+O sistema agora inclui um mecanismo de migração automática do banco de dados. Quando novas funcionalidades são adicionadas que requerem alterações no esquema do banco de dados, o sistema automaticamente atualiza o banco durante a inicialização.
+
+As migrações disponíveis incluem:
+- Adição de campo CREA na tabela de usuários para engenheiros
+
+Para executar manualmente as migrações:
+```python
+from database.migrations import executar_migracoes
+executar_migracoes()
+```
 
 ---
 

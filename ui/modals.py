@@ -49,94 +49,180 @@ class UserModal(BaseModal):
     def __init__(self, parent=None, is_dark=True):
         super().__init__(parent, is_dark)
         self.setWindowTitle("Cadastrar Usuário")
+        self.setMinimumWidth(450)
         self.setup_form()
         
     def setup_form(self):
-        layout = QVBoxLayout(self)
-        layout.setSpacing(16)
-        layout.setContentsMargins(24, 24, 24, 24)
+        main_layout = QVBoxLayout(self)
+        main_layout.setSpacing(20)
+        main_layout.setContentsMargins(30, 30, 30, 30)
         
-        # Campos do formulário
+        # Título
+        title_label = QLabel("Dados do Usuário")
+        title_font = title_label.font()
+        title_font.setPointSize(14)
+        title_font.setBold(True)
+        title_label.setFont(title_font)
+        title_label.setAlignment(Qt.AlignCenter)
+        main_layout.addWidget(title_label)
+        
+        # Linha separadora
+        line = QFrame()
+        line.setFrameShape(QFrame.HLine)
+        line.setFrameShadow(QFrame.Sunken)
+        main_layout.addWidget(line)
+        
+        # Layout de formulário
+        form_layout = QFormLayout()
+        form_layout.setSpacing(16)
+        form_layout.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
+        form_layout.setLabelAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        
+        # Campo Nome
         self.nome_input = QLineEdit()
-        self.nome_input.setPlaceholderText("Nome")
+        self.nome_input.setPlaceholderText("Digite o nome completo")
         self.nome_input.setMinimumHeight(36)
-        layout.addWidget(QLabel("Nome:"))
-        layout.addWidget(self.nome_input)
+        style_input(self.nome_input, self.is_dark)
+        form_layout.addRow("Nome:", self.nome_input)
         
+        # Campo Email
         self.email_input = QLineEdit()
-        self.email_input.setPlaceholderText("Email")
+        self.email_input.setPlaceholderText("exemplo@empresa.com")
         self.email_input.setMinimumHeight(36)
-        layout.addWidget(QLabel("Email:"))
-        layout.addWidget(self.email_input)
+        style_input(self.email_input, self.is_dark)
+        form_layout.addRow("Email:", self.email_input)
         
+        # Campo Senha
         self.senha_input = QLineEdit()
-        self.senha_input.setPlaceholderText("Senha")
+        self.senha_input.setPlaceholderText("Mínimo 6 caracteres")
         self.senha_input.setEchoMode(QLineEdit.Password)
         self.senha_input.setMinimumHeight(36)
-        layout.addWidget(QLabel("Senha:"))
-        layout.addWidget(self.senha_input)
+        style_input(self.senha_input, self.is_dark)
+        form_layout.addRow("Senha:", self.senha_input)
         
+        # Campo Tipo
+        tipo_container = QHBoxLayout()
         self.tipo_input = QComboBox()
-        self.tipo_input.addItems(["admin", "cliente", "eng"])
+        self.tipo_input.addItem("Administrador", "admin")
+        self.tipo_input.addItem("Cliente", "cliente")
+        self.tipo_input.addItem("Engenheiro", "eng")
         self.tipo_input.setMinimumHeight(36)
-        layout.addWidget(QLabel("Tipo:"))
-        layout.addWidget(self.tipo_input)
+        self.tipo_input.setItemData(0, "Acesso total ao sistema", Qt.ToolTipRole)
+        self.tipo_input.setItemData(1, "Acesso limitado às suas inspeções", Qt.ToolTipRole)
+        self.tipo_input.setItemData(2, "Responsável pelas inspeções técnicas", Qt.ToolTipRole)
+        style_combo(self.tipo_input, self.is_dark)
+        tipo_container.addWidget(self.tipo_input)
         
-        # Adiciona campos específicos para engenheiros
-        self.tipo_input.currentTextChanged.connect(self.toggle_engineer_fields)
+        # Adiciona ícone de informação
+        tipo_info = QLabel()
+        tipo_info.setToolTip("Selecione o nível de acesso do usuário")
+        tipo_container.addWidget(tipo_info)
+        tipo_container.setStretch(0, 1)  # O combobox ocupa todo o espaço disponível
+        
+        form_layout.addRow("Tipo de Acesso:", tipo_container)
+        
+        # Conecta o evento de mudança de tipo
+        self.tipo_input.currentIndexChanged.connect(self.toggle_engineer_fields)
         
         # Container para campos de engenheiro
         self.engineer_container = QWidget()
-        engineer_layout = QVBoxLayout(self.engineer_container)
-        engineer_layout.setContentsMargins(0, 0, 0, 0)
+        self.engineer_container.setObjectName("engineer_container")
+        self.engineer_container.setStyleSheet("""
+            #engineer_container {
+                background-color: rgba(0, 0, 0, 0.03);
+                border-radius: 8px;
+                padding: 10px;
+            }
+        """)
+        engineer_layout = QFormLayout(self.engineer_container)
+        engineer_layout.setContentsMargins(10, 10, 10, 10)
+        engineer_layout.setSpacing(12)
         
         # Campo CREA
         self.crea_input = QLineEdit()
-        self.crea_input.setPlaceholderText("Número do CREA")
+        self.crea_input.setPlaceholderText("Número do registro CREA")
         self.crea_input.setMinimumHeight(36)
-        engineer_layout.addWidget(QLabel("CREA:"))
-        engineer_layout.addWidget(self.crea_input)
-        
-        layout.addWidget(self.engineer_container)
-        
-        # Campo da empresa
-        self.empresa_input = QLineEdit()
-        self.empresa_input.setPlaceholderText("Empresa")
-        self.empresa_input.setMinimumHeight(36)
-        layout.addWidget(QLabel("Empresa:"))
-        layout.addWidget(self.empresa_input)
+        style_input(self.crea_input, self.is_dark)
+        engineer_layout.addRow("Registro CREA:", self.crea_input)
         
         # Inicialmente esconde os campos de engenheiro
         self.engineer_container.setVisible(False)
         
+        # Campo da empresa
+        self.empresa_input = QLineEdit()
+        self.empresa_input.setPlaceholderText("Nome da empresa")
+        self.empresa_input.setMinimumHeight(36)
+        style_input(self.empresa_input, self.is_dark)
+        form_layout.addRow("Empresa:", self.empresa_input)
+        
+        # Adiciona os layouts ao layout principal
+        main_layout.addLayout(form_layout)
+        main_layout.addWidget(self.engineer_container)
+        
+        # Espaçador para empurrar os botões para baixo
+        main_layout.addStretch(1)
+        
         # Botões
         buttons_layout = QHBoxLayout()
+        buttons_layout.setSpacing(15)
         
         self.cancel_button = QPushButton("Cancelar")
-        self.cancel_button.setMinimumHeight(36)
+        self.cancel_button.setMinimumHeight(40)
+        self.cancel_button.setStyleSheet("""
+            QPushButton {
+                background-color: #f8f9fa;
+                color: #212529;
+                border: 1px solid #dee2e6;
+                border-radius: 4px;
+                font-weight: bold;
+                padding: 8px 16px;
+            }
+            QPushButton:hover {
+                background-color: #e9ecef;
+            }
+            QPushButton:pressed {
+                background-color: #dee2e6;
+            }
+        """)
         self.cancel_button.clicked.connect(self.reject)
         buttons_layout.addWidget(self.cancel_button)
         
         self.save_button = QPushButton("Salvar")
-        self.save_button.setMinimumHeight(36)
+        self.save_button.setMinimumHeight(40)
+        self.save_button.setStyleSheet("""
+            QPushButton {
+                background-color: #007bff;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                font-weight: bold;
+                padding: 8px 16px;
+            }
+            QPushButton:hover {
+                background-color: #0069d9;
+            }
+            QPushButton:pressed {
+                background-color: #0062cc;
+            }
+        """)
         self.save_button.clicked.connect(self.accept)
         buttons_layout.addWidget(self.save_button)
         
-        layout.addLayout(buttons_layout)
+        main_layout.addLayout(buttons_layout)
 
-    def toggle_engineer_fields(self, text):
+    def toggle_engineer_fields(self, index):
         """Mostra ou esconde campos específicos para engenheiros"""
-        is_engineer = text == "eng"
+        is_engineer = self.tipo_input.currentData() == "eng"
         self.engineer_container.setVisible(is_engineer)
-        # Ajustar tamanho da janela quando os campos são exibidos/escondidos
+        
+        # Recalcular o tamanho mínimo da janela
         if is_engineer:
-            # Aumenta o tamanho da janela para acomodar os campos extras
-            current_size = self.size()
-            self.resize(current_size.width(), current_size.height() + 100)
+            self.setMinimumHeight(500)  # Altura maior para acomodar campos extras
         else:
-            # Reduz o tamanho da janela quando os campos extras são escondidos
-            current_size = self.size()
-            self.resize(current_size.width(), current_size.height() - 100)
+            self.setMinimumHeight(400)  # Altura padrão
+        
+        # Redimensiona a janela para se ajustar ao conteúdo
+        self.adjustSize()
         
     def get_data(self):
         """Retorna os dados do formulário"""
@@ -144,12 +230,12 @@ class UserModal(BaseModal):
             "nome": self.nome_input.text().strip(),
             "email": self.email_input.text().strip(),
             "senha": self.senha_input.text().strip(),
-            "tipo": self.tipo_input.currentText(),
+            "tipo": self.tipo_input.currentData(),
             "empresa": self.empresa_input.text().strip()
         }
         
         # Adiciona dados de engenheiro se aplicável
-        if self.tipo_input.currentText() == "eng":
+        if self.tipo_input.currentData() == "eng":
             data["crea"] = self.crea_input.text().strip()
             
         return data
@@ -159,23 +245,100 @@ class UserModal(BaseModal):
         # Validação básica de campos
         if not self.nome_input.text().strip():
             QMessageBox.warning(self, "Atenção", "O campo Nome é obrigatório")
+            self.nome_input.setFocus()
             return
             
         if not self.email_input.text().strip():
             QMessageBox.warning(self, "Atenção", "O campo Email é obrigatório")
+            self.email_input.setFocus()
             return
             
         if not self.senha_input.text().strip():
             QMessageBox.warning(self, "Atenção", "O campo Senha é obrigatório")
+            self.senha_input.setFocus()
             return
         
         # Validação específica para engenheiros
-        if self.tipo_input.currentText() == "eng" and not self.crea_input.text().strip():
+        if self.tipo_input.currentData() == "eng" and not self.crea_input.text().strip():
             QMessageBox.warning(self, "Atenção", "Para engenheiros, o campo CREA é obrigatório")
+            self.crea_input.setFocus()
             return
             
         # Se passou pela validação, aceita o diálogo
         super().accept()
+
+# Funções auxiliares para estilização de widgets
+def style_input(input_widget, is_dark):
+    """Aplica estilo ao widget de entrada"""
+    if is_dark:
+        input_widget.setStyleSheet("""
+            QLineEdit {
+                background-color: #333;
+                color: #fff;
+                border: 1px solid #555;
+                border-radius: 4px;
+                padding: 6px 10px;
+            }
+            QLineEdit:focus {
+                border: 1px solid #0078d7;
+                background-color: #3e3e3e;
+            }
+        """)
+    else:
+        input_widget.setStyleSheet("""
+            QLineEdit {
+                background-color: #fff;
+                color: #333;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                padding: 6px 10px;
+            }
+            QLineEdit:focus {
+                border: 1px solid #007bff;
+                background-color: #f8f9fa;
+            }
+        """)
+
+def style_combo(combo_widget, is_dark):
+    """Aplica estilo ao widget de combobox"""
+    if is_dark:
+        combo_widget.setStyleSheet("""
+            QComboBox {
+                background-color: #333;
+                color: #fff;
+                border: 1px solid #555;
+                border-radius: 4px;
+                padding: 6px 10px;
+            }
+            QComboBox:focus {
+                border: 1px solid #0078d7;
+            }
+            QComboBox::drop-down {
+                subcontrol-origin: padding;
+                subcontrol-position: top right;
+                width: 25px;
+                border-left: 1px solid #555;
+            }
+        """)
+    else:
+        combo_widget.setStyleSheet("""
+            QComboBox {
+                background-color: #fff;
+                color: #333;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                padding: 6px 10px;
+            }
+            QComboBox:focus {
+                border: 1px solid #007bff;
+            }
+            QComboBox::drop-down {
+                subcontrol-origin: padding;
+                subcontrol-position: top right;
+                width: 25px;
+                border-left: 1px solid #ddd;
+            }
+        """)
 
 class EquipmentModal(QDialog):
     def __init__(self, parent=None, is_dark=False, equipment_data=None):

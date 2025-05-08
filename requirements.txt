@@ -1,8 +1,23 @@
+# Dependências do Sistema de Gerenciamento de Inspeções NR-13
+
+# Interface gráfica
+PyQt5==5.15.9
+PyQt5-Qt5==5.15.2
+PyQt5-sip==12.12.1
+
+# Banco de dados
 pyodbc==4.0.39
 python-dotenv==1.0.0
-PyQt5==5.15.9
+
+# Segurança
 bcrypt==4.0.1
-schedule==1.2.0
+
+# Geração de PDFs
+reportlab==4.0.4
+Pillow==10.0.0  # Dependência do reportlab para processamento de imagens
+
+# Operações com datas
 python-dateutil==2.8.2
-logging==0.4.9.6 
-reportlab==3.6.12 
+
+# Agendamento de tarefas
+schedule==1.2.0 

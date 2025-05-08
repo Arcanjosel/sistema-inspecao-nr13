@@ -855,6 +855,47 @@ class AdminWindow(QMainWindow):
                 table.setStyleSheet(table_style)
                 table.setAlternatingRowColors(True)
             
+            # Atualiza o tema da aba de inspeções se ela existir
+            if hasattr(self, 'inspection_tab') and self.inspection_tab:
+                # Atualiza a flag para a aba de inspeções
+                self.inspection_tab.is_dark = self.is_dark
+                
+                # Se a aba de inspeções tiver um método para atualizar o tema, chama-o
+                if hasattr(self.inspection_tab, 'update_theme'):
+                    self.inspection_tab.update_theme(table_style)
+                else:
+                    # Se não tiver o método, pelo menos atualiza a tabela
+                    if hasattr(self.inspection_tab, 'inspection_table'):
+                        self.inspection_tab.inspection_table.setStyleSheet(table_style)
+                        self.inspection_tab.inspection_table.setAlternatingRowColors(True)
+                        
+                    # Atualiza o campo de pesquisa se existir
+                    if hasattr(self.inspection_tab, 'search_input'):
+                        search_style = """
+                            QLineEdit {
+                                border: 1px solid #666;
+                                border-radius: 4px;
+                                padding: 5px 10px;
+                                background: #333;
+                                color: white;
+                            }
+                            QLineEdit:focus {
+                                border: 1px solid #2196F3;
+                            }
+                        """ if self.is_dark else """
+                            QLineEdit {
+                                border: 1px solid #ddd;
+                                border-radius: 4px;
+                                padding: 5px 10px;
+                                background: white;
+                                color: #333;
+                            }
+                            QLineEdit:focus {
+                                border: 1px solid #2196F3;
+                            }
+                        """
+                        self.inspection_tab.search_input.setStyleSheet(search_style)
+            
             # Atualiza os ícones das abas ao trocar o tema
             for idx, icon_name in enumerate(["user.png", "equipamentos.png", "inspecoes.png", "relatorios.png"]):
                 if idx < self.tabs.count():
@@ -875,6 +916,10 @@ class AdminWindow(QMainWindow):
             # Forçar uma atualização visual das tabelas
             for table in [self.user_table, self.equipment_table, self.report_table]:
                 table.update()
+                
+            # Força a atualização da tabela de inspeções
+            if hasattr(self, 'inspection_tab') and hasattr(self.inspection_tab, 'inspection_table'):
+                self.inspection_tab.inspection_table.update()
             
             QApplication.restoreOverrideCursor()  # Restaura o cursor normal
             logger.debug(f"Tema {'escuro' if self.is_dark else 'claro'} aplicado com sucesso")
@@ -3843,7 +3888,8 @@ class AdminWindow(QMainWindow):
             parent=self,
             auth_controller=self.auth_controller,
             equipment_controller=self.equipment_controller,
-            inspection_controller=self.inspection_controller
+            inspection_controller=self.inspection_controller,
+            is_dark=self.is_dark  # Passa o tema atual
         )
         
         # Carrega inspeções do banco

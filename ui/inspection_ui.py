@@ -301,6 +301,61 @@ class FilterDialog(QDialog):
         """Configura a interface do diálogo de filtro"""
         layout = QVBoxLayout(self)
         
+        # Estilo para todos os componentes baseado no tema
+        if self.dark_mode:
+            base_style = """
+                QDialog { background-color: #2D2D30; color: #FFFFFF; }
+                QGroupBox { 
+                    color: #FFFFFF; 
+                    border: 1px solid #555555;
+                    border-radius: 4px;
+                    margin-top: 8px;
+                    padding-top: 8px;
+                }
+                QLabel { color: #FFFFFF; }
+                QCheckBox { color: #FFFFFF; }
+                QComboBox {
+                    background-color: #333333;
+                    color: #FFFFFF;
+                    border: 1px solid #555555;
+                    border-radius: 3px;
+                    padding: 4px;
+                    min-height: 20px;
+                }
+                QComboBox:hover {
+                    border: 1px solid #777777;
+                }
+                QComboBox::drop-down {
+                    background-color: #444444;
+                }
+                QDateEdit {
+                    background-color: #333333;
+                    color: #FFFFFF;
+                    border: 1px solid #555555;
+                    border-radius: 3px;
+                    padding: 4px;
+                    min-height: 20px;
+                }
+                QDateEdit:hover {
+                    border: 1px solid #777777;
+                }
+                QPushButton {
+                    background-color: #444444;
+                    color: #FFFFFF;
+                    border: 1px solid #555555;
+                    border-radius: 3px;
+                    padding: 5px 15px;
+                    min-height: 24px;
+                }
+                QPushButton:hover {
+                    background-color: #555555;
+                }
+                QPushButton:pressed {
+                    background-color: #666666;
+                }
+            """
+            self.setStyleSheet(base_style)
+        
         # === Grupo de filtro por período === 
         date_group = QGroupBox("Período")
         date_layout = QFormLayout()
@@ -383,15 +438,6 @@ class FilterDialog(QDialog):
         button_box.accepted.connect(self.accept)
         
         layout.addWidget(button_box)
-        
-        # Aplica estilo se estiver em modo escuro
-        if self.dark_mode:
-            self.setStyleSheet("""
-                QDialog { background-color: #2D2D30; color: #FFFFFF; }
-                QGroupBox { color: #FFFFFF; }
-                QLabel { color: #FFFFFF; }
-                QCheckBox { color: #FFFFFF; }
-            """)
 
     def load_equipment_options(self):
         """Carrega a lista de equipamentos no combobox"""
@@ -457,13 +503,13 @@ class FilterDialog(QDialog):
 class InspectionTab(QWidget):
     """Aba de gerenciamento de inspeções técnicas"""
     
-    def __init__(self, parent=None, auth_controller=None, equipment_controller=None, inspection_controller=None):
+    def __init__(self, parent=None, auth_controller=None, equipment_controller=None, inspection_controller=None, is_dark=True):
         super().__init__(parent)
         self.parent = parent
         self.auth_controller = auth_controller
         self.equipment_controller = equipment_controller
         self.inspection_controller = inspection_controller
-        self.is_dark = True  # Por padrão usa tema escuro
+        self.is_dark = is_dark  # Aceita o parâmetro is_dark do AdminWindow
         
         # Adicionar controller de engenheiros
         from controllers.auth_controller import AuthController
@@ -493,8 +539,13 @@ class InspectionTab(QWidget):
     def init_ui(self):
         """Inicializa a interface da aba de inspeções"""
         # Layout principal
-        layout = QVBoxLayout()
+        layout = QVBoxLayout(self)
         layout.setContentsMargins(10, 10, 10, 10)  # Reduzir margens
+        
+        # Título - removido conforme solicitado
+        
+        # Container principal para botões e pesquisa
+        top_container = QHBoxLayout()
         
         # Botões de ação secundários
         button_layout = QHBoxLayout()
@@ -557,7 +608,53 @@ class InspectionTab(QWidget):
         button_layout.addWidget(self.delete_button)
         button_layout.addWidget(self.filter_button)
         
-        layout.addLayout(button_layout)
+        # Adiciona os botões ao container principal
+        top_container.addLayout(button_layout)
+        
+        # Adiciona campo de pesquisa
+        search_container = QHBoxLayout()
+        search_container.addStretch()
+        
+        # Barra de pesquisa
+        self.search_input = QLineEdit()
+        self.search_input.setPlaceholderText("Pesquisar inspeções...")
+        self.search_input.setMinimumWidth(200)
+        self.search_input.setMaximumWidth(300)
+        self.search_input.setMinimumHeight(32)
+        self.search_input.textChanged.connect(self.filter_inspections_by_text)
+        
+        # Estilo da barra de pesquisa de acordo com o tema
+        if self.is_dark:
+            self.search_input.setStyleSheet("""
+                QLineEdit {
+                    border: 1px solid #666;
+                    border-radius: 4px;
+                    padding: 5px 10px;
+                    background: #333;
+                    color: white;
+                }
+                QLineEdit:focus {
+                    border: 1px solid #2196F3;
+                }
+            """)
+        else:
+            self.search_input.setStyleSheet("""
+                QLineEdit {
+                    border: 1px solid #ddd;
+                    border-radius: 4px;
+                    padding: 5px 10px;
+                    background: white;
+                    color: #333;
+                }
+                QLineEdit:focus {
+                    border: 1px solid #2196F3;
+                }
+            """)
+        
+        search_container.addWidget(self.search_input)
+        top_container.addLayout(search_container)
+        
+        layout.addLayout(top_container)
         
         # Tabela de inspeções
         self.inspection_table = QTableWidget()
@@ -571,31 +668,45 @@ class InspectionTab(QWidget):
         self.inspection_table.setSelectionBehavior(QTableWidget.SelectRows)
         self.inspection_table.setSelectionMode(QTableWidget.SingleSelection)
         
-        # Estilo da tabela
+        # Estilo da tabela melhorado para temas
         if self.is_dark:
             self.inspection_table.setStyleSheet("""
                 QTableWidget {
-                    background-color: #2d2d2d;
-                    alternate-background-color: #3a3a3a;
+                    background-color: #232629;
                     color: #ffffff;
+                    gridline-color: #3a3d40;
+                    alternate-background-color: #2a2d30;
                 }
                 QHeaderView::section {
-                    background-color: #1e1e1e;
+                    background-color: #2a2d30;
                     color: #ffffff;
-                    padding: 5px;
-                    border: 1px solid #3a3a3a;
+                    padding: 8px;
+                    border: 1px solid #3a3d40;
+                    font-weight: bold;
+                }
+                QTableWidget::item:selected {
+                    background-color: #3a3d40;
+                    color: #ffffff;
                 }
             """)
         else:
             self.inspection_table.setStyleSheet("""
                 QTableWidget {
-                    alternate-background-color: #f2f2f2;
+                    background-color: #ffffff;
+                    color: #000000;
+                    gridline-color: #d0d0d0;
+                    alternate-background-color: #f8f8f8;
                 }
                 QHeaderView::section {
-                    background-color: #e6e6e6;
-                    padding: 5px;
-                    border: 1px solid #d4d4d4;
+                    background-color: #f0f0f0;
+                    color: #000000;
+                    padding: 8px;
+                    border: 1px solid #d0d0d0;
                     font-weight: bold;
+                }
+                QTableWidget::item:selected {
+                    background-color: #e0e0e0;
+                    color: #000000;
                 }
             """)
         
@@ -858,11 +969,24 @@ class InspectionTab(QWidget):
         if not inspection:
             return
             
+        # Obter texto da data para exibição
+        date_str = ""
+        if 'data_inspecao' in inspection:
+            date_str = inspection['data_inspecao']
+        elif 'data' in inspection:
+            date_str = inspection['data']
+        else:
+            date_str = "data não especificada"
+            
+        # Formatar a data se for um objeto datetime
+        if isinstance(date_str, datetime.date) or isinstance(date_str, datetime.datetime):
+            date_str = date_str.strftime('%d/%m/%Y')
+            
         # Confirmação
         confirm = QMessageBox.question(
             self,
             "Confirmar Exclusão",
-            f"Tem certeza que deseja excluir a inspeção do equipamento {inspection['equipamento_tag']} realizada em {inspection['data_inspecao']}?",
+            f"Tem certeza que deseja excluir a inspeção do equipamento {inspection['equipamento_tag']} realizada em {date_str}?",
             QMessageBox.Yes | QMessageBox.No,
             QMessageBox.No
         )
@@ -881,7 +1005,7 @@ class InspectionTab(QWidget):
         dialog = FilterDialog(
             parent=self,
             equipment_controller=self.equipment_controller,
-            dark_mode=self.is_dark
+            dark_mode=self.is_dark  # Usa o valor atual da flag is_dark
         )
         
         if dialog.exec_():
@@ -898,29 +1022,26 @@ class InspectionTab(QWidget):
                     self.inspection_table.insertRow(row_position)
                     
                     # ID
-                    self.inspection_table.setItem(row_position, 0, 
-                                               QTableWidgetItem(str(inspection['id'])))
+                    id_item = QTableWidgetItem(str(inspection['id']))
+                    id_item.setData(Qt.UserRole, inspection['id'])  # Armazena o ID como dado do objeto
+                    self.inspection_table.setItem(row_position, 0, id_item)
                     
                     # Equipamento
                     equip_name = f"{inspection['equipamento_tag']} - {inspection['equipamento_nome']}"
-                    self.inspection_table.setItem(row_position, 1, 
-                                               QTableWidgetItem(equip_name))
+                    self.inspection_table.setItem(row_position, 1, QTableWidgetItem(equip_name))
                     
                     # Engenheiro
                     eng_name = f"{inspection['engenheiro_nome']}"
-                    self.inspection_table.setItem(row_position, 2, 
-                                               QTableWidgetItem(eng_name))
+                    self.inspection_table.setItem(row_position, 2, QTableWidgetItem(eng_name))
                     
                     # Data
                     date_str = inspection['data_inspecao']
                     if isinstance(date_str, datetime.date):
                         date_str = date_str.strftime('%d/%m/%Y')
-                    self.inspection_table.setItem(row_position, 3, 
-                                               QTableWidgetItem(date_str))
+                    self.inspection_table.setItem(row_position, 3, QTableWidgetItem(date_str))
                     
                     # Tipo
-                    self.inspection_table.setItem(row_position, 4, 
-                                               QTableWidgetItem(inspection['tipo_inspecao']))
+                    self.inspection_table.setItem(row_position, 4, QTableWidgetItem(inspection['tipo_inspecao']))
                     
                     # Resultado com cor
                     result_item = QTableWidgetItem(inspection['resultado'])
@@ -936,8 +1057,7 @@ class InspectionTab(QWidget):
                     recomendacoes = inspection.get('recomendacoes', '')
                     # Limitar o texto visível para não sobrecarregar a tabela
                     recomendacoes_short = recomendacoes[:50] + '...' if len(recomendacoes) > 50 else recomendacoes
-                    self.inspection_table.setItem(row_position, 6, 
-                                               QTableWidgetItem(recomendacoes_short))
+                    self.inspection_table.setItem(row_position, 6, QTableWidgetItem(recomendacoes_short))
                 
                 QMessageBox.information(self, "Filtro Aplicado", f"Exibindo {len(inspections)} inspeções conforme filtros selecionados.")
                 logger.debug(f"Filtro aplicado: {filters}")
@@ -1092,4 +1212,121 @@ class InspectionTab(QWidget):
             return engineers
         except Exception as e:
             logger.error(f"Erro ao buscar engenheiros: {str(e)}")
-            return [] 
+            return []
+
+    def filter_inspections_by_text(self):
+        """Filtra a lista de inspeções com base no texto de pesquisa"""
+        search_text = self.search_input.text().lower()
+        
+        # Mostra todas as linhas se o texto estiver vazio
+        if not search_text:
+            for row in range(self.inspection_table.rowCount()):
+                self.inspection_table.setRowHidden(row, False)
+            return
+        
+        # Procura em cada linha
+        for row in range(self.inspection_table.rowCount()):
+            match_found = False
+            
+            # Procura em cada coluna da linha
+            for col in range(self.inspection_table.columnCount()):
+                item = self.inspection_table.item(row, col)
+                if item and search_text in item.text().lower():
+                    match_found = True
+                    break
+            
+            # Mostra ou esconde a linha com base no resultado da pesquisa
+            self.inspection_table.setRowHidden(row, not match_found)
+
+    def update_theme(self, table_style=None):
+        """Atualiza o tema da aba de inspeções"""
+        try:
+            logger.debug(f"Atualizando tema da aba de inspeções para {'escuro' if self.is_dark else 'claro'}")
+            
+            # Atualiza o estilo da tabela
+            if self.is_dark:
+                table_style = table_style or """
+                    QTableWidget {
+                        background-color: #232629;
+                        color: #ffffff;
+                        gridline-color: #3a3d40;
+                        alternate-background-color: #2a2d30;
+                    }
+                    QHeaderView::section {
+                        background-color: #2a2d30;
+                        color: #ffffff;
+                        padding: 8px;
+                        border: 1px solid #3a3d40;
+                        font-weight: bold;
+                    }
+                    QTableWidget::item:selected {
+                        background-color: #3a3d40;
+                        color: #ffffff;
+                    }
+                """
+                
+                # Estilo do campo de pesquisa em tema escuro
+                search_style = """
+                    QLineEdit {
+                        border: 1px solid #666;
+                        border-radius: 4px;
+                        padding: 5px 10px;
+                        background: #333;
+                        color: white;
+                    }
+                    QLineEdit:focus {
+                        border: 1px solid #2196F3;
+                    }
+                """
+            else:
+                table_style = table_style or """
+                    QTableWidget {
+                        background-color: #ffffff;
+                        color: #000000;
+                        gridline-color: #d0d0d0;
+                        alternate-background-color: #f8f8f8;
+                    }
+                    QHeaderView::section {
+                        background-color: #f0f0f0;
+                        color: #000000;
+                        padding: 8px;
+                        border: 1px solid #d0d0d0;
+                        font-weight: bold;
+                    }
+                    QTableWidget::item:selected {
+                        background-color: #e0e0e0;
+                        color: #000000;
+                    }
+                """
+                
+                # Estilo do campo de pesquisa em tema claro
+                search_style = """
+                    QLineEdit {
+                        border: 1px solid #ddd;
+                        border-radius: 4px;
+                        padding: 5px 10px;
+                        background: white;
+                        color: #333;
+                    }
+                    QLineEdit:focus {
+                        border: 1px solid #2196F3;
+                    }
+                """
+            
+            # Aplica os estilos
+            if hasattr(self, 'inspection_table'):
+                self.inspection_table.setStyleSheet(table_style)
+                self.inspection_table.setAlternatingRowColors(True)
+                
+            if hasattr(self, 'search_input'):
+                self.search_input.setStyleSheet(search_style)
+                
+            # Atualiza a interface
+            self.update()
+            
+            logger.debug("Tema da aba de inspeções atualizado com sucesso")
+            
+        except Exception as e:
+            logger.error(f"Erro ao atualizar tema da aba de inspeções: {str(e)}")
+            import traceback
+            logger.error(traceback.format_exc()) 
